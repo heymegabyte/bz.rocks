@@ -1,11 +1,11 @@
 # Deployment
 
-`music.megabyte.space` is one Cloudflare Worker fronting a static asset bundle. Deploying is two steps: ship the worker, then purge the zone so the HTMLRewriter rewrites land instantly.
+`bz.rocks` is one Cloudflare Worker fronting a static asset bundle. Deploying is two steps: ship the worker, then purge the zone so the HTMLRewriter rewrites land instantly.
 
 ## Prerequisites
 
 - `wrangler` 4.x (`npx wrangler` works without a global install).
-- Wrangler logged into the Cloudflare account that owns `music.megabyte.space`. One-time: `npx wrangler login`.
+- Wrangler logged into the Cloudflare account that owns `bz.rocks`. One-time: `npx wrangler login`.
 - A green `npm run build` locally. Wrangler runs the build internally, but verify first so you don't deploy a broken bundle.
 
 ## Ship a release
@@ -72,10 +72,10 @@ Then purge the zone again. KV state is not part of the deployment, so a rollback
 
 After purge, hit four things:
 
-1. `https://music.megabyte.space/` — homepage 200, console clean, audio bootable.
-2. `https://music.megabyte.space/<track-id>` — per-route `<title>` matches `src/track-meta.ts`.
-3. `https://music.megabyte.space/api/oembed?url=https://music.megabyte.space/<track-id>` — JSON 200.
-4. `npm run test:e2e` against `PROD_URL=https://music.megabyte.space`.
+1. `https://bz.rocks/` — homepage 200, console clean, audio bootable.
+2. `https://bz.rocks/<track-id>` — per-route `<title>` matches `src/track-meta.ts`.
+3. `https://bz.rocks/api/oembed?url=https://bz.rocks/<track-id>` — JSON 200.
+4. `npm run test:e2e` against `PROD_URL=https://bz.rocks`.
 
 If the per-route title is stale, the purge didn't land — re-run it.
 

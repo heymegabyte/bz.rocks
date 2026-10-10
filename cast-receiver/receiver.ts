@@ -1,4 +1,4 @@
-// CAF v3 receiver runtime — music.megabyte.space custom receiver (App ID 228565CB).
+// CAF v3 receiver runtime — bz.rocks custom receiver (App ID 228565CB).
 //
 // Lifecycle:
 //   1. /cast-receiver/index.html loads cast_receiver_framework.js (gstatic).
@@ -376,7 +376,7 @@ if (!standaloneMode) {
     try {
       if (typeof req.url === 'string') {
         if (req.url.startsWith('//')) req.url = 'https:' + req.url;
-        else if (req.url.startsWith('/')) req.url = 'https://music.megabyte.space' + req.url;
+        else if (req.url.startsWith('/')) req.url = 'https://bz.rocks' + req.url;
       }
       req.withCredentials = false;
     } catch {
@@ -529,7 +529,7 @@ function exposeStandaloneApi() {
 //   ?track=<id>  → start at one specific track
 //   ?autoplay=0  → boot paused so click-to-play is testable without the
 //                  browser's user-gesture autoplay friction
-// Open https://music.megabyte.space/cast-receiver/?test on a laptop to preview
+// Open https://bz.rocks/cast-receiver/?test on a laptop to preview
 // exactly what the Chromecast renders, with songs loading automatically.
 function maybeAutoSeed() {
   try {
@@ -945,7 +945,7 @@ function renderUI() {
   setText('#title', cur.title);
   setText('#artist', cur.artist);
   setText('#album', cur.album);
-  setText('#eyebrow', cur.vibe || 'Casting from music.megabyte.space');
+  setText('#eyebrow', cur.vibe || 'Casting from bz.rocks');
   renderMetaChips(cur);
   const art = $('#artImg') as HTMLImageElement | null;
   if (art && cur.cover && art.src !== cur.cover) {

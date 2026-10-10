@@ -1,4 +1,4 @@
-# TODO — music.megabyte.space
+# TODO — bz.rocks
 
 Lightweight roadmap. The autonomous loop has driven the site to a complete,
 healthy state across SEO/structured-data, images, security headers, the RSS feed,
@@ -6,12 +6,12 @@ oEmbed, and player polish. What remains needs a decision or an external unblock.
 
 ## 🔴 Blocked on Brian (these unblock the next high-value batch)
 
-- **Clear the stuck homepage edge cache.** `music.megabyte.space/` serves a stale
+- **Clear the stuck homepage edge cache.** `bz.rocks/` serves a stale
   HTML shell from a CF cache entry that survives every API purge (`purge_everything`
-  + `files` + `hosts` all return success but don't clear it; `bzmusic.win` — same
+  + `files` + `hosts` all return success but don't clear it; `bz.rocks` — same
   worker/assets, different zone — serves fresh, proving origin is fine). Worker now
   sends `no-store` on `/` but the stuck entry persists.
-  → **2026-09-20 recheck:** after `purge_everything`, `music.megabyte.space/` served
+  → **2026-09-20 recheck:** after `purge_everything`, `bz.rocks/` served
   the FRESH bundle (`main-CcGkVluj.js`, new features live) — the stuck entry appears
   resolved. Re-confirm on the next homepage `<head>`/SEO edit before closing.
   → **Action:** CF dashboard → `megabyte.space` → Caching → **Purge Everything**

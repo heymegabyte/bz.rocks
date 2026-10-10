@@ -1,9 +1,19 @@
+# Worker SERVICE name — intentionally NOT renamed to bz-rocks. Secrets
+# (STRIPE_*, LISTMONK_API_TOKEN, VAPID_*, PUSH_ADMIN_TOKEN) + the KV/R2
+# bindings are bound to THIS service name; renaming would orphan them.
+# Invisible to users — the canonical domain is bz.rocks (routes below).
 name = "music-megabyte-space"
 account_id = "84fa0d1b16ff8086dd958c468ce7fd59"
 compatibility_date = "2025-04-01"
 main = "worker/index.ts"
 
+# bz.rocks (apex) is the canonical origin. www.bz.rocks + the legacy hosts
+# (music.megabyte.space, bzmusic.win, www.bzmusic.win) stay bound to THIS
+# worker only so it can 301 them → https://bz.rocks. See LEGACY_HOSTS in
+# worker/index.ts. Keep all five until legacy inbound traffic drops to ~0.
 routes = [
+  { pattern = "bz.rocks", custom_domain = true },
+  { pattern = "www.bz.rocks", custom_domain = true },
   { pattern = "music.megabyte.space", custom_domain = true },
   { pattern = "bzmusic.win", custom_domain = true },
   { pattern = "www.bzmusic.win", custom_domain = true }
@@ -24,6 +34,9 @@ run_worker_first = true
 [vars]
 LISTMONK_URL = "https://listmonk.megabyte.space"
 LISTMONK_API_USER = "automation"
+# Kept as the existing subscriber-list IDENTITY — the worker finds the list
+# by this exact name. Renaming it would orphan every current subscriber into
+# a new empty list. Internal label only; never shown to users.
 LISTMONK_LIST_NAME = "music.megabyte.space"
 
 [[kv_namespaces]]

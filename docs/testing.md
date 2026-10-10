@@ -47,7 +47,7 @@ Every test starts at the homepage and clicks through. No `page.goto('/some-route
 ### Running Playwright locally
 
 ```bash
-PROD_URL=https://music.megabyte.space npm run test:e2e          # against prod
+PROD_URL=https://bz.rocks npm run test:e2e          # against prod
 PROD_URL=http://localhost:5173    npm run test:e2e              # against dev (npm run dev in another shell)
 PROD_URL=http://localhost:8787    npm run test:e2e              # against wrangler dev (covers worker)
 ```

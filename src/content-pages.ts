@@ -839,10 +839,10 @@ export const CONTENT_PAGES: ContentPage[] = [
               allow="autoplay; encrypted-media; clipboard-write"></iframe>
           </div>
           <p>Three lines of HTML — works on any site, no framework required:</p>
-          <pre class="contentpage__code"><code>&lt;script src="https://bzmusic.win/embed.js" defer&gt;&lt;/script&gt;
+          <pre class="contentpage__code"><code>&lt;script src="https://bz.rocks/embed.js" defer&gt;&lt;/script&gt;
 &lt;bzmusic-player track="chef-lu-stew"&gt;&lt;/bzmusic-player&gt;</code></pre>
           <p>Or iframe directly (works in Substack, Notion, WordPress):</p>
-          <pre class="contentpage__code"><code>&lt;iframe src="https://music.megabyte.space/embed/desiiignare/chef-lu-stew"
+          <pre class="contentpage__code"><code>&lt;iframe src="https://bz.rocks/embed/desiiignare/chef-lu-stew"
         width="480" height="220" frameborder="0"
         allow="autoplay; encrypted-media"&gt;&lt;/iframe&gt;</code></pre>
 
@@ -1012,10 +1012,10 @@ export const CONTENT_PAGES: ContentPage[] = [
     title: 'Privacy',
     eyebrow: 'what we collect (barely anything)',
     description:
-      'music.megabyte.space is stateless. No accounts, no ad trackers. Plays are anonymous counts; email is opt-in only.',
-    metaTitle: 'Privacy — music.megabyte.space',
+      'bz.rocks is stateless. No accounts, no ad trackers. Plays are anonymous counts; email is opt-in only.',
+    metaTitle: 'Privacy — bz.rocks',
     metaDescription:
-      'How music.megabyte.space handles data: anonymous play/share counts, opt-in newsletter, Stripe checkout, privacy-aware analytics. No accounts, no ad trackers, no sale of data.',
+      'How bz.rocks handles data: anonymous play/share counts, opt-in newsletter, Stripe checkout, privacy-aware analytics. No accounts, no ad trackers, no sale of data.',
     jsonLdType: 'WebPage',
     render: () => `
       <article class="contentpage__article">
@@ -1069,15 +1069,15 @@ export const CONTENT_PAGES: ContentPage[] = [
     title: 'Terms',
     eyebrow: 'the short version',
     description:
-      'Terms of use for music.megabyte.space — listen freely, music is © bZ, merch ships via Printful + Stripe, no warranties.',
-    metaTitle: 'Terms of Service — music.megabyte.space',
+      'Terms of use for bz.rocks — listen freely, music is © bZ, merch ships via Printful + Stripe, no warranties.',
+    metaTitle: 'Terms of Service — bz.rocks',
     metaDescription:
       'Plain-English terms: stream freely for personal use, music + lyrics are © Brian Zalewski, merch via Stripe + Printful, licensing on request, no warranties.',
     jsonLdType: 'WebPage',
     render: () => `
       <article class="contentpage__article">
         <p class="contentpage__lead">
-          Plain-English terms for using music.megabyte.space. By using the site you
+          Plain-English terms for using bz.rocks. By using the site you
           agree to these.
         </p>
 

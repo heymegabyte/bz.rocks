@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 // Sequential-playback default + Aeon's Choice expander (up to 10).
 // Runs against PROD_URL (the deployed site) like the rest of the suite.
-const BASE = process.env.PROD_URL || 'https://music.megabyte.space';
+const BASE = process.env.PROD_URL || 'https://bz.rocks';
 
 // Mobile blocks autoplay -> the "tap to play" prompt (#autoplayPrompt) opens and
 // intercepts the transport. A real user taps it; dismiss it here before driving

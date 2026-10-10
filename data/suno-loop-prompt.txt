@@ -1,4 +1,4 @@
-Suno media loop — fully complete ONE song this cycle for music.megabyte.space with ALL 3 files (WAV + stems + video). Work in ~/emdash/repositories/music.megabyte.space.
+Suno media loop — fully complete ONE song this cycle for bz.rocks with ALL 3 files (WAV + stems + video). Work in ~/emdash/repositories/bz.rocks.
 
 STEP 1 GUARD: run `bash scripts/suno-loop-guard.sh`. Only SKIP (exit!=0) if Chrome isn't running or no suno.com tab exists — then STOP + report. Else proceed even if Emdash/another app is frontmost.
 

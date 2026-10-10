@@ -4,7 +4,7 @@
  * self-contained IIFE that defines the <bzmusic-player> custom element.
  *
  * Third-party sites consume this via:
- *   <script src="https://bzmusic.win/embed.js" defer></script>
+ *   <script src="https://bz.rocks/embed.js" defer></script>
  *
  * The script auto-defines the custom element on load. No module loading,
  * no importmap, no CSS to ship separately — the iframe inside the element
@@ -21,7 +21,7 @@ await build({
   minify: true,
   outfile: 'dist/embed.js',
   banner: {
-    js: '/* bzmusic.win <bzmusic-player> web component · https://bzmusic.win/embed.js */'
+    js: '/* bz.rocks <bzmusic-player> web component · https://bz.rocks/embed.js */'
   },
   legalComments: 'none'
 });

@@ -4,7 +4,7 @@
 //   3. clicking next advances the playlist title (mod-wrapped)
 //   4. Web Audio visualizer canvas is mounted + sized
 //   5. invalid slugs render the branded fallback card (never blank iframe)
-// Runs against PROD_URL (default music.megabyte.space) — same harness as
+// Runs against PROD_URL (default bz.rocks) — same harness as
 // journey/cast specs. Local: PROD_URL=http://127.0.0.1:5173 npx playwright test embed
 
 import { test, expect } from '@playwright/test';
@@ -110,7 +110,7 @@ test.describe('embed player — fallback', () => {
   test('invalid slug renders branded fallback (no blank iframe)', async ({ page }) => {
     await page.goto('/embed/this-slug-does-not-exist', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.embed-fallback')).toBeVisible();
-    await expect(page.locator('.embed-fallback__link')).toHaveAttribute('href', /music\.megabyte\.space/);
+    await expect(page.locator('.embed-fallback__link')).toHaveAttribute('href', /bz\.rocks/);
   });
 });
 

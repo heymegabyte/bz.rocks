@@ -1,5 +1,5 @@
 /**
- * sync-music-library.ts — mirror the albums hosted by music.megabyte.space
+ * sync-music-library.ts — mirror the albums hosted by bz.rocks
  * into ~/Music/bZ/<Album>/NN - Title.mp3, sorted by the site's tracklist order.
  *
  * Source of truth: src/data.ts (ALBUMS + TRACKS) + public/<track.file> (the exact

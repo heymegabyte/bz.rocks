@@ -52,7 +52,7 @@ function merchItemListJsonLd(): object {
   };
 }
 
-const SITE_ORIGIN = 'https://music.megabyte.space';
+const SITE_ORIGIN = 'https://bz.rocks';
 const ARTIST = 'bZ';
 
 /** Whole seconds → ISO-8601 duration (e.g. 180 → "PT3M0S") for schema.org. */
@@ -250,7 +250,7 @@ function buildTrackBody(track: Track, album: Album): string {
   }
   parts.push(`<h2>More from bZ</h2>`);
   parts.push(
-    `<p>Other records from the same catalog: ${otherAlbumLinks || ''}. Every album is part of one long arc — hustle gospel, soup-kitchen liturgy, cyan-flag prophecy. The full discography lives at <a href="${SITE_ORIGIN}/">music.megabyte.space</a>. New drops are mirrored to Spotify, Apple Music, YouTube Music, and Tidal via DistroKid as soon as each cut is mastered.</p>`
+    `<p>Other records from the same catalog: ${otherAlbumLinks || ''}. Every album is part of one long arc — hustle gospel, soup-kitchen liturgy, cyan-flag prophecy. The full discography lives at <a href="${SITE_ORIGIN}/">bz.rocks</a>. New drops are mirrored to Spotify, Apple Music, YouTube Music, and Tidal via DistroKid as soon as each cut is mastered.</p>`
   );
   parts.push(`<h2>Credits</h2>`);
   parts.push(
@@ -495,14 +495,14 @@ const CONTENT_PAGES_SEO: Array<{ slug: string; title: string; description: strin
   },
   {
     slug: 'privacy',
-    title: 'Privacy — music.megabyte.space',
+    title: 'Privacy — bz.rocks',
     description:
-      'How music.megabyte.space handles data: anonymous play/share counts, opt-in newsletter, Stripe checkout, privacy-aware analytics. No accounts, no ad trackers, no sale of data.',
+      'How bz.rocks handles data: anonymous play/share counts, opt-in newsletter, Stripe checkout, privacy-aware analytics. No accounts, no ad trackers, no sale of data.',
     og: FALLBACK_OG
   },
   {
     slug: 'terms',
-    title: 'Terms of Service — music.megabyte.space',
+    title: 'Terms of Service — bz.rocks',
     description:
       'Plain-English terms: stream freely for personal use, music + lyrics are © Brian Zalewski, merch via Stripe + Printful, licensing on request, no warranties.',
     og: FALLBACK_OG
@@ -535,7 +535,7 @@ function contentPageSeo(c: { slug: string; title: string; description: string; o
         name: c.title,
         description,
         url,
-        isPartOf: { '@type': 'WebSite', name: 'bZ — music.megabyte.space', url: SITE_ORIGIN }
+        isPartOf: { '@type': 'WebSite', name: 'bZ — bz.rocks', url: SITE_ORIGIN }
       },
       // Home > {Page} breadcrumb — parity with track/album routes, so Google can
       // render the hierarchy in search results.
@@ -550,7 +550,7 @@ function contentPageSeo(c: { slug: string; title: string; description: string; o
       // The merch page gets a Product ItemList for shopping rich results.
       ...(c.slug === 'merch' ? [merchItemListJsonLd()] : [])
     ],
-    seoBody: `<h1>${c.title}</h1><p>${description}</p><p><a href="/">bZ — music.megabyte.space</a></p>`
+    seoBody: `<h1>${c.title}</h1><p>${description}</p><p><a href="/">bZ — bz.rocks</a></p>`
   };
 }
 

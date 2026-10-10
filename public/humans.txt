@@ -1,6 +1,6 @@
 /* TEAM */
 Artist + producer + builder: bZ (Brian Zalewski)
-Site: https://music.megabyte.space
+Site: https://bz.rocks
 Contact: hey [at] megabyte.space
 Location: Newark, NJ — USA
 

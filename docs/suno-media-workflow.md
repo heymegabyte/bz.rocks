@@ -1,6 +1,6 @@
 # Suno media download loop — runbook
 
-Extract **WAV + MIDI + VIDEO** for every music.megabyte.space song from Suno, one song
+Extract **WAV + MIDI + VIDEO** for every bz.rocks song from Suno, one song
 per loop iteration. Derived from the walkthrough video `~/Desktop/suno-suno-suno.mov`
 (2026-08-30). Driven by **Computer Use** on the user's Suno-logged-in Chrome.
 
@@ -62,7 +62,7 @@ When 0 `pending` remain, `CronDelete` self. Cadence ~30m (one song ≈ 10-15 min
 (Range-aware). Ingest uploads each file (`<id>.wav`, `<id>.mp4`, `stems/<id>.zip`). NOTE (2026-08-30):
 R2 storage confirmed (objects persist + retrieve via CLI) but the Workers binding view lagged on the
 brand-new bucket (`/media/*` 404 while `object_count` read 0 — stale stats, not jurisdiction). Re-verify
-`curl https://music.megabyte.space/media/chef-lu-stew.mp4` after propagation; if still 404, redeploy the worker.
+`curl https://bz.rocks/media/chef-lu-stew.mp4` after propagation; if still 404, redeploy the worker.
 
 ## Status (2026-08-30)
 

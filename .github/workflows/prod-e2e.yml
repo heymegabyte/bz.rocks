@@ -16,7 +16,7 @@ on:
       prod_url:
         description: 'Target base URL'
         required: false
-        default: 'https://music.megabyte.space'
+        default: 'https://bz.rocks'
 
 permissions:
   contents: read
@@ -46,7 +46,7 @@ jobs:
 
       - name: Run prod feature matrix
         env:
-          PROD_URL: ${{ github.event.inputs.prod_url || 'https://music.megabyte.space' }}
+          PROD_URL: ${{ github.event.inputs.prod_url || 'https://bz.rocks' }}
         run: npm run test:e2e:prod -- feature-matrix
 
       - name: Upload screenshots + traces

@@ -3,7 +3,7 @@ import { test, expect, type Page } from '@playwright/test';
 // Cinematic film player — the fullscreen music-video overlay wired to tracks
 // that carry a `video` field (Bermuda Prophecy is the first). Runs against
 // PROD_URL like the rest of the suite.
-const BASE = process.env.PROD_URL || 'https://music.megabyte.space';
+const BASE = process.env.PROD_URL || 'https://bz.rocks';
 
 // Mobile blocks autoplay -> the "tap to play" prompt (#apClose) can intercept
 // clicks. Dismiss it before driving the transport. No-op on desktop.

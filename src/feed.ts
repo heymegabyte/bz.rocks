@@ -5,7 +5,7 @@
 import { ALBUMS, TRACK_BY_ID } from './data';
 import { TRACK_DURATIONS, TRACK_BYTES } from './durations';
 
-const SITE = 'https://music.megabyte.space';
+const SITE = 'https://bz.rocks';
 const ARTIST = 'bZ';
 const OWNER_EMAIL = 'hey@megabyte.space';
 
@@ -70,7 +70,7 @@ export function buildRssFeed(origin: string = SITE): string {
     <title>bZ — hustle gospel</title>
     <link>${xml(origin)}/</link>
     <atom:link href="${xml(origin)}/feed.xml" rel="self" type="application/rss+xml" />
-    <description>Hard but holy. Christian-gangster hustle gospel by bZ — every drop, straight from music.megabyte.space.</description>
+    <description>Hard but holy. Christian-gangster hustle gospel by bZ — every drop, straight from bz.rocks.</description>
     <language>en-us</language>
     <copyright>© bZ / Megabyte Labs</copyright>
     <lastBuildDate>${lastBuild}</lastBuildDate>

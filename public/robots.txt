@@ -1,4 +1,4 @@
-# music.megabyte.space — robots policy
+# bz.rocks — robots policy
 # Last updated 2026-06-10
 
 # Default crawlers welcome to the public catalog. Block /api/* (mostly POSTs)
@@ -76,4 +76,4 @@ User-agent: Amazonbot
 Disallow: /
 
 # --- Sitemap ---
-Sitemap: https://music.megabyte.space/sitemap.xml
+Sitemap: https://bz.rocks/sitemap.xml

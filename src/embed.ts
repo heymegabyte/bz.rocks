@@ -15,7 +15,7 @@
 //      scrub bar · time · deep-link to the full site.
 //
 // The full app surface (visualizer, lyrics, sharing, casting) lives on
-// music.megabyte.space proper — clicking the cover / deep-link opens the
+// bz.rocks proper — clicking the cover / deep-link opens the
 // canonical route in a new tab.
 import './style.css';
 // Default Trusted Types policy installed by inline <head> script in embed.html.
@@ -24,10 +24,9 @@ import { ALBUM_BY_ID, TRACK_BY_ID } from './data';
 import { fmtTime } from './format';
 import type { Track, Album } from './types';
 
-const SITE_ORIGIN = 'https://music.megabyte.space';
+const SITE_ORIGIN = 'https://bz.rocks';
 const FALLBACK_MSG_INVALID = 'This embed link is missing or invalid.';
-const FALLBACK_MSG_ERROR =
-  'Something went wrong loading this track. Try the full player on music.megabyte.space.';
+const FALLBACK_MSG_ERROR = 'Something went wrong loading this track. Try the full player on bz.rocks.';
 
 interface EmbedTrackTarget {
   kind: 'track';
@@ -74,7 +73,7 @@ function fallback(host: HTMLElement, msg: string) {
   host.innerHTML = `
     <div class="embed-fallback">
       <p>${escapeHtml(msg)}</p>
-      <a class="embed-fallback__link" href="${SITE_ORIGIN}/" target="_blank" rel="noopener">Open bZ on music.megabyte.space →</a>
+      <a class="embed-fallback__link" href="${SITE_ORIGIN}/" target="_blank" rel="noopener">Open bZ on bz.rocks →</a>
     </div>
   `;
 }
@@ -139,7 +138,7 @@ function renderPlayer(host: HTMLElement, target: NonNullable<EmbedTarget>) {
 
   host.innerHTML = `
     <div class="embed" style="--accent: ${album.accent};">
-      <a class="embed__cover" id="embedCover" href="${escapeHtml(deepHref)}" target="_blank" rel="noopener" aria-label="Open on music.megabyte.space">
+      <a class="embed__cover" id="embedCover" href="${escapeHtml(deepHref)}" target="_blank" rel="noopener" aria-label="Open on bz.rocks">
         <img src="${albumCover}" alt="${albumName} cover" />
       </a>
       <div class="embed__body">
@@ -154,7 +153,7 @@ function renderPlayer(host: HTMLElement, target: NonNullable<EmbedTarget>) {
           <div class="embed__bar" id="embedBar" role="slider" aria-label="Seek" tabindex="0"><div class="embed__fill" id="embedFill"></div></div>
           <span class="embed__time" id="embedTime">0:00 / 0:00</span>
         </div>
-        <a class="embed__deep" href="${escapeHtml(deepHref)}" target="_blank" rel="noopener">music.megabyte.space →</a>
+        <a class="embed__deep" href="${escapeHtml(deepHref)}" target="_blank" rel="noopener">bz.rocks →</a>
       </div>
     </div>
   `;

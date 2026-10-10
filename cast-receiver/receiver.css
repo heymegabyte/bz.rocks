@@ -1,6 +1,6 @@
 /* ════════════════════════════════════════════════════════════════════════
    BZ MUSIC · CAST RECEIVER — 10-foot UI, black + cyan, matched to
-   music.megabyte.space. 1920×1080 baseline, 5% safe-zone, D-pad focus.
+   bz.rocks. 1920×1080 baseline, 5% safe-zone, D-pad focus.
 
    Android TV WebView perf doctrine (this file is tuned for it):
    • Animate ONLY transform + opacity (compositor-only — no layout/paint).
@@ -378,7 +378,7 @@ img {
   box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 
-/* Larger, music.megabyte.space-style display title with a slow cyan gradient
+/* Larger, bz.rocks-style display title with a slow cyan gradient
    sheen drifting through the letters (background-position only — compositor
    cheap). Falls back to solid ink where background-clip:text is unsupported. */
 .np__title {

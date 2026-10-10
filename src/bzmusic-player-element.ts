@@ -2,7 +2,7 @@
  * <bzmusic-player> — drop-in web component for embedding the bZ music
  * player on any third-party page. Single-script distribution:
  *
- *   <script src="https://bzmusic.win/embed.js" defer></script>
+ *   <script src="https://bz.rocks/embed.js" defer></script>
  *   <bzmusic-player track="chef-lu-stew"></bzmusic-player>
  *   <bzmusic-player album="appeal"></bzmusic-player>
  *   <bzmusic-player track="chef-lu-stew" theme="dark" accent="#00E5FF"></bzmusic-player>
@@ -41,7 +41,7 @@
  * if the slug doesn't match the catalog.
  */
 
-const ORIGIN = 'https://bzmusic.win';
+const ORIGIN = 'https://bz.rocks';
 
 // Catalog of valid album slugs we'll send to the iframe. Kept inline so
 // the bundled embed.js doesn't need to fetch a tracks index just to

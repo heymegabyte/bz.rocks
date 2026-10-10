@@ -61,8 +61,13 @@ const TRACKS = [];
 // Title accepts single- OR double-quoted strings INCLUDING escaped quotes
 // (`'The Odds Don\'t Know Me'`) — a naive [^'"]+ stops at the escaped
 // apostrophe and drops the whole entry, silently skipping that track's card.
+//
+// The `(?:…)*?` after `file` tolerates OPTIONAL interleaved string fields
+// (e.g. `video: '/media/<id>.mp4'`) between `file` and `cover`. Without it a
+// single video track — bermuda-prophecy — fell out of the parse entirely and
+// its OG card was never generated (asset audit then hard-failed the build).
 const trackRegex =
-  /\{\s*id:\s*'([^']+)',\s*title:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)"),\s*artist:\s*'([^']+)',\s*file:\s*'[^']+',\s*cover:\s*([^,]+),\s*album:\s*'([^']+)'/g;
+  /\{\s*id:\s*'([^']+)',\s*title:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)"),\s*artist:\s*'([^']+)',\s*file:\s*'[^']+',(?:\s*[a-zA-Z]+:\s*'[^']*',)*?\s*cover:\s*([^,]+),\s*album:\s*'([^']+)'/g;
 for (const m of dataSrc.matchAll(trackRegex)) {
   const [, id, titleSingle, titleDouble, artist, coverRef, album] = m;
   const cover = coverRef.startsWith("'")
@@ -221,7 +226,7 @@ function buildOverlaySvg(titleRaw, eyebrowRaw, accentColor) {
 
   <!-- footer: domain -->
   <text x="630" y="${HEIGHT - 62}" class="footer">PLAY ON  </text>
-  <text x="755" y="${HEIGHT - 62}" class="footer-domain">music.megabyte.space</text>
+  <text x="755" y="${HEIGHT - 62}" class="footer-domain">bz.rocks</text>
 </svg>`;
 }
 

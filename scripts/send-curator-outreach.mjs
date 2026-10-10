@@ -27,8 +27,8 @@ const CURATORS = [
 
 const TRACK_ID = 'bootleg-from-tomorrow';
 const TRACK_TITLE = 'Bootleg From Tomorrow';
-const PRESS_URL = `https://music.megabyte.space/press/${TRACK_ID}`;
-const CLIP_URL = `https://music.megabyte.space/clip/${TRACK_ID}`;
+const PRESS_URL = `https://bz.rocks/press/${TRACK_ID}`;
+const CLIP_URL = `https://bz.rocks/clip/${TRACK_ID}`;
 
 function bodyFor({ name, org }) {
   return `Hi ${name || 'there'},

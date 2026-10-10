@@ -10980,10 +10980,10 @@ export const SPOTIFY_ARTIST_URL = `https://open.spotify.com/artist/${SPOTIFY_ART
 export const NEXT_RELEASE: { title: string; date: string; preSaveUrl?: string } | undefined = undefined;
 
 // PKCE OAuth client for "Pair Spotify Connect". Register at https://developer.spotify.com/dashboard
-// with redirect URI https://music.megabyte.space/spotify/callback. Leave empty to render the
+// with redirect URI https://bz.rocks/spotify/callback. Leave empty to render the
 // "coming soon" pairing surface (still wired, just won't initiate OAuth until set).
 export const SPOTIFY_CLIENT_ID = '';
-export const SPOTIFY_REDIRECT_URI = 'https://music.megabyte.space/spotify/callback';
+export const SPOTIFY_REDIRECT_URI = 'https://bz.rocks/spotify/callback';
 
 export const ROBERT_GREENE_WISDOM = [
   'Make other people come to you — use bait if necessary. — Law 8',

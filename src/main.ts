@@ -699,7 +699,7 @@ function parseRouteFromUrl(pathname: string = location.pathname): RouteMatch {
   return null;
 }
 
-const SITE_ORIGIN = 'https://music.megabyte.space';
+const SITE_ORIGIN = 'https://bz.rocks';
 const DEFAULT_OG = `${SITE_ORIGIN}/og/album-desiiignare.jpg`;
 
 function setMeta(selector: string, attr: 'content' | 'href', value: string) {
@@ -6058,7 +6058,7 @@ function bindUi() {
   $('#shareCopyMd')?.addEventListener('click', async e => {
     if (!shareCurrent) return;
     const t = shareCurrent;
-    const md = `![${t.title} cover](${t.cover.startsWith('http') ? t.cover : SITE_ORIGIN + t.cover})\n\n**${t.title}** — bZ\n${t.sub}\n\n[▶ Listen on music.megabyte.space](${t.shareUrl}?ref=share-markdown)`;
+    const md = `![${t.title} cover](${t.cover.startsWith('http') ? t.cover : SITE_ORIGIN + t.cover})\n\n**${t.title}** — bZ\n${t.sub}\n\n[▶ Listen on bz.rocks](${t.shareUrl}?ref=share-markdown)`;
     await copyText(md, e.currentTarget as HTMLElement);
     if (t.kind === 'track') reportShare(t.id);
   });
@@ -8100,7 +8100,7 @@ function buildLyricsLrc(track: Track, album: { name: string } | undefined): stri
     `[ar:bZ]`,
     `[al:${album?.name ?? 'bZ'}]`,
     `[length:${npFormatTime(engine.audio.duration || 0)}]`,
-    `[by:bzmusic.win]`
+    `[by:bz.rocks]`
   ].join('\n');
   const body = activeLyrics.lines
     .map(l => {

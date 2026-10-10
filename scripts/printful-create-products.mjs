@@ -24,7 +24,7 @@ const ROOT = resolve(__dirname, '..');
 const TOKEN = process.env.PRINTFUL_API_KEY;
 const STORE_ID = 18259062;
 const DRY = process.argv.includes('--dry');
-const DESIGN_URL = 'https://music.megabyte.space/merch/design-free-satan.png';
+const DESIGN_URL = 'https://bz.rocks/merch/design-free-satan.png';
 const PRODUCT_PREFIX = 'FREE SATAN';
 
 if (!TOKEN) {

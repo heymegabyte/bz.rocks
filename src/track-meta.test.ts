@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ALBUMS, TRACKS } from './data';
 import { SEO_INDEX, albumSeo, buildSeoIndex, trackOgImage, trackSeo, type RouteSeo } from './track-meta';
 
-const SITE_ORIGIN = 'https://music.megabyte.space';
+const SITE_ORIGIN = 'https://bz.rocks';
 
 describe('trackOgImage', () => {
   it('returns the canonical per-track OG path', () => {
@@ -71,7 +71,7 @@ describe('SEO contract (every route)', () => {
   });
 
   it.each(routes)('$kind $seo.path canonical is absolute https', ({ seo }) => {
-    expect(seo.canonical).toMatch(/^https:\/\/music\.megabyte\.space\//);
+    expect(seo.canonical).toMatch(/^https:\/\/bz\.rocks\//);
   });
 
   it.each(routes)('$kind $seo.path og/twitter share fields are non-empty', ({ seo }) => {

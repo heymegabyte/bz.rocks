@@ -93,7 +93,7 @@ for (const page of CONTENT_PAGES) {
 for (const [path, seo] of Object.entries(SEO_INDEX)) {
   scanHtml(seo.seoBody, `seo-body:${path}`);
   for (const u of [seo.ogImage, seo.embedUrl, seo.audioUrl].filter(Boolean) as string[]) {
-    checkLink(u.replace('https://music.megabyte.space', ''), `seo-meta:${path}`);
+    checkLink(u.replace('https://bz.rocks', ''), `seo-meta:${path}`);
   }
 }
 

@@ -25,7 +25,7 @@ The worker treats every request body as untrusted. The patterns to follow when a
 - **Push endpoints** must start with `https://`. Anything else is dropped — protects against malformed `PushSubscription` payloads being persisted.
 - **`/api/push/send`** requires a Bearer token (`PUSH_ADMIN_TOKEN`). The token value is compared with constant-time semantics; never logged.
 
-`Access-Control-Allow-Origin` is locked to `https://music.megabyte.space` on every API response. The single exception is `/api/oembed`, which is intentionally `*` because oEmbed consumers (Slack, Discord, blog post unfurlers) come from arbitrary origins.
+`Access-Control-Allow-Origin` is locked to `https://bz.rocks` on every API response. The single exception is `/api/oembed`, which is intentionally `*` because oEmbed consumers (Slack, Discord, blog post unfurlers) come from arbitrary origins.
 
 ## Rate limiting
 

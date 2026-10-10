@@ -16,7 +16,7 @@ interface Env {
   LISTMONK_URL?: string; // e.g. https://listmonk.megabyte.space
   LISTMONK_API_USER?: string; // API user name (e.g. "automation")
   LISTMONK_API_TOKEN?: string; // API token (secret)
-  LISTMONK_LIST_NAME?: string; // Display name for the list (default: "music.megabyte.space")
+  LISTMONK_LIST_NAME?: string; // Subscriber-list identity (default: "music.megabyte.space" — do not rename, see wrangler.toml)
   LISTMONK_LIST_ID?: string; // Optional pinned list id; if unset, worker auto-discovers/creates
   // Listmonk transactional template IDs for Foundation flows. See
   // worker/listmonk-templates/README.md for upload + secret-set steps.
@@ -53,11 +53,22 @@ interface Env {
 
 const CF_ACCOUNT_ID = '84fa0d1b16ff8086dd958c468ce7fd59';
 
-// Recognized origins the worker serves from. bzmusic.win is the new
-// primary surface; music.megabyte.space is the legacy alias that stays
-// live for SEO + back-link continuity. Use these constants in CORS +
-// canonical computation + oEmbed host validation.
-const ALLOWED_HOSTS = new Set(['music.megabyte.space', 'bzmusic.win', 'www.bzmusic.win']);
+// bz.rocks is the canonical origin. www.bz.rocks + the legacy hosts
+// (music.megabyte.space, bzmusic.win) are 301'd to it in fetch() — see
+// LEGACY_HOSTS below. ALLOWED_HOSTS stays permissive (it still includes the
+// legacy hosts) so oEmbed + CORS keep resolving historical share URLs that
+// haven't yet followed the redirect.
+const ALLOWED_HOSTS = new Set([
+  'bz.rocks',
+  'www.bz.rocks',
+  'music.megabyte.space',
+  'bzmusic.win',
+  'www.bzmusic.win'
+]);
+
+// Legacy hostnames that must 301 → canonical bz.rocks. The worker still owns
+// these as custom domains (wrangler.toml routes) purely to issue this redirect.
+const LEGACY_HOSTS = new Set(['music.megabyte.space', 'bzmusic.win', 'www.bzmusic.win', 'www.bz.rocks']);
 
 const VALID_TRACK_ID = /^[a-z0-9-]{1,80}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -112,7 +123,7 @@ async function getSpotifyToken(env: Env): Promise<string | null> {
 /**
  * Returns the appropriate `Access-Control-Allow-Origin` header value for
  * the inbound request. Echoes the request's Origin when it's one of the
- * allowed hosts; otherwise falls back to bzmusic.win (new primary).
+ * allowed hosts; otherwise falls back to the canonical bz.rocks origin.
  */
 function corsOrigin(request: Request): string {
   const origin = request.headers.get('origin') || '';
@@ -122,7 +133,7 @@ function corsOrigin(request: Request): string {
   } catch {
     /* invalid origin header */
   }
-  return 'https://bzmusic.win';
+  return 'https://bz.rocks';
 }
 
 function jsonResponse(
@@ -134,7 +145,7 @@ function jsonResponse(
   const headers: Record<string, string> = {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
-    'Access-Control-Allow-Origin': request ? corsOrigin(request) : 'https://bzmusic.win',
+    'Access-Control-Allow-Origin': request ? corsOrigin(request) : 'https://bz.rocks',
     ...extra
   };
   return new Response(JSON.stringify(body), { status, headers });
@@ -210,7 +221,7 @@ function listmonkAuthHeaders(env: Env): Record<string, string> {
     Authorization: `token ${env.LISTMONK_API_USER}:${env.LISTMONK_API_TOKEN}`,
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    'User-Agent': 'music.megabyte.space/1.0 (Cloudflare Workers)'
+    'User-Agent': 'bz.rocks/1.0 (Cloudflare Workers)'
   };
 }
 
@@ -878,7 +889,7 @@ function renderClipPage(trackId: string, origin: string): string {
   <div class="stage">
     <video class="bg-vid" id="bgVid" autoplay muted loop playsinline preload="auto"></video>
     <div class="bg-vid-overlay"></div>
-    <div class="brand">bz · music.megabyte.space</div>
+    <div class="brand">bz · bz.rocks</div>
     <div class="cover"><img id="cover" src="/art/cover-${trackId}.jpg" onerror="this.onerror=null;this.src='/art/cover-panda-desiiignare.jpg';" alt="" /></div>
     <div class="meta">
       <h1 class="title">${title}</h1>
@@ -888,7 +899,7 @@ function renderClipPage(trackId: string, origin: string): string {
       </div>
     </div>
     <div class="lyric" id="lyric"></div>
-    <div class="url">stream on spotify · bzmusic.win</div>
+    <div class="url">stream on spotify · bz.rocks</div>
   </div>
   <audio id="audio" src="/audio/${trackId}.mp3" preload="auto" crossorigin="anonymous"></audio>
 <script>
@@ -1600,6 +1611,23 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
+    // Legacy-domain consolidation — music.megabyte.space + bzmusic.win (and the
+    // www.bz.rocks host) 301 → canonical https://bz.rocks, preserving path +
+    // query so every old link, share card, and search-index entry still lands.
+    // Runs before all other routing; these hosts reach the worker only to be
+    // redirected (see wrangler.toml routes + LEGACY_HOSTS).
+    if (LEGACY_HOSTS.has(url.hostname)) {
+      const dest = new URL(url.pathname + url.search, 'https://bz.rocks');
+      return new Response(null, {
+        status: 301,
+        headers: {
+          Location: dest.toString(),
+          'Cache-Control': 'public, max-age=3600',
+          'X-Content-Type-Options': 'nosniff'
+        }
+      });
+    }
+
     // Consolidated content pages — Process / Theology / Support / Connect were
     // merged into /about (2026-06-09). 301 the retired slugs so old links, search
     // index entries, and direct navigation all land on the hub.
@@ -1733,28 +1761,28 @@ export default {
         let oeTitle: string;
         if (resolved.kind === 'track') {
           const track = TRACK_BY_ID.get(resolved.trackId)!;
-          embedUrl = `https://music.megabyte.space/embed/${resolved.albumId}/${resolved.trackId}`;
-          audioUrl = `https://music.megabyte.space${track.file}`;
-          thumbnail = `https://music.megabyte.space/og/track-${resolved.trackId}.jpg`;
+          embedUrl = `https://bz.rocks/embed/${resolved.albumId}/${resolved.trackId}`;
+          audioUrl = `https://bz.rocks${track.file}`;
+          thumbnail = `https://bz.rocks/og/track-${resolved.trackId}.jpg`;
           oeTitle = `${track.title} — bZ`;
         } else {
           const album = ALBUM_BY_ID.get(resolved.albumId)!;
-          embedUrl = `https://music.megabyte.space/embed/${resolved.albumId}`;
+          embedUrl = `https://bz.rocks/embed/${resolved.albumId}`;
           const firstTrackId = album.trackIds[0];
           const firstTrack = firstTrackId ? TRACK_BY_ID.get(firstTrackId) : null;
-          audioUrl = firstTrack ? `https://music.megabyte.space${firstTrack.file}` : '';
-          thumbnail = `https://music.megabyte.space${album.cover}`;
+          audioUrl = firstTrack ? `https://bz.rocks${firstTrack.file}` : '';
+          thumbnail = `https://bz.rocks${album.cover}`;
           oeTitle = `${album.name} — bZ`;
         }
         const html = `<iframe src="${escapeHtmlAttr(embedUrl)}" width="${maxwidth}" height="${maxheight}" frameborder="0" scrolling="no" allow="autoplay; encrypted-media" allowfullscreen title="${escapeHtmlAttr(oeTitle)}"></iframe>`;
         const payload: Record<string, unknown> = {
           version: '1.0',
           type: 'rich',
-          provider_name: 'bZ — music.megabyte.space',
-          provider_url: 'https://music.megabyte.space',
+          provider_name: 'bZ — bz.rocks',
+          provider_url: 'https://bz.rocks',
           title: oeTitle,
           author_name: 'bZ',
-          author_url: 'https://music.megabyte.space',
+          author_url: 'https://bz.rocks',
           html,
           width: maxwidth,
           height: maxheight,
@@ -2398,7 +2426,7 @@ export default {
         const systemText =
           typeof body.system === 'string'
             ? body.system.slice(0, 4000)
-            : "You are bZ's in-app DJ — concise, warm, brand-aware. Speak in the voice of music.megabyte.space: sharp, punchy, Christian-gangster ethic, hustle-gospel, hard but holy. Reference the album Panda Desiiignare and the artist bZ when relevant. Use markdown sparingly. Default to 2-3 sentences unless the user asks for more. Never recommend or mention drugs. Stay reverent around family names.";
+            : "You are bZ's in-app DJ — concise, warm, brand-aware. Speak in the voice of bz.rocks: sharp, punchy, Christian-gangster ethic, hustle-gospel, hard but holy. Reference the album Panda Desiiignare and the artist bZ when relevant. Use markdown sparingly. Default to 2-3 sentences unless the user asks for more. Never recommend or mention drugs. Stay reverent around family names.";
 
         // ── Deep mode: web research pre-step ────────────────────────────
         // For deep queries we hit Cloudflare's Browser Rendering REST API
@@ -2607,7 +2635,7 @@ export default {
           'metadata[cart]': JSON.stringify(
             items.map(it => ({ s: it.slug, v: it.sync_variant_id, q: it.quantity, p: it.price, sz: it.size }))
           ),
-          'metadata[source]': 'music.megabyte.space'
+          'metadata[source]': 'bz.rocks'
         };
         items.forEach((it, i) => {
           stripeFields[`line_items[${i}][price_data][currency]`] = 'usd';
@@ -2697,7 +2725,7 @@ export default {
                   html: `<div style="font-family:system-ui;max-width:560px;margin:0 auto;padding:24px;color:#060610">
                 <h1 style="color:#00E5FF;margin:0 0 8px">${expired ? 'Cart still warm' : "Payment didn't complete"}</h1>
                 <p>${expired ? 'Your checkout expired before payment was confirmed.' : "Your payment didn't go through."} No charge was made — pick up where you left off:</p>
-                <p><a href="https://music.megabyte.space/merch" style="color:#00E5FF">Return to the FREE SATAN suite →</a></p>
+                <p><a href="https://bz.rocks/merch" style="color:#00E5FF">Return to the FREE SATAN suite →</a></p>
                 <p>—bZ</p></div>`
                 })
               }).then(r => (r.ok ? null : r.text().then(t => console.warn('fail-email', t.slice(0, 200)))))
@@ -2816,7 +2844,7 @@ export default {
                 <ul>${itemsHtml}</ul>
                 <p style="color:#666;font-size:0.85rem">Order ID: ${pfOrderId} · Stripe session ${session.id.slice(-12)}</p>
                 <p>Questions? Just reply.</p>
-                <p>—bZ<br/><a href="https://music.megabyte.space" style="color:#00E5FF">music.megabyte.space</a></p>
+                <p>—bZ<br/><a href="https://bz.rocks" style="color:#00E5FF">bz.rocks</a></p>
               </div>`
               })
             }).then(r =>

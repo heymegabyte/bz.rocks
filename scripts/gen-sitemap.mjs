@@ -10,7 +10,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const ROOT = resolve(import.meta.dirname, '..');
-const ORIGIN = 'https://music.megabyte.space';
+const ORIGIN = 'https://bz.rocks';
 
 function extractAlbumsAndTracks() {
   const src = readFileSync(resolve(ROOT, 'src/data.ts'), 'utf8');

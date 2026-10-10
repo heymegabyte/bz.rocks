@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { buildLlmsTxt } from './llms';
 
 describe('buildLlmsTxt', () => {
-  const txt = buildLlmsTxt('https://music.megabyte.space');
+  const txt = buildLlmsTxt('https://bz.rocks');
 
   it('starts with a single H1 title (llmstxt.org requirement)', () => {
     expect(txt.startsWith('# ')).toBe(true);
@@ -10,7 +10,7 @@ describe('buildLlmsTxt', () => {
   });
 
   it('contains markdown links (Lighthouse agentic-browsing requirement)', () => {
-    const links = txt.match(/\[[^\]]+\]\(https:\/\/music\.megabyte\.space\/[^)]*\)/g) || [];
+    const links = txt.match(/\[[^\]]+\]\(https:\/\/bz\.rocks\/[^)]*\)/g) || [];
     expect(links.length).toBeGreaterThanOrEqual(5);
   });
 

@@ -73,7 +73,7 @@ async function attachCollectors(page: import('@playwright/test').Page) {
     // third-party script (e.g. the gstatic Cast SDK in headless, which has no
     // Cast support) carries that source in its stack. IGNORE_SOURCES already
     // lists those external origins, so they're filtered here — while any error
-    // with a first-party (music.megabyte.space) frame still fails the gate.
+    // with a first-party (bz.rocks) frame still fails the gate.
     const stack = err.stack || '';
     if (shouldIgnore(err.message, stack)) return;
     const topFrame =

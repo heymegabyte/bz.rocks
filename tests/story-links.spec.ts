@@ -96,7 +96,7 @@ test.describe('Story menu — no dead links', () => {
     // Crawl every internal link on the kit; none may 404.
     const links = await page.locator('a[href]').evaluateAll(els =>
       Array.from(new Set(els.map(e => (e as HTMLAnchorElement).getAttribute('href') || '')))
-        .filter(h => h.startsWith('http') && h.includes('music.megabyte.space'))
+        .filter(h => h.startsWith('http') && h.includes('bz.rocks'))
         .filter(h => !/\/cdn-cgi\//.test(h))
     );
     for (const href of links) {

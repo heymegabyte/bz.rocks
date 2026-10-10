@@ -45,7 +45,7 @@ All 20 tracks have **MP3 + WAV + MP4 + Stems** staged in `~/Downloads`, every tr
 2. ✓ **20/20 MP4 videos** — pulled via the playlist search box → row ⋯ → Download → modal (uncheck M4A `766,383`, check MP4 `766,507`, Download `766,611`). Each MP4 needs a ~90–150 s server-side render; wait then verify on disk. Durations match mp3/wav for all 20.
 3. ✓ **Wake Up ×4 collide-rename** — the 4 "Wake Up For You" takes download with identical names → renamed by duration to star mixes: 281.6→**Betelgeuse**, 290.8→**Polaris**, 299.6→**Algenib**, 301.2→**Deneb** (mp3/wav/mp4 all consistent per mix). Note: 5 "Wake Up For You Stems*.zip" but only 4 distinct takes (one stem zip is a dup of the base).
 
-## PUBLISHED + DEPLOYED (2026-09-07) ✅ — live at https://music.megabyte.space/reckless-grace
+## PUBLISHED + DEPLOYED (2026-09-07) ✅ — live at https://bz.rocks/reckless-grace
 - **20 tracks + album** authored into `src/data.ts` (single-quoted TS — the regex-based `gen-og-cards`/album parsers require it; double-quoted JSON is silently skipped) + `src/durations.ts`. Wake mixes titled `Betelgeuse/Algenib/Polaris/Deneb Mix`, placed LAST.
 - **mp3** → `public/audio/<id>.mp3` (git-tracked, played by the site). **wav/mp4/stems** → `public/media/**` (gitignored) + **R2** `music-megabyte-space-media` via `aws s3` (wrangler r2 put failed auth; aws-S3 path with `R2_ACCESS_KEY_ID/SECRET` works).
 - **Lyrics**: OpenAI Whisper API (word timestamps) → `data/whisper-cache/<id>.json` (must include top-level `duration` or the aligner writes `duration:0` and validate fails) → `sync-lyrics:align` → `public/lyrics/<id>.json` → `clamp-lyric-spans`. `no-chicharron` re-transcribed with auto-detect (Spanish). 100% match.

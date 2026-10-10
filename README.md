@@ -1,6 +1,6 @@
 <!-- README generated 2026-05-30 -->
 <div align="center">
-  <a href="https://music.megabyte.space">
+  <a href="https://bz.rocks">
     <img width="240" alt="bZ logo" src="public/art/bz-icon.png" />
   </a>
 </div>
@@ -11,8 +11,8 @@
 </div>
 
 <div align="center">
-  <a href="https://music.megabyte.space" target="_blank">
-    <img alt="Live" src="https://img.shields.io/website?down_color=%23FF4136&down_message=Down&label=music.megabyte.space&logo=cloudflare&logoColor=white&up_color=%2300E5FF&up_message=Live&url=https%3A%2F%2Fmusic.megabyte.space&style=for-the-badge" />
+  <a href="https://bz.rocks" target="_blank">
+    <img alt="Live" src="https://img.shields.io/website?down_color=%23FF4136&down_message=Down&label=bz.rocks&logo=cloudflare&logoColor=white&up_color=%2300E5FF&up_message=Live&url=https%3A%2F%2Fbz.rocks&style=for-the-badge" />
   </a>
   <a href="https://open.spotify.com/artist/0hDEUhE0QAh51cM1Fe2p3T" target="_blank">
     <img alt="Spotify" src="https://img.shields.io/badge/Spotify-Listen-1DB954?logo=spotify&logoColor=white&style=for-the-badge" />
@@ -20,7 +20,7 @@
   <a href="LICENSE" target="_blank">
     <img alt="MIT" src="https://img.shields.io/badge/License-MIT-00E5FF?style=for-the-badge" />
   </a>
-  <a href="https://github.com/HeyMegabyte/bzmusic" target="_blank">
+  <a href="https://github.com/HeyMegabyte/bz.rocks" target="_blank">
     <img alt="GitHub" src="https://img.shields.io/badge/Source-GitHub-333333?logo=github&style=for-the-badge" />
   </a>
 </div>
@@ -56,7 +56,7 @@
 
 ## Overview
 
-**bZ Music** is the production codebase behind [music.megabyte.space](https://music.megabyte.space) — the live website for hustle-gospel artist [bZ](https://open.spotify.com/artist/0hDEUhE0QAh51cM1Fe2p3T) (Brian Zalewski, Newark NJ). It's a vanilla TypeScript single-page app on Cloudflare Workers, designed to run an entire indie music career — playback, distribution, press, social — from a single repo with one operator.
+**bZ Music** is the production codebase behind [bz.rocks](https://bz.rocks) — the live website for hustle-gospel artist [bZ](https://open.spotify.com/artist/0hDEUhE0QAh51cM1Fe2p3T) (Brian Zalewski, Newark NJ). It's a vanilla TypeScript single-page app on Cloudflare Workers, designed to run an entire indie music career — playback, distribution, press, social — from a single repo with one operator.
 
 What makes it different:
 
@@ -74,12 +74,12 @@ What makes it different:
 <table>
   <tr>
     <td width="50%">
-      <a href="https://music.megabyte.space"><img src="docs/screenshots/home.png" alt="Home — Aurora visualizer" /></a>
-      <p align="center"><sub><a href="https://music.megabyte.space">music.megabyte.space</a> — home view</sub></p>
+      <a href="https://bz.rocks"><img src="docs/screenshots/home.png" alt="Home — Aurora visualizer" /></a>
+      <p align="center"><sub><a href="https://bz.rocks">bz.rocks</a> — home view</sub></p>
     </td>
     <td width="50%">
-      <a href="https://music.megabyte.space/bootleg-from-tomorrow"><img src="docs/screenshots/album-bootleg.png" alt="Album page — Bootleg From Tomorrow" /></a>
-      <p align="center"><sub><a href="https://music.megabyte.space/bootleg-from-tomorrow">Bootleg From Tomorrow</a> — album page</sub></p>
+      <a href="https://bz.rocks/bootleg-from-tomorrow"><img src="docs/screenshots/album-bootleg.png" alt="Album page — Bootleg From Tomorrow" /></a>
+      <p align="center"><sub><a href="https://bz.rocks/bootleg-from-tomorrow">Bootleg From Tomorrow</a> — album page</sub></p>
     </td>
   </tr>
 </table>
@@ -171,7 +171,7 @@ Slide-in panel triggered by `⌘K` or the floating FAB. Streaming via Workers AI
 ## Quick Start
 
 ```bash
-git clone https://github.com/HeyMegabyte/bzmusic.git
+git clone https://github.com/HeyMegabyte/bz.rocks.git
 cd bzmusic
 npm install
 npm run dev                # local dev server at http://localhost:5173
@@ -264,8 +264,8 @@ Every track in `src/data.ts` gets a `/press/{trackId}` URL with zero per-track c
 Hi [name],
 bZ — Newark hustle-gospel. "Chef Lu Stew" is a 2:59 cinematic gospel-trap cut.
 
-Press kit:  https://music.megabyte.space/press/chef-lu-stew
-TikTok clip: https://music.megabyte.space/clip/chef-lu-stew
+Press kit:  https://bz.rocks/press/chef-lu-stew
+TikTok clip: https://bz.rocks/clip/chef-lu-stew
 Spotify:    https://open.spotify.com/track/7iXeCejHToTccIklUePuem
 
 Sync clearance available. Faith-positive cues welcome.
@@ -281,8 +281,8 @@ The `scripts/send-curator-outreach.mjs` script bundles this as a templated Resen
 `/clip/{trackId}` renders a 1080×1920 vertical surface — cover art floating with a slow drift animation, lyric karaoke synced to the audio, BPM/key chips, brand watermark. Open on a phone, hit **Play 15s**, screen-record from Control Center → upload to TikTok/Reels/Shorts.
 
 ```
-https://music.megabyte.space/clip/bootleg-from-tomorrow
-https://music.megabyte.space/clip/chef-lu-stew
+https://bz.rocks/clip/bootleg-from-tomorrow
+https://bz.rocks/clip/chef-lu-stew
 ```
 
 <hr/>

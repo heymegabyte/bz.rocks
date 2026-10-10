@@ -1,6 +1,6 @@
 # Development
 
-Day-to-day work on `music.megabyte.space` — what to run, where to look, and the rough shape of a change.
+Day-to-day work on `bz.rocks` — what to run, where to look, and the rough shape of a change.
 
 ## Prerequisites
 
@@ -61,7 +61,7 @@ Without a `.dev.vars`, the worker still boots — the affected endpoints return 
 ## Adding a Worker route
 
 1. Add the route inside `worker/index.ts`. Keep the pattern of validating inputs (`/^[a-z0-9-]{1,80}$/` for track IDs, the email regex for addresses) and rate-limiting via `rateLimited()`.
-2. Lock `Access-Control-Allow-Origin` to `https://music.megabyte.space` unless the endpoint is intentionally public (e.g. oEmbed).
+2. Lock `Access-Control-Allow-Origin` to `https://bz.rocks` unless the endpoint is intentionally public (e.g. oEmbed).
 3. If the new path is an internal SPA route, add it to the `run_worker_first` list in `wrangler.toml` and to the `MetaRewriter` map in `src/track-meta.ts`.
 4. `npx wrangler dev` to test. Hit it from `curl` first; once the JSON shape is right, wire the UI.
 

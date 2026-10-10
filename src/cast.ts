@@ -45,7 +45,7 @@ declare global {
 }
 
 const CAST_FRAMEWORK_URL = 'https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1';
-const SITE_ORIGIN = 'https://music.megabyte.space';
+const SITE_ORIGIN = 'https://bz.rocks';
 const APP_VERSION = '1.0.0';
 
 export type CastEvent =

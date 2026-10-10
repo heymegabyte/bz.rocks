@@ -3,7 +3,7 @@ import { buildRssFeed } from './feed';
 import { TRACKS } from './data';
 
 describe('buildRssFeed', () => {
-  const feed = buildRssFeed('https://music.megabyte.space');
+  const feed = buildRssFeed('https://bz.rocks');
 
   it('is a well-formed RSS 2.0 document with the iTunes namespace', () => {
     expect(feed.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true);
@@ -21,7 +21,7 @@ describe('buildRssFeed', () => {
 
   it('emits a valid self-link, enclosure, and itunes:duration', () => {
     expect(feed).toContain('rel="self" type="application/rss+xml"');
-    expect(feed).toContain('<enclosure url="https://music.megabyte.space/audio/');
+    expect(feed).toContain('<enclosure url="https://bz.rocks/audio/');
     expect(feed).toMatch(/<itunes:duration>\d+:\d{2}/);
     // enclosure length is real bytes, not the 0 placeholder
     expect(feed).toMatch(/<enclosure [^>]*length="[1-9]\d{4,}"/);

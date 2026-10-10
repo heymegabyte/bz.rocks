@@ -147,7 +147,7 @@ async function upload(trackId) {
   const body = {
     snippet: {
       title: `${meta.title} — bZ (Official Audio)`,
-      description: `"${meta.title}" by bZ\n\n${meta.vibe}\n\nFrom ${meta.album} · 2026\nStream: https://music.megabyte.space/${trackId}\nPress kit: https://music.megabyte.space/press/${trackId}\nSpotify: https://open.spotify.com/artist/0hDEUhE0QAh51cM1Fe2p3T\n\n#hustlegospel #christianhiphop #newark #bzmusic`,
+      description: `"${meta.title}" by bZ\n\n${meta.vibe}\n\nFrom ${meta.album} · 2026\nStream: https://bz.rocks/${trackId}\nPress kit: https://bz.rocks/press/${trackId}\nSpotify: https://open.spotify.com/artist/0hDEUhE0QAh51cM1Fe2p3T\n\n#hustlegospel #christianhiphop #newark #bzmusic`,
       tags: ['bZ', 'hustle gospel', 'Christian hip-hop', 'Newark', 'Megabyte Labs', meta.album].filter(
         Boolean
       ),

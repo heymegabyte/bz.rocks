@@ -584,7 +584,7 @@ test.describe('embed player — advanced standalone widget', () => {
     const errs = recordConsoleErrors(page);
     await page.goto('/embed/does-not-exist/at-all', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.embed-fallback')).toBeVisible();
-    await expect(page.locator('.embed-fallback__link')).toHaveAttribute('href', /music\.megabyte\.space/);
+    await expect(page.locator('.embed-fallback__link')).toHaveAttribute('href', /bz\.rocks/);
     expect(errs, `console errors: ${errs.join(' | ')}`).toEqual([]);
   });
 
@@ -653,7 +653,7 @@ test.describe('oEmbed discovery + endpoint', () => {
   });
 
   test('/api/oembed resolves album URLs to a tracklist iframe payload', async ({ request }) => {
-    const target = encodeURIComponent('https://music.megabyte.space/desiiignare');
+    const target = encodeURIComponent('https://bz.rocks/desiiignare');
     const res = await request.get(`/api/oembed?url=${target}&format=json`);
     expect(res.status()).toBe(200);
     const body = (await res.json()) as {
@@ -663,26 +663,24 @@ test.describe('oEmbed discovery + endpoint', () => {
       thumbnail_url: string;
     };
     expect(body.type).toBe('rich');
-    expect(body.html).toMatch(/<iframe[^>]+src="https:\/\/music\.megabyte\.space\/embed\/desiiignare"/);
+    expect(body.html).toMatch(/<iframe[^>]+src="https:\/\/bz\.rocks\/embed\/desiiignare"/);
     expect(body.title).toMatch(/bZ/);
-    expect(body.thumbnail_url).toMatch(/^https:\/\/music\.megabyte\.space\//);
+    expect(body.thumbnail_url).toMatch(/^https:\/\/bz\.rocks\//);
   });
 
   test('/api/oembed resolves /embed/<album>/<track> form (Discord/Reddit deep links)', async ({
     request
   }) => {
-    const target = encodeURIComponent('https://music.megabyte.space/embed/desiiignare/chef-lu-stew');
+    const target = encodeURIComponent('https://bz.rocks/embed/desiiignare/chef-lu-stew');
     const res = await request.get(`/api/oembed?url=${target}&format=json`);
     expect(res.status()).toBe(200);
     const body = (await res.json()) as { html: string; audio_url?: string };
-    expect(body.html).toMatch(
-      /<iframe[^>]+src="https:\/\/music\.megabyte\.space\/embed\/desiiignare\/chef-lu-stew"/
-    );
+    expect(body.html).toMatch(/<iframe[^>]+src="https:\/\/bz\.rocks\/embed\/desiiignare\/chef-lu-stew"/);
     expect(body.audio_url).toMatch(/Chef_Lu_Stew\.mp3$/);
   });
 
   test('/api/oembed rejects unknown slugs', async ({ request }) => {
-    const target = encodeURIComponent('https://music.megabyte.space/no-such-album');
+    const target = encodeURIComponent('https://bz.rocks/no-such-album');
     const res = await request.get(`/api/oembed?url=${target}&format=json`);
     expect(res.status()).toBe(404);
   });

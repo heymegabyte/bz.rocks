@@ -9,7 +9,7 @@ const gotoHome = async (page: import('@playwright/test').Page, qs = '') => {
   await page.waitForSelector('#heroTitle', { state: 'visible', timeout: 15000 });
 };
 
-test.describe('music.megabyte.space — golden journey', () => {
+test.describe('bz.rocks — golden journey', () => {
   test.beforeEach(async ({ context }) => {
     await context.route(/cloudflareinsights\.com|cdn-cgi\/challenge-platform|cdn-cgi\/speculation/, r =>
       r.abort()
@@ -199,7 +199,7 @@ test.describe('music.megabyte.space — golden journey', () => {
     await page.locator('.share-chip--row').first().click();
     await expect(page.locator('#share')).toBeVisible();
     const link = await page.locator('#shareLink').inputValue();
-    expect(link).toMatch(/^https:\/\/music\.megabyte\.space\//);
+    expect(link).toMatch(/^https:\/\/bz\.rocks\//);
     await page.locator('#shareClose').click();
     await expect(page.locator('#share')).toBeHidden();
   });

@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PROD_URL = process.env.PROD_URL ?? 'https://music.megabyte.space';
+const PROD_URL = process.env.PROD_URL ?? 'https://bz.rocks';
 
 export default defineConfig({
   testDir: './tests',

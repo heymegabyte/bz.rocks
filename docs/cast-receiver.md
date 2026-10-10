@@ -1,9 +1,9 @@
 # Cast receiver
 
-Custom Chromecast receiver for `music.megabyte.space`. Renders the full 10-foot UI — palette-driven background, real-FFT visualizer, scroll-synced lyrics, navigable queue sidebar — instead of Google's stock Default Media Receiver.
+Custom Chromecast receiver for `bz.rocks`. Renders the full 10-foot UI — palette-driven background, real-FFT visualizer, scroll-synced lyrics, navigable queue sidebar — instead of Google's stock Default Media Receiver.
 
 - App ID: `228565CB`
-- Sender origin: `https://music.megabyte.space`
+- Sender origin: `https://bz.rocks`
 - Custom namespace: `urn:x-cast:com.megabyte.music`
 - Source: `cast-receiver/index.html` + `cast-receiver/receiver.ts` + `cast-receiver/receiver.css`
 - Protocol: `src/cast-protocol.ts`

@@ -14,8 +14,8 @@ import { dirname, resolve } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
-const SITE_ORIGIN = 'https://music.megabyte.space';
-const DEFAULT_LIST_NAME = 'music.megabyte.space';
+const SITE_ORIGIN = 'https://bz.rocks';
+const DEFAULT_LIST_NAME = 'bz.rocks';
 const DEFAULT_FROM = process.env.LISTMONK_FROM_EMAIL || 'bZ <hi@megabyte.space>';
 
 const args = process.argv.slice(2);
@@ -51,7 +51,7 @@ function lmHeaders() {
     Authorization: `token ${LISTMONK_API_USER}:${LISTMONK_API_TOKEN}`,
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    'User-Agent': 'music.megabyte.space/drop-broadcast'
+    'User-Agent': 'bz.rocks/drop-broadcast'
   };
 }
 
@@ -139,7 +139,7 @@ const html = `<!doctype html><html><body style="margin:0;padding:0;background:#0
       <tr><td style="padding:32px 0 8px;font-size:12px;color:#6b7280;border-top:1px solid #1a1a2e;margin-top:24px">
         <p style="margin:16px 0 4px">First listen, every drop. No ads. No spam.</p>
         <p style="margin:0">
-          <a href="${SITE_ORIGIN}" style="color:#50AAE3;text-decoration:none">music.megabyte.space</a>
+          <a href="${SITE_ORIGIN}" style="color:#50AAE3;text-decoration:none">bz.rocks</a>
           &nbsp;·&nbsp;
           <a href="{{ UnsubscribeURL }}" style="color:#9aa3b2;text-decoration:underline">unsubscribe</a>
         </p>

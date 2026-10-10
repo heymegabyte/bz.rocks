@@ -4,14 +4,14 @@
 // title + link sections.
 import { ALBUMS } from './data';
 
-const SITE = 'https://music.megabyte.space';
+const SITE = 'https://bz.rocks';
 
 export function buildLlmsTxt(origin: string = SITE): string {
   const albums = [...ALBUMS]
     .sort((a, b) => (b.releasedAt || '').localeCompare(a.releasedAt || ''))
     .map(a => `- [${a.name}](${origin}/${a.id}): ${a.tagline}`)
     .join('\n');
-  return `# bZ — music.megabyte.space
+  return `# bZ — bz.rocks
 
 > Hard but holy. Christian-gangster hustle gospel by bZ. An AI-native music project: every region of the homepage plays a different song, with a live Web Audio visualizer and word-by-word karaoke. Stream free, embed any track, cast to a TV.
 

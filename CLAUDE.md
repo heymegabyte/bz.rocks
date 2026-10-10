@@ -1,10 +1,10 @@
-# CLAUDE.md — agent guide for `music.megabyte.space`
+# CLAUDE.md — agent guide for `bz.rocks`
 
 Brief for AI agents working in this repository. Read this first.
 
 ## What this is
 
-bZ's music site at <https://music.megabyte.space>. Vanilla TypeScript + Vite bundle served by a Cloudflare Worker (`worker/index.ts`). The Worker handles SEO rewriting, the `/api/*` surface, and edge caching for `/audio/*` + `/lyrics/*`.
+bZ's music site at <https://bz.rocks>. Vanilla TypeScript + Vite bundle served by a Cloudflare Worker (`worker/index.ts`). The Worker handles SEO rewriting, the `/api/*` surface, and edge caching for `/audio/*` + `/lyrics/*`.
 
 The app is a single-page experience. The audio element is created once and persists across all internal navigation — never tear it down on a route change.
 

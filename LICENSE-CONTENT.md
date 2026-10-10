@@ -8,7 +8,7 @@ The following **content** is © 2026 Brian Zalewski / Megabyte Labs and **all ri
 - All lyrics in `src/data.ts`, `src/content-pages.ts`, and `public/lyrics/*.json`
 - All cover art and brand imagery in `public/art/*` (covers, logos, headshots)
 - The "bZ" name, likeness, and recording artist persona
-- The "Megabyte Labs", "music.megabyte.space", and "bzmusic.win" brands
+- The "Megabyte Labs", "bz.rocks", and "bz.rocks" brands
 - All page copy in `src/content-pages.ts` (About, Process, Theology, Credits, Press, Contact, Support)
 
 ## What you can do (with attribution + permission)
@@ -28,4 +28,4 @@ The following **content** is © 2026 Brian Zalewski / Megabyte Labs and **all ri
 ## Contact
 
 For licensing requests, sync placements, sample clearance, or anything else:
-**brian@megabyte.space** · +1 (469) 694-3696 · https://music.megabyte.space/press
+**brian@megabyte.space** · +1 (469) 694-3696 · https://bz.rocks/press

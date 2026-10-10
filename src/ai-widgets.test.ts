@@ -80,10 +80,10 @@ describe('renderWidget — cta', () => {
       kind: 'cta',
       title: 'Listen now',
       body: 'Two albums dropped.',
-      primary: { label: 'Play', href: 'https://music.megabyte.space/canopy/birch-swing-heaven' },
+      primary: { label: 'Play', href: 'https://bz.rocks/canopy/birch-swing-heaven' },
       secondary: { label: 'About', href: '/about' }
     });
-    expect(html).toContain('href="https://music.megabyte.space/canopy/birch-swing-heaven"');
+    expect(html).toContain('href="https://bz.rocks/canopy/birch-swing-heaven"');
     expect(html).toContain('href="/about"');
     expect(html).toContain('target="_blank"');
     expect(html).toContain('Play');
@@ -781,12 +781,12 @@ describe('renderWidget — document-card', () => {
       kind: 'document-card',
       title: 'Press kit',
       description: 'High-res photos + bio.',
-      href: 'https://music.megabyte.space/press-kit.pdf',
+      href: 'https://bz.rocks/press-kit.pdf',
       format: 'PDF',
       size: '2.4 MB'
     });
     expect(html).toContain('aichat__widget--doc');
-    expect(html).toContain('href="https://music.megabyte.space/press-kit.pdf"');
+    expect(html).toContain('href="https://bz.rocks/press-kit.pdf"');
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noopener noreferrer"');
     expect(html).toContain('Press kit');

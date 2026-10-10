@@ -1,13 +1,13 @@
 # Maintenance
 
-Operational runbook for `music.megabyte.space`. Routine work, KV inspection, secret rotation, and what to do when something is on fire.
+Operational runbook for `bz.rocks`. Routine work, KV inspection, secret rotation, and what to do when something is on fire.
 
 ## Routine
 
 | Cadence     | Task                                              | How                                                                                                                      |
 | ----------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Per release | Smoke the live site at 6 breakpoints              | `PROD_URL=https://music.megabyte.space npm run test:e2e`                                                                 |
-| Per release | Confirm the worker picked up the new bundle       | `curl -sI https://music.megabyte.space \| grep -i 'cf-ray\|x-edge'` then watch the version tail with `npx wrangler tail` |
+| Per release | Smoke the live site at 6 breakpoints              | `PROD_URL=https://bz.rocks npm run test:e2e`                                                                 |
+| Per release | Confirm the worker picked up the new bundle       | `curl -sI https://bz.rocks \| grep -i 'cf-ray\|x-edge'` then watch the version tail with `npx wrangler tail` |
 | Weekly      | Eyeball KV usage                                  | `npx wrangler kv:key list --binding COUNTERS --remote \| wc -l`                                                          |
 | Monthly     | `npm outdated` and apply low-risk patch bumps     | One PR per group (lint+format / build tools / test tools). Major bumps get their own PR with a rollback note.            |
 | Quarterly   | Rotate `PUSH_ADMIN_TOKEN` and `ANTHROPIC_API_KEY` | See [Secret rotation](#secret-rotation).                                                                                 |
@@ -136,4 +136,4 @@ If a problem needs another set of eyes, capture:
 1. The output of `npx wrangler tail --format=json --limit 100` covering the affected window.
 2. The deploy id under suspicion: `npx wrangler deployments list | head -5`.
 3. The browser-side console log if the report includes a user-visible regression.
-4. A relevant `curl -sI https://music.megabyte.space/<route>` so the response headers are captured.
+4. A relevant `curl -sI https://bz.rocks/<route>` so the response headers are captured.

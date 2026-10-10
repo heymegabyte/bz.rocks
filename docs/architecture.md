@@ -89,7 +89,7 @@ The worker treats every request body as untrusted. Specifically:
 - Push endpoints must start with `https://` (drops malformed PushSubscription payloads).
 - `/api/push/send` requires a Bearer token (`PUSH_ADMIN_TOKEN`) that is never logged.
 
-`Access-Control-Allow-Origin` is locked to `https://music.megabyte.space` on API responses (except oEmbed, which is intentionally `*` for unfurling).
+`Access-Control-Allow-Origin` is locked to `https://bz.rocks` on API responses (except oEmbed, which is intentionally `*` for unfurling).
 
 ## What lives in KV
 
