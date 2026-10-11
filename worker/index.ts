@@ -5,6 +5,7 @@ import { buildLlmsTxt } from '../src/llms';
 import { sendPushBatch, type PushSubscriptionRecord } from './web-push';
 import { escapeXmlText, escapeHtmlAttr } from './escape';
 import { serializeJsonLd } from './json-ld';
+import { orderReceivedEmail, cartRecoveryEmail, adminSaleEmail } from './emails';
 
 interface Env {
   ASSETS: Fetcher;
@@ -2722,11 +2723,7 @@ export default {
                   subject: expired
                     ? 'Your FREE SATAN cart is still here'
                     : "Your FREE SATAN payment didn't go through",
-                  html: `<div style="font-family:system-ui;max-width:560px;margin:0 auto;padding:24px;color:#060610">
-                <h1 style="color:#00E5FF;margin:0 0 8px">${expired ? 'Cart still warm' : "Payment didn't complete"}</h1>
-                <p>${expired ? 'Your checkout expired before payment was confirmed.' : "Your payment didn't go through."} No charge was made — pick up where you left off:</p>
-                <p><a href="https://bz.rocks/merch" style="color:#00E5FF">Return to the FREE SATAN suite →</a></p>
-                <p>—bZ</p></div>`
+                  html: cartRecoveryEmail({ expired })
                 })
               }).then(r => (r.ok ? null : r.text().then(t => console.warn('fail-email', t.slice(0, 200)))))
             );
@@ -2825,11 +2822,16 @@ export default {
           { expirationTtl: 60 * 60 * 24 * 90 }
         );
 
-        // Fire-and-forget receipt email via Resend
+        // Fire-and-forget receipt email via Resend (gorgeous template in ./emails)
         if (env.RESEND_API_KEY && recipient.email) {
-          const itemsHtml = cart
-            .map(c => `<li>${c.q} × ${c.s} (${c.sz}) — $${(c.p * c.q).toFixed(2)}</li>`)
-            .join('');
+          const html = orderReceivedEmail({
+            items: cart.map(c => ({ desc: `${c.s} (${c.sz})`, qty: c.q, total: c.p * c.q })),
+            subtotal: session.amount_subtotal / 100,
+            shipping: (session.amount_total - session.amount_subtotal) / 100,
+            total: session.amount_total / 100,
+            orderId: pfOrderId,
+            sessionTail: session.id.slice(-12)
+          });
           ctx.waitUntil(
             fetch('https://api.resend.com/emails', {
               method: 'POST',
@@ -2838,14 +2840,7 @@ export default {
                 from: 'bZ Music <hey@megabyte.space>',
                 to: recipient.email,
                 subject: 'FREE SATAN order received',
-                html: `<div style="font-family:system-ui;max-width:560px;margin:0 auto;padding:24px;color:#060610">
-                <h1 style="color:#00E5FF;margin:0 0 8px">Order received</h1>
-                <p>Printful is making this for you now. Tracking arrives in 2-3 business days when it ships.</p>
-                <ul>${itemsHtml}</ul>
-                <p style="color:#666;font-size:0.85rem">Order ID: ${pfOrderId} · Stripe session ${session.id.slice(-12)}</p>
-                <p>Questions? Just reply.</p>
-                <p>—bZ<br/><a href="https://bz.rocks" style="color:#00E5FF">bz.rocks</a></p>
-              </div>`
+                html
               })
             }).then(r =>
               r.ok ? null : r.text().then(t => console.warn('receipt email failed', t.slice(0, 200)))
@@ -2865,7 +2860,13 @@ export default {
                 from: 'bZ Music <hey@megabyte.space>',
                 to: 'hey@megabyte.space',
                 subject: `💸 New merch order — $${(session.amount_total / 100).toFixed(2)}`,
-                html: `<p>${cart.length} item(s) · ${recipient.email || 'no email'} · Printful #${pfOrderId} · Stripe ${session.id.slice(-12)}</p>`
+                html: adminSaleEmail({
+                  itemCount: cart.length,
+                  email: recipient.email || 'no email',
+                  orderId: pfOrderId,
+                  sessionTail: session.id.slice(-12),
+                  total: session.amount_total / 100
+                })
               })
             }).catch(() => {})
           );
