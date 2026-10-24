@@ -33,6 +33,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:prod": "playwright test --config=playwright.prod.config.ts",
+    "test:e2e:chrome": "playwright test --config=playwright.chrome.config.ts",
     "verify:prod": "npm run test:e2e:prod",
     "prepare": "lefthook install || true",
     "sync-suno": "node scripts/fetch-suno-metadata.mjs --merge --realign && /opt/homebrew/bin/python3 scripts/analyze-audio.py && node scripts/build-suno-meta.mjs",

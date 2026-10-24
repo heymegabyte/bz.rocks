@@ -2447,7 +2447,7 @@ export default {
         const q = (url.searchParams.get('q') || '').trim().slice(0, 80);
         if (q.length < 2) return jsonResponse({ picks: [] }, 200, {}, request);
         const norm = q.toLowerCase().replace(/\s+/g, ' ');
-        const cacheK = `vibe:${norm}#v1`;
+        const cacheK = `vibe:${norm}#v2`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2463,7 +2463,7 @@ export default {
           .map(t => `${t.id} | ${t.title} | ${ALBUM_BY_ID.get(t.album)?.name ?? 'bZ'} | ${t.vibe}`)
           .join('\n');
         const system =
-          "You are bZ's music matchmaker. From the CATALOG (each line `id | title | album | vibe`), pick the up-to-6 tracks that best fit the listener's MOOD. Output ONLY lines formatted `id | reason` — the id copied EXACTLY from the catalog, the reason ONE short sentence (max ~12 words) on why it fits the mood. Order best-first. No preamble, no markdown, no numbering, and NEVER a track absent from the catalog. Christian-gangster ethic; zero drug references.";
+          "You are bZ's music matchmaker. From the CATALOG (each line `id | title | album | vibe`), pick the up-to-6 tracks that best fit the listener's MOOD. Output ONLY lines formatted `id | reason` — the id copied EXACTLY from the catalog, the reason ONE short sentence (max ~12 words) on why it fits the mood. In the reason, refer to the track by its exact TITLE (the 2nd catalog field) — NEVER by its id-slug. Order best-first. No preamble, no markdown, no numbering, and NEVER a track absent from the catalog. Christian-gangster ethic; zero drug references.";
         const user = `MOOD: ${q}\n\nCATALOG:\n${catalog}`;
         let picks: Array<{ id: string; why: string }> = [];
         try {
