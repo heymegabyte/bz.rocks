@@ -51,9 +51,18 @@ binding = "AI"
 # R2 bucket for full-fidelity Suno media (WAV + stems/MIDI zip + lyric video) —
 # too large for Worker Assets (25MB/file cap; ~14GB total across 109 songs). Served
 # via the worker's /media/* route with Range support. No PII (artist's own music).
-[[r2_buckets]]
-binding = "MEDIA"
-bucket_name = "music-megabyte-space-media"
+#
+# ⚠️ TEMPORARILY DISABLED 2026-10-24 — R2 is turned OFF on the Megabyte Labs
+# account (CF API code 10042 "Please enable R2 through the Cloudflare Dashboard"
+# from BOTH the Global API Key and CF_API_TOKEN_SCOPED → account-level, not auth).
+# With R2 down, `env.MEDIA.get()` was throwing a 1101 Worker exception on every
+# /media/*.mp4; the binding also blocks `wrangler deploy` (R2 binding validation).
+# Commenting it out lets the site deploy and makes /media return a graceful 503
+# ("media store unavailable", via the `if (!env.MEDIA)` guard) instead of 1101.
+# RE-ENABLE R2 in the CF dashboard (billing/subscription), then UNCOMMENT this.
+# [[r2_buckets]]
+# binding = "MEDIA"
+# bucket_name = "music-megabyte-space-media"
 
 [observability]
 enabled = true

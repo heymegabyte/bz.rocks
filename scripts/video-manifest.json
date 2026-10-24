@@ -1,0 +1,101 @@
+{
+  "_README": "SOURCE OF TRUTH for which bz.rocks songs have a music video. Each film costs ~$21 (Fal) + ~18min. BEFORE generating ANY video: (1) check `done` below, (2) grep ~/Desktop/*.mp4 for the song/theme (filenames there do NOT match track ids), (3) check `preexisting_unmapped`. scripts/fal-film.mjs refuses to run a `done` id unless FORCE=1. Full plan + per-song concepts + ranked order: MUSIC-VIDEO-PLAN.md.",
+  "rail": "Fal — flux-pro/v1.1 keyframes -> kling-video/v2.5-turbo/pro image-to-video (10s, 1080p). ~$0.74/scene, ~$21 + ~18min for a full 4-5min film. FAL_ADMIN_API_KEY via get-secret.",
+  "brief": "Hyper-real, HBO-level cinematic. A recurring BEAUTIFUL MULTICULTURAL WOMAN is the lead/protagonist/witness across the film — dignified, powerful, never exploitative (hard-but-holy ethic). Teal+amber brand grade, anamorphic 35mm, volumetric god-rays, film grain.",
+  "channel": "https://www.youtube.com/@bzbloom — 7 published song videos as of 2026-10-24. AUTHORITATIVE published list.",
+  "done": {
+    "atlantis-crossfire": {
+      "status": "done",
+      "youtube": "https://www.youtube.com/watch?v=TKqWD3OvRTA",
+      "duration": "4:28",
+      "file": "~/Desktop/atlantis-crossfire-film.mp4 + older ATLANTIS_master_1080p.mp4",
+      "published": true,
+      "features_woman_lead": false,
+      "note": "Two versions exist; published on @bzbloom. Do NOT make a third."
+    },
+    "bermuda-prophecy": {
+      "status": "done",
+      "youtube": "https://www.youtube.com/watch?v=g8nDB2yQ0J4",
+      "duration": "5:15",
+      "file": "/media/bermuda-prophecy.mp4 (R2, Track.video) + ~/Desktop/BERMUDA_master_1080p.mp4",
+      "published": true,
+      "note": "Full 5:15 film on @bzbloom; 30s teaser wired on site."
+    },
+    "luminous-love": {
+      "status": "done",
+      "youtube": "https://www.youtube.com/watch?v=sjQ2nuBDVsM",
+      "duration": "4:30",
+      "published": true,
+      "note": "On @bzbloom — the nebula film the asset-rails memory referenced."
+    },
+    "wexford-bridge": {
+      "status": "done",
+      "youtube": "https://www.youtube.com/watch?v=YTHFTO_O4KI",
+      "duration": "4:54",
+      "published": true,
+      "note": "On @bzbloom. Was Tier S #6."
+    },
+    "other-side-of-the-fall": {
+      "status": "done",
+      "youtube": "https://www.youtube.com/watch?v=EY6ihESauKg",
+      "duration": "3:50",
+      "published": true,
+      "note": "On @bzbloom. Was Tier S #9 — already made."
+    },
+    "two-friends-two-hunnies": {
+      "status": "done",
+      "youtube": "https://www.youtube.com/watch?v=8hGCUgpjxiI",
+      "duration": "4:26",
+      "published": true,
+      "note": "On @bzbloom. Was Tier A #25 — already made."
+    },
+    "reckless-grace": {
+      "status": "done",
+      "youtube": "https://www.youtube.com/watch?v=D6obfXMRumk",
+      "duration": "4:53",
+      "published": true,
+      "note": "TITLE TRACK only on @bzbloom. The other 16 Reckless Grace songs are NOT published."
+    }
+  },
+  "preexisting_unmapped": [
+    "~/Desktop/ATLANTIS_master_1080p.mp4",
+    "~/Desktop/ATLANTIS_vertical_1080x1920.mp4",
+    "~/Desktop/BERMUDA_master_1080p.mp4",
+    "~/Desktop/the_signal_16x9.mp4",
+    "~/Desktop/the_signal_social_16x9.mp4",
+    "~/Desktop/the_signal_trailer_16x9.mp4",
+    "~/Desktop/if-war-paused-complete.mp4",
+    "~/Desktop/the-enemy-was-you-complete.mp4",
+    "~/Desktop/the-last-song-on-earth-complete.mp4",
+    "~/Desktop/the-future-is-on-air_16x9.mp4"
+  ],
+  "_preexisting_note": "These Desktop .mp4s predate this manifest and their filenames do NOT map cleanly to track ids. RECONCILE each to a song (or mark as album-trailer/other) BEFORE generating anything war/anti-war/Signals/cosmic-themed — several may already BE the video for a ranked song (e.g. an anti-war film could already cover The Last Soldier Refused / Peace in the Picture). Verify by watching before spending.",
+  "next_up": [
+    "i-killed-your-dragon",
+    "the-last-soldier-refused",
+    "if-we-met-again",
+    "algenib-crown-of-the-sky",
+    "the-smell-was-so-sinful",
+    "welcome-to-the-multiverse",
+    "the-night-knew-my-name",
+    "crown-without-a-sound",
+    "ocular-uplink",
+    "same-moon-different-city"
+  ],
+  "dedupe": {
+    "wake-up-for-you-mixes": [
+      "wake-up-algenib-mix",
+      "wake-up-betelgeuse-mix",
+      "wake-up-polaris-mix",
+      "wake-up-deneb-mix"
+    ],
+    "_note": "Same song, 4 star-named mixes. Make ONE 'Wake Up For You' film, reuse (or 4 color-graded variants of one base) — saves ~$63.",
+    "reprise": {
+      "st-johns-plate-2": "reprise of saint-johns-plate — reuse/condense"
+    }
+  },
+  "flags": {
+    "reckless-grace-album": "Only the TITLE track is published on @bzbloom. The asset-rails memory's 'all 17 Reckless Grace videos' claim is NOT on the channel — the other 16 are unpublished/unmade. Verify before assuming any exist.",
+    "preexisting_desktop": "The ~8 unmapped Desktop films are NOT on @bzbloom (channel has only the 7 songs in `done`). Likely album trailers / other projects — reconcile separately, not music-video dupes."
+  }
+}

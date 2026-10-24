@@ -150,7 +150,50 @@ function cleanQuotes(s: string): string {
   return s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
 }
 
-function pickDescription(candidates: string[]): string {
+/** Strip markdown heading/emphasis tokens from a lyric line so it reads as
+ * plain prose inside a meta description, hook sentence, or SEO blockquote.
+ * Lyrics in src/data.ts carry a leading "# Title" line and "**[Section]**"
+ * markers; without this those leak raw markdown ("# Two Friends…") straight
+ * into the rendered <meta description> + OG/Twitter cards. */
+function cleanLyricLine(line: string): string {
+  return cleanQuotes(line)
+    .replace(/^#+\s*/, '')
+    .replace(/\*\*/g, '')
+    .replace(/[*_`]/g, '')
+    .trim();
+}
+
+/** A lyric line that is structure, not a sung line: the markdown title heading
+ * ("# …") or a section marker ("[Intro]", "**[Chorus]**"). Never quote one of
+ * these as the song's hook in a description. */
+function isStructuralLyric(line: string): boolean {
+  const raw = line.trim();
+  if (!raw) return true;
+  if (raw.startsWith('#')) return true;
+  return /^\[.*\]$/.test(cleanLyricLine(raw));
+}
+
+/** First n actually-sung lyric lines — markdown-stripped and de-punctuated,
+ * skipping headings + section markers — i.e. the real opening/hook of the
+ * song rather than "# Title" or "[Intro — Haunting Synths]". */
+export function firstSungLines(track: Track, n: number): string[] {
+  const out: string[] = [];
+  for (const line of track.lyrics) {
+    if (isStructuralLyric(line)) continue;
+    // Callers re-wrap the line in quotes ("…"), so strip the line's own quotes
+    // (else "…" lyrics double up) and any trailing terminal punctuation.
+    const cleaned = cleanLyricLine(line)
+      .replace(/"/g, '')
+      .replace(/[.,;:?!…]+$/, '')
+      .trim();
+    if (!cleaned) continue;
+    out.push(cleaned);
+    if (out.length >= n) break;
+  }
+  return out;
+}
+
+function pickDescription(candidates: string[], padder = 'Hard but holy.'): string {
   const inRange = candidates.find(c => c.length >= 120 && c.length <= 156);
   if (inRange) return inRange;
   const closest = candidates.reduce((best, c) => {
@@ -158,28 +201,35 @@ function pickDescription(candidates: string[]): string {
     const cDist = Math.abs(c.length - 138);
     return cDist < bestDist ? c : best;
   }, candidates[0]);
-  return clampLen(closest, 120, 156, 'bZ.');
+  // Pad short candidates (one-word lyric openers like "God." / "Slim.") with a
+  // meaningful phrase — the album tagline — never a comical "bZ. bZ. bZ." run.
+  return clampLen(closest, 120, 156, padder);
 }
 
 function trackDescription(track: Track, album: Album): string {
-  const firstLine = cleanQuotes(track.lyrics[0] || '').replace(/\.$/, '');
-  const secondLine = cleanQuotes(track.lyrics[1] || '').replace(/\.$/, '');
-  return pickDescription([
-    `${track.title} by bZ on ${album.name}: "${firstLine}." ${album.tagline}.`,
-    `bZ — ${track.title} (${album.name}). "${firstLine}." Hustle gospel, hard but holy.`,
-    `${track.title} (bZ · ${album.name}): "${firstLine}." "${secondLine}."`,
-    `${track.title} on ${album.name} by bZ. "${firstLine}." Cyan-flag hustle gospel.`,
-    `bZ presents ${track.title} from ${album.name}: ${album.tagline}. "${firstLine}."`
-  ]);
+  const [firstLine = track.title, secondLine = ''] = firstSungLines(track, 2);
+  return pickDescription(
+    [
+      `${track.title} by bZ on ${album.name}: "${firstLine}." ${album.tagline}.`,
+      `bZ — ${track.title} (${album.name}). "${firstLine}." Hustle gospel, hard but holy.`,
+      `${track.title} (bZ · ${album.name}): "${firstLine}." "${secondLine}."`,
+      `${track.title} on ${album.name} by bZ. "${firstLine}." Cyan-flag hustle gospel.`,
+      `bZ presents ${track.title} from ${album.name}: ${album.tagline}. "${firstLine}."`
+    ],
+    `${album.tagline}. ${album.description}`
+  );
 }
 
 function albumDescription(album: Album): string {
-  return pickDescription([
-    `${album.name} by bZ. ${album.tagline}. ${album.description}`,
-    `bZ — ${album.name}: ${album.tagline}. ${album.description}`,
-    `${album.name} (${album.tagline}) — bZ. ${album.description}`,
-    `${album.name} by bZ: ${album.description}`
-  ]);
+  return pickDescription(
+    [
+      `${album.name} by bZ. ${album.tagline}. ${album.description}`,
+      `bZ — ${album.name}: ${album.tagline}. ${album.description}`,
+      `${album.name} (${album.tagline}) — bZ. ${album.description}`,
+      `${album.name} by bZ: ${album.description}`
+    ],
+    `${album.tagline}. ${album.description}`
+  );
 }
 
 const escapeHtml = (s: string) =>
@@ -212,7 +262,8 @@ function siblingAlbumLinks(excludeId?: string, limit = 5): string {
 
 function buildTrackBody(track: Track, album: Album): string {
   const wisdom = cleanQuotes(track.wisdom).trim();
-  const lyrics = track.lyrics.map(cleanQuotes).filter(Boolean);
+  const lyrics = track.lyrics.map(cleanLyricLine).filter(Boolean);
+  const hookLine = firstSungLines(track, 1)[0] || track.title;
   const stanza1 = lyrics.slice(0, 4).map(escapeHtml).join('<br/>');
   const stanza2 = lyrics.slice(4, 8).map(escapeHtml).join('<br/>');
   const stanza3 = lyrics.slice(8, 12).map(escapeHtml).join('<br/>');
@@ -226,7 +277,7 @@ function buildTrackBody(track: Track, album: Album): string {
   );
   parts.push(`<h2>What the song is about</h2>`);
   parts.push(
-    `<p>The hook lands on the line "${escapeHtml(lyrics[0] || track.title)}." It plays like a ${escapeHtml(track.vibe)} sermon set to a drum machine — bZ's signature where the bar is the prayer and the prayer is the bar. The wisdom behind the track is short and sharp: <em>${escapeHtml(wisdom)}</em></p>`
+    `<p>The hook lands on the line "${escapeHtml(hookLine)}." It plays like a ${escapeHtml(track.vibe)} sermon set to a drum machine — bZ's signature where the bar is the prayer and the prayer is the bar. The wisdom behind the track is short and sharp: <em>${escapeHtml(wisdom)}</em></p>`
   );
   if (stanza1) {
     parts.push(`<h2>Opening verse</h2>`);

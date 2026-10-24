@@ -1,4 +1,4 @@
-import { SEO_INDEX, type RouteSeo } from '../src/track-meta';
+import { SEO_INDEX, firstSungLines, type RouteSeo } from '../src/track-meta';
 import { TRACK_BY_ID, ALBUM_BY_ID, ALBUMS } from '../src/data';
 import { buildRssFeed } from '../src/feed';
 import { buildLlmsTxt } from '../src/llms';
@@ -2356,7 +2356,9 @@ export default {
           return jsonResponse({ liner: null, throttled: true }, 200, {}, request);
         const track = TRACK_BY_ID.get(trackId)!;
         const album = ALBUM_BY_ID.get(track.album);
-        const lyricSnippet = (track.lyrics || []).filter(Boolean).slice(0, 8).join(' / ');
+        // Sung lines only — skip the "# Title" heading + "[Section]" markers so
+        // the model grounds on real lyrics, not markdown structure tokens.
+        const lyricSnippet = firstSungLines(track, 8).join(' / ');
         const system =
           "Write a short 'story behind the song' liner note for bZ's track, GROUNDED ONLY in the provided title, album, vibe, wisdom line, and lyric excerpt — interpret the song's meaning and spirit. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. STRICT: 2-3 sentences, ~55 words max, zero drug references. NEVER invent people, names, places, dates, or biographical events — describe what the song is ABOUT, never a made-up backstory. No preamble, no quotation marks, no markdown. Output only the note.";
         const user = `Track: "${track.title}" from the album "${album?.name ?? 'bZ'}".\nVibe: ${track.vibe}.\nWisdom line: ${track.wisdom}.\nLyric excerpt: ${lyricSnippet}`;

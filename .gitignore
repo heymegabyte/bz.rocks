@@ -76,3 +76,6 @@ public/media/stems/
 .claude/scheduled_tasks.lock
 .prodverify.ts
 .infisical.json
+
+# MiniMax video generation scratch (clips/frames; finals go to R2)
+.cache/
