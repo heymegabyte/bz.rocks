@@ -788,7 +788,11 @@ export const CONTENT_PAGES: ContentPage[] = [
             can be fully self-hosted. Happy to chat about the engineering — same email.
           </p>
 
-          ${figure('/art/pages/press-magazine.png', 'Magazine spread mockup on a dark wooden table', 'Press kit ready for editorial feature placement.')}
+          ${figure('/art/pages/press-magazine.png', 'Magazine spread mockup on a dark wooden table', 'This page is the press kit — bios, hi-res art, streaming + sync links, per-track one-sheets below.')}
+
+          <p class="press-kit-cta">
+            <a href="mailto:hey@megabyte.space?subject=bZ%20press%20kit%20request&amp;body=Hi%20bZ%20%E2%80%94%20I%27d%20like%20the%20full%20press%20kit%20(hi-res%20assets%20%2B%20one-sheet)%20for%20a%20feature." rel="noopener">Request the full press kit (hi-res assets + one-sheet) →</a>
+          </p>
 
           ${divider('most-asked interview questions')}
           <details>

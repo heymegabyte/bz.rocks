@@ -44,7 +44,6 @@
     "sync-lyrics:all": "npm run sync-lyrics:whisper-cache && npm run sync-lyrics:align"
   },
   "dependencies": {
-    "lottie-web": "^5.12.2",
     "sharp": "^0.34.5"
   },
   "devDependencies": {

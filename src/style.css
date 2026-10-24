@@ -14418,6 +14418,40 @@ a.aichat__widget:hover {
   text-wrap: pretty;
   max-width: 56ch;
 }
+/* Press-kit request CTA — a real, reachable action behind the "press kit" claim. */
+.press-kit-cta {
+  margin: 20px 0;
+}
+.press-kit-cta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-accent);
+  text-decoration: none;
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+.press-kit-cta a:hover {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.press-kit-cta a:focus-visible {
+  outline: 2px solid var(--ink-accent);
+  outline-offset: 2px;
+}
 .contentpage__body {
   /* Body no longer scrolls — its parent .contentpage__scroll does. The
      body is just a content column that joins the head in the same flow. */
