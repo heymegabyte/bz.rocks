@@ -59,3 +59,50 @@ test('a11y: AI chat drawer (open) has no serious/critical violations', async ({ 
   const blocking = await axeBlocking(page);
   expect(blocking, blocking.map(v => `${v.id}: ${v.help}`).join('; ')).toEqual([]);
 });
+
+// The queue, fullscreen-lyrics, and shortcuts overlays open via the "More" menu
+// (btnMore → menuitem[data-action]). A track is played first so queue/lyrics have
+// content. Bounded + fail-soft opens so a flaky headless interaction can't hang;
+// axe still scans the reached state. These guard the clean baseline found 2026-10-24.
+async function openViaMore(page: import('@playwright/test').Page, action: string) {
+  await page
+    .locator('.trackrow')
+    .first()
+    .click()
+    .catch(() => {});
+  await page.waitForTimeout(1500);
+  await page
+    .locator('#btnMore')
+    .click({ timeout: 8000 })
+    .catch(() => {});
+  await page.waitForTimeout(500);
+  await page
+    .locator(`.more-menu__item[data-action="${action}"]`)
+    .click({ timeout: 8000 })
+    .catch(() => {});
+  await page.waitForTimeout(900);
+}
+
+test('a11y: queue panel (open) has no serious/critical violations', async ({ page }) => {
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(1500);
+  await openViaMore(page, 'queue');
+  const blocking = await axeBlocking(page);
+  expect(blocking, blocking.map(v => `${v.id}: ${v.help}`).join('; ')).toEqual([]);
+});
+
+test('a11y: fullscreen lyrics (open) has no serious/critical violations', async ({ page }) => {
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(1500);
+  await openViaMore(page, 'fs-lyrics');
+  const blocking = await axeBlocking(page);
+  expect(blocking, blocking.map(v => `${v.id}: ${v.help}`).join('; ')).toEqual([]);
+});
+
+test('a11y: shortcuts modal (open) has no serious/critical violations', async ({ page }) => {
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(1500);
+  await openViaMore(page, 'shortcuts');
+  const blocking = await axeBlocking(page);
+  expect(blocking, blocking.map(v => `${v.id}: ${v.help}`).join('; ')).toEqual([]);
+});
