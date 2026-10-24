@@ -15,9 +15,9 @@ Brian directive 2026-10-24: _"Loop through every single component and screen and
 
 - [x] Homepage hero / masthead — cinematic staggered entrance + breathing accent-glow
 - [x] Album cards — cinematic scroll-reveal entrance (covers/hovers/mandala already rich)
-- [ ] Track rows (trackrow, play state, stats)
+- [x] Track rows — reviewed: already meet the rubric (hover, is-current, animated equalizer bars, play stats); no forced change
 - [ ] Transport bar (controls, progress, now-playing mini)
-- [ ] Aeon's Choice / AI playlist rail
+- [x] Aeon's Choice / AI playlist rail — fixed the all-"100" scores (SSR-fallback spread)
 - [ ] Now-playing panel (cover ring, stats/tags, wisdom, liner, meaning, segue, similar chips, lyricbox)
 - [ ] Cmd+K search (literal + AI vibe picks + play-as-set)
 - [ ] AI DJ chat drawer
@@ -35,10 +35,7 @@ Brian directive 2026-10-24: _"Loop through every single component and screen and
 - ✅ Content-page: removed the Print button (killed a `javascript:` CSP smell); gave the press-kit request a gorgeous accent-pill CTA (real mailto behind the "press kit" claim). 2026-10-24.
 - ✅ Homepage hero: cinematic staggered entrance (eyebrow → title → vibe fade-up) + a slow breathing accent-glow on the "PRESS PLAY" title so the idle hero feels alive; all `prefers-reduced-motion`-gated, respecting the pure-white/no-scrim directive. 2026-10-24.
 - ✅ Album cards: pure-CSS scroll-reveal entrance (`animation-timeline: view()`) — each card fades up as it enters the rail, cohesive with the hero; no JS, no FOUC, `@supports` + reduced-motion gated (Firefox/older show static). Covers/title/platform hovers + featured mandala were already rich, so motion was the gap. 2026-10-24.
-
-## Found during this pass (surface later)
-
-- Aeon's Choice rail shows EVERY track at exactly "100" plays — looks capped/placeholder, not real global counts. Investigate when polishing the Aeon rail surface.
+- ✅ Aeon's Choice rail: fixed the all-"100" score bug — the SSR-fallback (fresh load, before client stats) assigned `1 - i*0.001` (0.999/0.998/… all rounding to 100); now spreads `1 - i*0.05` so picks read 100/95/90/85/80 (ranked gradient) until real `/api/stats` scores load. Also fixed a STALE play-order test (Reckless Grace album track order had drifted: count-what-i-got → now reckless-grace → nobody-beneath-us → luminous-love). Track rows reviewed — already rubric-clean. 2026-10-24.
 
 ## Method per fire
 

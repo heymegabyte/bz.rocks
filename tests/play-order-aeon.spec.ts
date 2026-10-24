@@ -14,7 +14,7 @@ async function dismissAutoplayPrompt(page: Page) {
 
 test.describe('default play order is sequential (album order, not AI ranking)', () => {
   test('Next advances to the next track in the album', async ({ page }) => {
-    // Reckless Grace album order: reckless-grace -> count-what-i-got -> nobody-beneath-us
+    // Reckless Grace album order: reckless-grace -> nobody-beneath-us -> luminous-love
     await page.goto(`${BASE}/reckless-grace/reckless-grace`, { waitUntil: 'domcontentloaded' });
     const np = page.locator('#transportNpTitle');
     await expect(np).toHaveText('Reckless Grace', { timeout: 15000 });
@@ -27,11 +27,11 @@ test.describe('default play order is sequential (album order, not AI ranking)', 
 
     await dismissAutoplayPrompt(page);
     await page.locator('#btnNext').click();
-    await expect(np).toHaveText('Count What I Got', { timeout: 15000 });
+    await expect(np).toHaveText('Nobody Beneath Us', { timeout: 15000 });
 
     await dismissAutoplayPrompt(page);
     await page.locator('#btnNext').click();
-    await expect(np).toHaveText('Nobody Beneath Us', { timeout: 15000 });
+    await expect(np).toHaveText('Luminous Love', { timeout: 15000 });
   });
 });
 

@@ -385,9 +385,13 @@ function aiPicks(limit = 5): AiPickScore[] {
     const ssr = (window as unknown as { __AEON_SSR?: unknown }).__AEON_SSR;
     const ssrIds = Array.isArray(ssr) ? ssr.map(String).filter(id => TRACK_BY_ID.has(id)) : [];
     const base = ssrIds.length ? ssrIds : TRACKS.map(t => t.id);
+    // Spread the fallback scores by rank so the displayed match-% DIFFERENTIATES
+    // (100, 95, 90…) instead of every pick rounding to 100 — the old 0.001 step
+    // left 0.999/0.998/… all rounding to 100, which read as broken on first paint.
+    // Real /api/stats scores replace these the moment client stats load.
     return base.slice(0, limit).map((id, i) => ({
       trackId: id,
-      score: 1 - i * 0.001,
+      score: Math.max(0.4, 1 - i * 0.05),
       parts: { global: 0, completion: 0, local: 0, shares: 0, recency: 0 }
     }));
   }
