@@ -328,7 +328,7 @@ export function mountAIChat(opts: MountOpts = {}) {
 
             <div class="aichat__field aichat__field--row">
               <span class="aichat__field-label">Theatre mode</span>
-              <label class="aichat__toggle"><input type="checkbox" data-aichat="theatreMode" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
+              <label class="aichat__toggle"><input type="checkbox" data-aichat="theatreMode" aria-label="Theatre mode" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
             </div>
             <p class="aichat__field-desc">Expands the chat panel to full width and dims everything else. Best for long-form conversations on a desktop monitor.</p>
           </section>
@@ -382,13 +382,13 @@ export function mountAIChat(opts: MountOpts = {}) {
             <span class="aichat__drawer-section-title">Composer</span>
             <div class="aichat__field aichat__field--row">
               <span class="aichat__field-label">Send on Enter</span>
-              <label class="aichat__toggle"><input type="checkbox" data-aichat="sendOnEnter" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
+              <label class="aichat__toggle"><input type="checkbox" data-aichat="sendOnEnter" aria-label="Send on Enter" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
             </div>
             <p class="aichat__field-desc">When on, Enter sends and Shift+Enter inserts a newline. When off, Enter newlines and Cmd+Enter sends.</p>
 
             <div class="aichat__field aichat__field--row">
               <span class="aichat__field-label">Auto-scroll to latest</span>
-              <label class="aichat__toggle"><input type="checkbox" data-aichat="autoScroll" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
+              <label class="aichat__toggle"><input type="checkbox" data-aichat="autoScroll" aria-label="Auto-scroll to latest" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
             </div>
             <p class="aichat__field-desc">Keep the newest reply in view as it streams. Turn off if you're scrolled up reading earlier turns and don't want to be yanked.</p>
           </section>
@@ -404,13 +404,13 @@ export function mountAIChat(opts: MountOpts = {}) {
 
             <div class="aichat__field aichat__field--row">
               <span class="aichat__field-label">Wake word "hey bz"</span>
-              <label class="aichat__toggle"><input type="checkbox" data-aichat="wakeWord" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
+              <label class="aichat__toggle"><input type="checkbox" data-aichat="wakeWord" aria-label="Wake word hey bz" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
             </div>
             <p class="aichat__field-desc">When on, saying "hey bz" with your mic active opens the chat and starts listening. Off by default to save battery on phones.</p>
 
             <div class="aichat__field aichat__field--row">
               <span class="aichat__field-label">Continuous dictation</span>
-              <label class="aichat__toggle"><input type="checkbox" data-aichat="continuousDictation" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
+              <label class="aichat__toggle"><input type="checkbox" data-aichat="continuousDictation" aria-label="Continuous dictation" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
             </div>
             <p class="aichat__field-desc">When the mic stops on a pause vs keeps listening until you tap the mic again. Off = better for short questions; On = better for long-form thinking out loud.</p>
           </section>
@@ -420,13 +420,13 @@ export function mountAIChat(opts: MountOpts = {}) {
 
             <div class="aichat__field aichat__field--row">
               <span class="aichat__field-label">Spectrogram backdrop</span>
-              <label class="aichat__toggle"><input type="checkbox" data-aichat="spectrogramBackdrop" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
+              <label class="aichat__toggle"><input type="checkbox" data-aichat="spectrogramBackdrop" aria-label="Spectrogram backdrop" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
             </div>
             <p class="aichat__field-desc">A live audio-frequency rainbow behind the chat panel. Looks cinematic; turn off on slow phones for battery.</p>
 
             <div class="aichat__field aichat__field--row">
               <span class="aichat__field-label">Hide spectrogram during reply</span>
-              <label class="aichat__toggle"><input type="checkbox" data-aichat="hideSpectroDuringStream" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
+              <label class="aichat__toggle"><input type="checkbox" data-aichat="hideSpectroDuringStream" aria-label="Hide spectrogram during reply" /><span class="aichat__toggle-track"></span><span class="aichat__toggle-thumb"></span></label>
             </div>
             <p class="aichat__field-desc">When the model is streaming, dim the spectrogram so the text is easier to read.</p>
 

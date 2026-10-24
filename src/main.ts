@@ -1627,7 +1627,7 @@ function setupShell(root: HTMLElement) {
           <input class="cmdk__input" id="cmdkInput" type="search" placeholder="Search tracks…" autocomplete="off" spellcheck="false" aria-label="Search tracks" aria-controls="cmdkResults" aria-autocomplete="list" />
           <kbd class="cmdk__kbd">Esc</kbd>
         </div>
-        <div class="cmdk__results" id="cmdkResults" role="listbox" aria-label="Search results"></div>
+        <div class="cmdk__results" id="cmdkResults" role="listbox" aria-label="Search results" tabindex="0"></div>
         <p class="cmdk__empty" id="cmdkEmpty" hidden>No tracks found</p>
         <footer class="cmdk__footer">
           <kbd class="cmdk__kbd">↑↓</kbd> navigate &nbsp;
@@ -1893,7 +1893,7 @@ function setupShell(root: HTMLElement) {
           <h3 class="lyrics-fs__title" id="lyricsFsTitle">—</h3>
         </div>
       </div>
-      <div class="lyrics-fs__inner" id="lyricsFsInner"></div>
+      <div class="lyrics-fs__inner" id="lyricsFsInner" tabindex="0" role="region" aria-label="Lyrics"></div>
     </div>
 
     <!-- Queue / recents / top / AI / moods / albums panel -->
