@@ -18,7 +18,7 @@ Brian directive 2026-10-24: _"Loop through every single component and screen and
 - [x] Track rows — reviewed: already meet the rubric (hover, is-current, animated equalizer bars, play stats); no forced change
 - [x] Transport bar — reviewed: already rubric-clean (hover-grow scrubber, wave + buffer, 20+ `is-playing` states, suno BPM/key chip)
 - [x] Aeon's Choice / AI playlist rail — fixed the all-"100" scores (SSR-fallback spread)
-- [ ] Now-playing panel (cover ring, stats/tags, wisdom, liner, meaning, segue, similar chips, lyricbox)
+- [x] Now-playing panel — reviewed (read CSS + headless capture): already exceptional (full beat-sync breathing card/ring/cover/title/toolbar via `--np-beat`/`--np-energy`, spinning progress-ring cover, word-by-word karaoke, related-tracks grid, smart-links); no forced change. The visual audit SURFACED a real data bug instead — see BPM-consistency fix below.
 - [ ] Cmd+K search (literal + AI vibe picks + play-as-set)
 - [ ] AI DJ chat drawer
 - [ ] Queue / library panel (Queue/AI/Recents/Top/Moods/Albums tabs)
@@ -40,6 +40,8 @@ Brian directive 2026-10-24: _"Loop through every single component and screen and
 - ✅ Aeon's Choice rail: fixed the all-"100" score bug — the SSR-fallback (fresh load, before client stats) assigned `1 - i*0.001` (0.999/0.998/… all rounding to 100); now spreads `1 - i*0.05` so picks read 100/95/90/85/80 (ranked gradient) until real `/api/stats` scores load. Also fixed a STALE play-order test (Reckless Grace album track order had drifted: count-what-i-got → now reckless-grace → nobody-beneath-us → luminous-love). Track rows reviewed — already rubric-clean. 2026-10-24.
 
 - ✅ Chrome / 404 state: a **friendly, dismissible 404 banner** instead of silently showing the homepage on a mistyped/retired URL. The worker is authoritative — `TelemetryRewriter` injects `window.__IS_404` (true only when the path matches no SEO route, no file ext, no embed/known-non-SEO route) AND serves a real `404` status while still booting the SPA shell; the client reads that one flag and shows the banner (no client-side route logic to drift). Banner is DOM-built (Trusted-Types-safe), accent-pill styled, `top:112px` so it clears the top-right BPM/KEY HUD, with a one-tap dismiss. E2E 4/4 green (unknown route → banner + dismiss; known routes → never). 2026-10-24.
+
+- ✅ Visualizer HUD BPM consistency fix (found via the now-playing visual audit): the HUD read the **live in-browser beat estimate**, which locks onto a ~1.5× harmonic (142-bpm track → HUD showed 205–214, nondeterministic) and **contradicted** the transport + cast, both of which show the authoritative `SUNO_META.sunoBpm` (142). Now the HUD sources that same authoritative, build-time aubio-measured value → accurate, stable, and identical across HUD/transport/cast. Motion is untouched (it already seeds from `engine.bpm` = the correct 142). RED→GREEN proven: `tests/hud-bpm-consistency.spec.ts` failed pre-fix (206≠142), passes post-fix (142==142) at 390 + 1280. 2026-10-24.
 
 ## Method per fire
 

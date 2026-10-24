@@ -43,6 +43,9 @@ const KF_MODEL = 'fal-ai/flux-pro/v1.1';
 const I2V_MODEL = 'fal-ai/veo3.1/image-to-video';
 const T2V_MODEL = 'fal-ai/veo3.1'; // Veo 3.1 text-to-video — most photoreal path (no stylized keyframe)
 const T2V = process.env.T2V === '1'; // T2V=1 → pure Veo text-to-video (max realism); else image-to-video
+const MINIMAX = process.env.MINIMAX === '1'; // MINIMAX=1 → native MiniMax Hailuo-02 via Brian's subscription key (cap-compliant $0.25/s)
+const MINIMAX_MODEL = 'MiniMax-Hailuo-02';
+const MINIMAX_BASE = 'https://api.minimax.io/v1';
 const CONCURRENCY = 3;
 const AUDIO_REL = `public/audio/${FILM_ID}.mp3`;
 
@@ -174,6 +177,77 @@ async function veoClip(tok, shot, heroFrame) {
   }
 }
 
+// Native MiniMax subscription key — env first, then repo-local .dev.vars (gitignored).
+async function minimaxToken() {
+  if (process.env.MINIMAX_API_KEY) return process.env.MINIMAX_API_KEY.trim();
+  try {
+    const dv = await readFile(path.join(ROOT, '.dev.vars'), 'utf8');
+    const m = dv.match(/^MINIMAX_API_KEY=(.+)$/m);
+    if (m) return m[1].trim().replace(/^["']|["']$/g, '');
+  } catch {
+    /* no .dev.vars */
+  }
+  throw new Error('MINIMAX_API_KEY not available (env or .dev.vars)');
+}
+
+// MiniMax Hailuo-02 text-to-video: submit → poll task → retrieve file → download.
+// 1080P = 6s clips; no negative_prompt param (prompt_optimizer handles quality).
+async function minimaxClip(tok, shot) {
+  const dest = path.join(CLIPS, `${shot.id}.mp4`);
+  if (existsSync(dest) && (await stat(dest)).size > 100_000) {
+    log(`clip ${shot.id}: cached ✓`);
+    return dest;
+  }
+  const H = { Authorization: `Bearer ${tok}`, 'Content-Type': 'application/json' };
+  const prompt = shot.veoPrompt + PHOTOREAL;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const sub = await (
+        await fetch(`${MINIMAX_BASE}/video_generation`, {
+          method: 'POST',
+          headers: H,
+          body: JSON.stringify({
+            model: MINIMAX_MODEL,
+            prompt,
+            duration: 6,
+            resolution: '1080P',
+            prompt_optimizer: true
+          })
+        })
+      ).json();
+      const taskId = sub?.task_id;
+      if (!taskId) throw new Error(`submit: ${JSON.stringify(sub?.base_resp || sub).slice(0, 200)}`);
+      let fileId;
+      const t0 = Date.now();
+      for (;;) {
+        if (Date.now() - t0 > 12 * 60 * 1000) throw new Error('poll timeout');
+        await sleep(6000);
+        const st = await (
+          await fetch(`${MINIMAX_BASE}/query/video_generation?task_id=${taskId}`, { headers: H })
+        ).json();
+        if (st?.status === 'Success') {
+          fileId = st.file_id;
+          break;
+        }
+        if (st?.status === 'Fail')
+          throw new Error(`gen failed: ${JSON.stringify(st?.base_resp || st).slice(0, 200)}`);
+      }
+      const fr = await (
+        await fetch(`${MINIMAX_BASE}/files/retrieve?file_id=${fileId}`, { headers: H })
+      ).json();
+      const url = fr?.file?.download_url;
+      if (!url) throw new Error(`retrieve: ${JSON.stringify(fr?.base_resp || fr).slice(0, 200)}`);
+      await writeFile(dest, Buffer.from(await (await fetch(url)).arrayBuffer()));
+      log(`clip ${shot.id}: done`);
+      return dest;
+    } catch (e) {
+      log(`clip ${shot.id}: attempt ${attempt} failed — ${e.message}`);
+      if (attempt === 2) throw e;
+      await sleep(8000);
+    }
+  }
+}
+
 async function pool(items, n, fn) {
   const out = new Array(items.length);
   let idx = 0;
@@ -284,13 +358,19 @@ async function run() {
     : m.shots.slice(0, limit);
   const isFull = process.env.FULL === '1'; // default = preview; set FULL=1 for the full-length film
   log(
-    `${m.id}: ${shots.length}/${m.shots.length} shots ${isFull ? '(FULL)' : '(PREVIEW)'} · Veo 3.1 via Fal`
+    `${m.id}: ${shots.length}/${m.shots.length} shots ${isFull ? '(FULL)' : '(PREVIEW)'} · ${MINIMAX ? 'MiniMax Hailuo-02 (subscription)' : T2V ? 'Veo 3.1 t2v via Fal' : 'Veo 3.1 i2v via Fal'}`
   );
 
   let clips;
   if (process.env.STITCH_ONLY) {
     clips = shots.map(s => path.join(CLIPS, `${s.id}.mp4`));
     for (const c of clips) if (!existsSync(c)) throw new Error(`STITCH_ONLY but missing ${c}`);
+  } else if (MINIMAX) {
+    const tok = await minimaxToken();
+    log(
+      `generating ${shots.length} MiniMax Hailuo-02 clips (6s, 1080P) on your subscription, concurrency 4…`
+    );
+    clips = await pool(shots, 4, shot => minimaxClip(tok, shot));
   } else {
     const tok = await token();
     // Hero reference still — i2v identity continuity only; skipped in T2V (no keyframe).

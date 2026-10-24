@@ -5686,7 +5686,13 @@ function startHud() {
     const textDue = now - lastTextWrite >= TEXT_INTERVAL_MS;
     if (textDue) {
       lastTextWrite = now;
-      const bpmVal = m.bpm > 30 ? Math.round(m.bpm) : -1;
+      // Display the authoritative build-time (aubio-measured) BPM from SUNO_META —
+      // it's accurate + constant per track, so the HUD matches the transport + cast
+      // readouts instead of drifting to a 1.5×/2× harmonic the way the live in-browser
+      // beat estimate (m.bpm) can (e.g. a 142-bpm track mis-detected live as 214). The
+      // live meter is the fallback only when a track has no stored tempo.
+      const metaBpm = currentTrackId ? SUNO_META[currentTrackId]?.sunoBpm : null;
+      const bpmVal = metaBpm && metaBpm > 30 ? Math.round(metaBpm) : m.bpm > 30 ? Math.round(m.bpm) : -1;
       if (bpmEl && bpmVal !== lastBpm) {
         bpmEl.textContent = bpmVal === -1 ? '—' : bpmVal.toString();
         lastBpm = bpmVal;
