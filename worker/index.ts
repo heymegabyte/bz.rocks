@@ -2437,6 +2437,68 @@ export default {
         return jsonResponse({ points }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
       }
 
+      // AI vibe matcher — natural-language discovery over the FULL catalog.
+      // The Cmd+K palette calls this when a query reads like a mood ("late
+      // night drive", "songs about faith") rather than a title. The model
+      // ranks REAL track ids only (every returned id is re-validated against
+      // TRACK_BY_ID — the authoritative catalog is the source of truth; the AI
+      // only interprets + ranks). KV-cached 7d, rate-limited, fail-soft.
+      if (url.pathname === '/api/vibe' && request.method === 'GET') {
+        const q = (url.searchParams.get('q') || '').trim().slice(0, 80);
+        if (q.length < 2) return jsonResponse({ picks: [] }, 200, {}, request);
+        const norm = q.toLowerCase().replace(/\s+/g, ' ');
+        const cacheK = `vibe:${norm}#v1`;
+        const cached = await env.COUNTERS.get(cacheK);
+        if (cached)
+          return jsonResponse(
+            { picks: JSON.parse(cached) as Array<{ id: string; why: string }>, cached: true },
+            200,
+            { 'Cache-Control': 'public, max-age=86400' },
+            request
+          );
+        if (!env.AI) return jsonResponse({ picks: [] }, 200, {}, request);
+        if (await rateLimitedCount(env.COUNTERS, ip, 'vibe', 'minute', 15, 60))
+          return jsonResponse({ picks: [], throttled: true }, 200, {}, request);
+        const catalog = [...TRACK_BY_ID.values()]
+          .map(t => `${t.id} | ${t.title} | ${ALBUM_BY_ID.get(t.album)?.name ?? 'bZ'} | ${t.vibe}`)
+          .join('\n');
+        const system =
+          "You are bZ's music matchmaker. From the CATALOG (each line `id | title | album | vibe`), pick the up-to-6 tracks that best fit the listener's MOOD. Output ONLY lines formatted `id | reason` — the id copied EXACTLY from the catalog, the reason ONE short sentence (max ~12 words) on why it fits the mood. Order best-first. No preamble, no markdown, no numbering, and NEVER a track absent from the catalog. Christian-gangster ethic; zero drug references.";
+        const user = `MOOD: ${q}\n\nCATALOG:\n${catalog}`;
+        let picks: Array<{ id: string; why: string }> = [];
+        try {
+          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: user }
+            ],
+            max_tokens: 320,
+            temperature: 0.6
+          })) as { response?: string };
+          const seen = new Set<string>();
+          for (const line of (out.response || '').split(/\r?\n+/)) {
+            const parts = line.split('|');
+            const rawId = parts[0];
+            if (parts.length < 2 || !rawId) continue;
+            const id = rawId.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '').trim();
+            const why = parts
+              .slice(1)
+              .join('|')
+              .trim()
+              .replace(/^["']+|["']+$/g, '');
+            if (!TRACK_BY_ID.has(id) || seen.has(id) || why.length < 4) continue;
+            seen.add(id);
+            picks.push({ id, why });
+            if (picks.length >= 6) break;
+          }
+        } catch {
+          picks = [];
+        }
+        if (!picks.length) return jsonResponse({ picks: [] }, 200, {}, request);
+        ctx.waitUntil(env.COUNTERS.put(cacheK, JSON.stringify(picks), { expirationTtl: 604800 }));
+        return jsonResponse({ picks }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
+      }
+
       if (url.pathname === '/api/ai/chat' && request.method === 'POST') {
         if (!env.AI) return jsonResponse({ error: 'ai_not_configured' }, 503);
         // Two-tier rate limit: 8/min burst + 60/hr sustained per IP.

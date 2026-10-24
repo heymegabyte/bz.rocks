@@ -15860,6 +15860,30 @@ select:focus-visible,
   background: color-mix(in srgb, var(--album-accent, var(--accent)) 14%, transparent);
   border-color: color-mix(in srgb, var(--album-accent, var(--accent)) 40%, transparent);
 }
+/* AI vibe picks — grounded natural-language matches from /api/vibe */
+.cmdk__group--ai {
+  color: var(--ink-accent);
+}
+.cmdk__item-badge--ai {
+  background: color-mix(in srgb, var(--album-accent, var(--accent)) 20%, transparent);
+  border-color: color-mix(in srgb, var(--album-accent, var(--accent)) 50%, transparent);
+  color: var(--ink-accent);
+}
+.cmdk__item-sub:has(.cmdk__why) {
+  white-space: normal;
+}
+.cmdk__why {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  font-style: italic;
+  color: color-mix(in srgb, var(--album-accent, var(--accent)) 65%, var(--ink-soft));
+}
 
 /* ── Print stylesheet ───────────────────────────────────────────── */
 @media print {

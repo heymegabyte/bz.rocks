@@ -6555,7 +6555,9 @@ function bindUi() {
   $('#cmdkInput')?.addEventListener('input', e => {
     const q = (e.target as HTMLInputElement).value;
     searchActiveIdx = 0;
-    renderSearchResults(filterTracks(q));
+    const literal = filterTracks(q);
+    renderSearchResults(literal);
+    maybeVibeSearch(q, literal);
   });
   $('#cmdkInput')?.addEventListener('keydown', e => {
     if (e.key === 'ArrowDown') {
@@ -6583,9 +6585,7 @@ function bindUi() {
       return;
     }
     const idx = Number(item.dataset.idx ?? -1);
-    const input = $('#cmdkInput') as HTMLInputElement | null;
-    const tracks = filterTracks(input?.value ?? '');
-    const t = tracks[idx];
+    const t = searchRows[idx];
     if (t) {
       closeSearch();
       play(t);
@@ -7644,6 +7644,15 @@ function applyAlbumPalette(track: Track) {
 }
 
 /** Filters tracks by title, vibe, album name, or lyrics content. */
+// Cmd+K search SSOT: the exact track rows currently rendered (literal matches
+// + AI vibe picks, in render order). searchMove / searchCommit / result clicks
+// all index into THIS, so AI-augmented rows stay keyboard- and click-consistent.
+let searchRows: Track[] = [];
+let searchLiteral: Track[] = [];
+let searchAiPicks: Array<{ track: Track; why: string }> = [];
+let vibeTimer: number | null = null;
+let vibeController: AbortController | null = null;
+
 function filterTracks(query: string): Track[] {
   if (!query.trim()) return [...TRACKS];
   const q = query.toLowerCase().trim();
@@ -7671,14 +7680,38 @@ function filterContentPages(
   }).map(p => ({ slug: p.slug, title: p.title, sub: p.description, ogImage: p.ogImage }));
 }
 
-function renderSearchResults(tracks: Track[]) {
+function trackRowHtml(t: Track, idx: number, sub: string, badge: string): string {
+  const album = ALBUM_BY_ID.get(t.album);
+  const active = idx === searchActiveIdx;
+  const playingBadge =
+    t.id === currentTrackId ? '<span class="cmdk__item-badge cmdk__item-badge--inline">playing</span>' : '';
+  const plays = playCounts.get(t.id) ?? 0;
+  const playsBadge = `<span class="cmdk__item-plays" data-plays="${t.id}" aria-label="${plays} plays"${plays === 0 ? ' hidden' : ''}><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span data-plays-num="${t.id}">${plays}</span></span>`;
+  return `<div class="cmdk__item${active ? ' cmdk__item--active' : ''}" data-idx="${idx}" role="option" aria-selected="${active ? 'true' : 'false'}" tabindex="-1">
+      <img class="cmdk__item-cover" src="${album?.cover ?? '/art/cover-panda-desiiignare.jpg'}" alt="" width="40" height="40" loading="lazy" />
+      <div class="cmdk__item-body">
+        <div class="cmdk__item-title"><span class="cmdk__item-title-text">${escapeHtml(t.title)}</span>${playingBadge}${badge}</div>
+        <div class="cmdk__item-sub">${sub}</div>
+      </div>
+      ${playsBadge}
+    </div>`;
+}
+
+function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why: string }> = []) {
   const results = $('#cmdkResults');
   const empty = $('#cmdkEmpty') as HTMLElement | null;
   const count = $('#cmdkCount');
   if (!results || !empty || !count) return;
   const input = $('#cmdkInput') as HTMLInputElement | null;
   const pages = filterContentPages(input?.value ?? '');
-  if (!tracks.length && !pages.length) {
+  // AI picks already surfaced by the literal filter are redundant — drop them.
+  const ai = aiPicks.filter(p => !tracks.some(t => t.id === p.track.id));
+  // SSOT for keyboard nav + commit + click: literal rows first, AI rows after
+  // (appending keeps literal indices stable if AI resolves mid-arrow).
+  searchLiteral = tracks;
+  searchAiPicks = ai;
+  searchRows = [...tracks, ...ai.map(p => p.track)];
+  if (!tracks.length && !pages.length && !ai.length) {
     results.innerHTML = '';
     empty.hidden = false;
     count.textContent = '0 results';
@@ -7686,12 +7719,12 @@ function renderSearchResults(tracks: Track[]) {
     return;
   }
   empty.hidden = true;
-  const parts: string[] = [];
-  parts.push(`${tracks.length} track${tracks.length !== 1 ? 's' : ''}`);
+  const parts: string[] = [`${tracks.length} track${tracks.length !== 1 ? 's' : ''}`];
   if (pages.length) parts.push(`${pages.length} page${pages.length !== 1 ? 's' : ''}`);
+  if (ai.length) parts.push(`${ai.length} vibe pick${ai.length !== 1 ? 's' : ''}`);
   count.textContent = parts.join(' · ');
   if (searchActiveIdx < 0) searchActiveIdx = 0;
-  searchActiveIdx = Math.min(searchActiveIdx, tracks.length - 1);
+  searchActiveIdx = Math.min(searchActiveIdx, searchRows.length - 1);
   // Content pages first (so a user typing "theology" hits the page, not
   // a track that happens to mention it)
   const pagesHtml = pages.length
@@ -7711,29 +7744,26 @@ function renderSearchResults(tracks: Track[]) {
         .join('') +
       (tracks.length ? `<div class="cmdk__group">tracks</div>` : '')
     : '';
-  results.innerHTML =
-    pagesHtml +
-    tracks
-      .map((t, i) => {
-        const album = ALBUM_BY_ID.get(t.album);
-        // Playing badge moved INLINE next to the title (was floating at the
-        // far-right of the row, visually orphaned from the track it labels).
-        const playingBadge =
-          t.id === currentTrackId
-            ? '<span class="cmdk__item-badge cmdk__item-badge--inline">playing</span>'
-            : '';
-        const plays = playCounts.get(t.id) ?? 0;
-        const playsBadge = `<span class="cmdk__item-plays" data-plays="${t.id}" aria-label="${plays} plays"${plays === 0 ? ' hidden' : ''}><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span data-plays-num="${t.id}">${plays}</span></span>`;
-        return `<div class="cmdk__item${i === searchActiveIdx ? ' cmdk__item--active' : ''}" data-idx="${i}" role="option" aria-selected="${i === searchActiveIdx ? 'true' : 'false'}" tabindex="-1">
-      <img class="cmdk__item-cover" src="${album?.cover ?? '/art/cover-panda-desiiignare.jpg'}" alt="" width="40" height="40" loading="lazy" />
-      <div class="cmdk__item-body">
-        <div class="cmdk__item-title"><span class="cmdk__item-title-text">${escapeHtml(t.title)}</span>${playingBadge}</div>
-        <div class="cmdk__item-sub">${escapeHtml(album?.name ?? 'bZ')} · ${escapeHtml(t.vibe)}</div>
-      </div>
-      ${playsBadge}
-    </div>`;
-      })
-      .join('');
+  const tracksHtml = tracks
+    .map((t, i) => {
+      const album = ALBUM_BY_ID.get(t.album);
+      return trackRowHtml(t, i, `${escapeHtml(album?.name ?? 'bZ')} · ${escapeHtml(t.vibe)}`, '');
+    })
+    .join('');
+  const aiHtml = ai.length
+    ? `<div class="cmdk__group cmdk__group--ai">AI vibe picks</div>` +
+      ai
+        .map((p, j) =>
+          trackRowHtml(
+            p.track,
+            tracks.length + j,
+            `<span class="cmdk__why">${escapeHtml(p.why)}</span>`,
+            '<span class="cmdk__item-badge cmdk__item-badge--inline cmdk__item-badge--ai">AI</span>'
+          )
+        )
+        .join('')
+    : '';
+  results.innerHTML = pagesHtml + tracksHtml + aiHtml;
 }
 
 function openSearch() {
@@ -7752,22 +7782,56 @@ function closeSearch() {
 }
 
 function searchMove(dir: 1 | -1) {
-  const input = $('#cmdkInput') as HTMLInputElement | null;
-  const tracks = filterTracks(input?.value ?? '');
-  if (!tracks.length) return;
-  searchActiveIdx = (searchActiveIdx + dir + tracks.length) % tracks.length;
-  renderSearchResults(tracks);
+  if (!searchRows.length) return;
+  searchActiveIdx = (searchActiveIdx + dir + searchRows.length) % searchRows.length;
+  renderSearchResults(searchLiteral, searchAiPicks);
   $('#cmdkResults .cmdk__item--active')?.scrollIntoView({ block: 'nearest' });
 }
 
 function searchCommit() {
-  const input = $('#cmdkInput') as HTMLInputElement | null;
-  const tracks = filterTracks(input?.value ?? '');
-  const t = tracks[Math.max(0, searchActiveIdx)];
+  const t = searchRows[Math.max(0, searchActiveIdx)];
   if (t) {
     closeSearch();
     play(t);
   }
+}
+
+// AI vibe augmentation for Cmd+K — debounced, cancellable, grounded, fail-soft.
+// Fires only when the query reads like a MOOD (multi-word, or the literal
+// filter is thin) so we never run an LLM on a plain title prefix. Literal
+// results already painted; this layers AI-ranked picks on top (ai-first-search).
+function maybeVibeSearch(query: string, literal: Track[]) {
+  const q = query.trim();
+  if (vibeTimer !== null) clearTimeout(vibeTimer);
+  if (vibeController) vibeController.abort();
+  const vibey = q.length >= 4 && (q.split(/\s+/).length >= 2 || literal.length < 3);
+  if (!vibey) return;
+  const count = $('#cmdkCount');
+  if (count)
+    count.textContent = literal.length ? `${count.textContent ?? ''} · matching vibe…` : 'matching vibe…';
+  vibeTimer = window.setTimeout(() => {
+    const controller = new AbortController();
+    vibeController = controller;
+    void (async () => {
+      try {
+        const r = await fetch(`/api/vibe?q=${encodeURIComponent(q)}`, { signal: controller.signal });
+        const d = (await r.json()) as { picks?: Array<{ id: string; why: string }> };
+        const input = $('#cmdkInput') as HTMLInputElement | null;
+        // Ignore stale responses + ground every id against the real catalog:
+        // the AI never conjures a track that isn't in TRACKS.
+        if (!input || input.value.trim() !== q) return;
+        const picks = (d.picks ?? [])
+          .map(p => {
+            const track = TRACKS.find(t => t.id === p.id);
+            return track ? { track, why: p.why } : null;
+          })
+          .filter((p): p is { track: Track; why: string } => p !== null);
+        renderSearchResults(filterTracks(q), picks);
+      } catch {
+        /* fail-soft — keyword results stand */
+      }
+    })();
+  }, 450);
 }
 
 function showWisdomToast(track: Track) {
