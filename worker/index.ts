@@ -2461,7 +2461,7 @@ export default {
         const trackId = (url.searchParams.get('track') || '').trim();
         if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
           return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
-        const cacheK = `meaning:${trackId}#v2`;
+        const cacheK = `meaning:${trackId}#v3`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2477,7 +2477,7 @@ export default {
         const album = ALBUM_BY_ID.get(track.album);
         const lyricSnippet = firstSungLines(track, 20).join(' / ');
         const system =
-          "You interpret the MEANING of bZ's track in exactly 3 short beats, drawing ONLY on the provided title, album, vibe, wisdom line, and lyric excerpt. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. Each beat is ONE plain sentence, max ~16 words, naming a real theme/tension/turn the lyrics carry (e.g. a struggle, a prayer, a redemption). STRICT: output EXACTLY 3 lines, one beat per line, zero drug references, NO numbering, NO bullets, NO markdown, NO preamble, NO quotation marks. NEVER invent people, names, places, dates, or biographical events — interpret the words given, never a made-up backstory.";
+          "You interpret the MEANING of bZ's track in exactly 3 short beats, drawing ONLY on the provided title, album, vibe, wisdom line, and lyric excerpt. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. Each beat is ONE plain sentence, max ~16 words, naming a SPECIFIC theme/tension/turn ANCHORED in a concrete image, line, or action from THIS song's lyrics — NEVER an interchangeable virtue ('generosity', 'redemption', 'faith', 'nourishment') that could describe any track. STRICT: output EXACTLY 3 lines, one beat per line, zero drug references, NO numbering, NO bullets, NO markdown, NO preamble, NO quotation marks. NEVER invent people, names, places, dates, or biographical events — interpret the words given, never a made-up backstory.";
         const user = `Track: "${track.title}" from the album "${album?.name ?? 'bZ'}".\nVibe: ${track.vibe}.\nWisdom line: ${track.wisdom}.\nLyric excerpt: ${lyricSnippet}`;
         let points: string[] = [];
         try {
