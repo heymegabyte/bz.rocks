@@ -528,7 +528,7 @@
         "rain visibly interacts with armor"
       ],
       "keyframePrompt": "A scarred multicultural male warrior (North African / Middle-Eastern / South-Asian, early 30s) in bronze-and-leather scale armor, one notched sword in hand, small and resolute at the mouth of a towering canyon of wildfire, cold rain sheeting down through the flames, embers streaming, a blood-red moon above, sun-gold obsidian rock",
-      "veoPrompt": "Slow cinematic push-in as the warrior walks forward into the towering wall of wildfire; rain hisses to steam against his bronze armor; embers stream past; volumetric firelight; he does not slow. Photoreal, anamorphic, teal and amber, fine film grain.",
+      "veoPrompt": "A real man in weathered bronze scale armor walks forward into a canyon of real raging wildfire; real flames tower and real smoke rolls, embers lift on the heat, cold rain cuts through and hisses to steam on his armor; a slow cinematic push-in; he does not slow.",
       "useHeroAsFirstFrame": false
     },
     {
@@ -666,7 +666,7 @@
         "triumphant, heroic composition"
       ],
       "keyframePrompt": "A scarred multicultural male warrior in FULL bronze-and-leather scale armor bursts through a towering wall of fire, triumphant, notched sword raised; behind him, from the glowing embers and golden light, a radiant beautiful multicultural woman appears as a goddess-like vision in flowing golden robes, fully clothed, luminous, dignified, serene; volcanic glow beyond",
-      "veoPrompt": "The armored warrior bursts through the wall of flame in triumph, sword raised; behind him, from the embers and golden light, a radiant beautiful woman in flowing golden robes appears as a serene goddess-like vision and the firelight blooms warm around them; a heroic rising crane. Photoreal, two fully-clothed people, anamorphic, teal and amber.",
+      "veoPrompt": "A real armored warrior bursts through a real wall of fire and raises his sword, roaring in triumph; behind him a real woman in flowing golden silk rises through the real smoke and firelight as if lifted on a hidden wire-rig with practical pyrotechnics, serene and dignified, fully clothed; a heroic rising crane; real flames and real embers.",
       "useHeroAsFirstFrame": false,
       "negativePrompt": "shirtless, bare chest, bare torso, naked, nudity, bikini, lingerie, underwear, cleavage, cheesecake, glamour model, pin-up, modern clothing"
     }

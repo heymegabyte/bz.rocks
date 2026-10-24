@@ -41,12 +41,21 @@ const OUT = path.join(CACHE, 'out');
 
 const KF_MODEL = 'fal-ai/flux-pro/v1.1';
 const I2V_MODEL = 'fal-ai/veo3.1/image-to-video';
+const T2V_MODEL = 'fal-ai/veo3.1'; // Veo 3.1 text-to-video — most photoreal path (no stylized keyframe)
+const T2V = process.env.T2V === '1'; // T2V=1 → pure Veo text-to-video (max realism); else image-to-video
 const CONCURRENCY = 3;
 const AUDIO_REL = `public/audio/${FILM_ID}.mp3`;
 
 // Shared keyframe look (the standing brief: hyper-real, HBO, no overlays).
 const STYLE =
   ' — hyper-realistic, HBO-level cinematic, anamorphic 35mm, teal-and-amber color grade, volumetric light, fine film grain, ultra-detailed, dignified, no text, no watermark, no overlays.';
+
+// Photoreal directive appended to EVERY Veo prompt — the look must be
+// indistinguishable from real live-action footage, never a CGI/game render.
+const PHOTOREAL =
+  ' Shot on ARRI Alexa 65 with vintage anamorphic lenses, real 35mm photochemical film grain, photojournalistic realism; REAL practical fire and REAL smoke with true combustion physics, natural skin with pores and sweat, true-to-life lighting and physics — 100% photoreal, indistinguishable from real live-action footage.';
+const NEG =
+  'CGI, 3D render, Unreal Engine, video game, game cinematic, cartoon, anime, illustration, painting, concept art, digital art, plastic skin, waxy skin, airbrushed, mannequin, doll, fake fire, gas-jet flames, floating embers everywhere, stylized, oversaturated, overexposed, uncanny, deformed, extra limbs, watermark, text';
 
 const log = (...a) => console.log(`[veo-film ${new Date().toISOString().slice(11, 19)}]`, ...a);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -119,28 +128,39 @@ async function veoClip(tok, shot, heroFrame) {
     log(`clip ${shot.id}: cached ✓`);
     return dest;
   }
-  // First frame: the HERO still (identity continuity) or a per-shot flux keyframe.
-  let frame;
-  if (shot.useHeroAsFirstFrame && heroFrame) frame = heroFrame;
-  else frame = await flux(tok, shot.keyframePrompt, path.join(FRAMES, `${shot.id}.jpg`), `kf ${shot.id}`);
-  const image_url = await dataUri(frame);
+  const prompt = shot.veoPrompt + PHOTOREAL;
+  const negative_prompt = [NEG, shot.negativePrompt].filter(Boolean).join(', ');
+  // T2V (max realism, no keyframe) OR image-to-video from a photoreal keyframe.
+  let model, input;
+  if (T2V) {
+    model = T2V_MODEL;
+    input = {
+      prompt,
+      aspect_ratio: '16:9',
+      duration: '8s',
+      resolution: '1080p',
+      generate_audio: false,
+      negative_prompt
+    };
+  } else {
+    const frame =
+      shot.useHeroAsFirstFrame && heroFrame
+        ? heroFrame
+        : await flux(tok, shot.keyframePrompt, path.join(FRAMES, `${shot.id}.jpg`), `kf ${shot.id}`);
+    model = I2V_MODEL;
+    input = {
+      prompt,
+      image_url: await dataUri(frame),
+      duration: '8s',
+      resolution: '1080p',
+      aspect_ratio: '16:9',
+      generate_audio: false,
+      negative_prompt
+    };
+  }
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      const r = await falRun(
-        tok,
-        I2V_MODEL,
-        {
-          prompt: shot.veoPrompt,
-          image_url,
-          duration: '8s',
-          resolution: '1080p',
-          aspect_ratio: '16:9',
-          generate_audio: false,
-          ...(shot.negativePrompt ? { negative_prompt: shot.negativePrompt } : {})
-        },
-        `veo ${shot.id}`,
-        10 * 60 * 1000
-      );
+      const r = await falRun(tok, model, input, `veo ${shot.id}`, 10 * 60 * 1000);
       const vurl = r?.video?.url || r?.video_url || r?.videos?.[0]?.url;
       if (!vurl) throw new Error(`no video url ${JSON.stringify(r).slice(0, 180)}`);
       await writeFile(dest, Buffer.from(await (await fetch(vurl)).arrayBuffer()));
@@ -258,7 +278,10 @@ async function run() {
   for (const d of [REF, FRAMES, CLIPS, NORM, OUT]) await mkdir(d, { recursive: true });
   const m = JSON.parse(await readFile(MANIFEST, 'utf8'));
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : m.shots.length;
-  const shots = m.shots.slice(0, limit);
+  const pick = process.env.SHOTS ? process.env.SHOTS.split(',').map(s => s.trim()) : null;
+  const shots = pick
+    ? pick.map(id => m.shots.find(s => s.id === id)).filter(Boolean)
+    : m.shots.slice(0, limit);
   const isFull = process.env.FULL === '1'; // default = preview; set FULL=1 for the full-length film
   log(
     `${m.id}: ${shots.length}/${m.shots.length} shots ${isFull ? '(FULL)' : '(PREVIEW)'} · Veo 3.1 via Fal`
@@ -270,17 +293,20 @@ async function run() {
     for (const c of clips) if (!existsSync(c)) throw new Error(`STITCH_ONLY but missing ${c}`);
   } else {
     const tok = await token();
-    // Hero reference still — the canonical lead, reused for identity continuity.
+    // Hero reference still — i2v identity continuity only; skipped in T2V (no keyframe).
     const lead = m.characters?.[0];
-    const heroFrame = lead
-      ? await flux(
-          tok,
-          `${lead.description} Full-body hero portrait, standing resolute, bronze scale-mail, one notched sword, rain and distant firelight, cinematic key light`,
-          path.join(REF, 'hero.jpg'),
-          'hero'
-        )
-      : null;
-    log(`generating ${shots.length} Veo 3.1 clips (8s, 1080p, audio off), concurrency ${CONCURRENCY}…`);
+    const heroFrame =
+      !T2V && lead
+        ? await flux(
+            tok,
+            `${lead.description} Full-body hero portrait, standing resolute, bronze scale-mail, one notched sword, rain and distant firelight, cinematic key light`,
+            path.join(REF, 'hero.jpg'),
+            'hero'
+          )
+        : null;
+    log(
+      `generating ${shots.length} Veo 3.1 ${T2V ? 'text-to-video' : 'image-to-video'} clips (8s, 1080p, audio off), concurrency ${CONCURRENCY}…`
+    );
     clips = await pool(shots, CONCURRENCY, shot => veoClip(tok, shot, heroFrame));
   }
 
