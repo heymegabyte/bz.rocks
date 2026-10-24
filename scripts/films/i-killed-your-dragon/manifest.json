@@ -1,0 +1,630 @@
+{
+  "id": "i-killed-your-dragon",
+  "createdAtIso": "2026-10-24T00:00:00Z",
+  "brief": {
+    "concept": "Music video for bZ's 'I Killed Your Dragon' — a lone multicultural warrior crosses a burning mythic kingdom to slay the immortal dragon its empire was built on, and in the ashes inherits the beast's fire, becoming the very terror she destroyed. Hyper-real, HBO-scale, anamorphic 2.39, teal+amber grade; the woman is the dignified, powerful through-line. No superimposed holograms/HUD/overlays — every element photoreal.",
+    "durationSec": 254.6,
+    "aspectRatio": "2.39:1",
+    "mood": "mythic, fervent, tragic-triumphant; grief under fury; opulent and scorched",
+    "format": "music-video",
+    "song": { "title": "I Killed Your Dragon" }
+  },
+  "logline": "A lone warrior crosses a burning kingdom to slay the immortal dragon its empire was built on — and in the ashes inherits its fire, becoming the very terror she destroyed.",
+  "synopsis": "Aziza walks alone into a wildfire pass toward a kingdom the dragon has terrorized for generations. The people swear the beast cannot die; she climbs its spine over a molten valley and drives her one notched sword through its skull. But as it falls she sees the truth — the dragon was the empire's foundation, its guardian and its curse — and its surviving fire takes root in her. She rises transformed, ember-eyed and feared, the sky finally turning from blood-red to blue. She did it for the very 'you' who now kneels in terror of her.",
+  "characters": [
+    {
+      "id": "aziza",
+      "name": "Aziza",
+      "description": "A multicultural warrior woman — North African / Middle-Eastern / South-Asian features, late 20s — in bronze scale-mail with henna-marked hands, carrying one notched sword. Dignified and powerful, grief held under fury.",
+      "state": { "armor": "clean", "warrior_fire": "none" },
+      "externalGoal": "Slay the immortal dragon that terrorizes the kingdom",
+      "internalNeed": "To be the savior no one else would be — to matter, to avenge the one she lost",
+      "contradiction": "To kill the monster she must become monstrous — she inherits its fire",
+      "voice": "Silent and resolute; speaks only in action; fury over grief",
+      "vulnerabilities": [
+        "grief for the one she lost",
+        "rage makes her reckless"
+      ],
+      "blindSpots": [
+        "cannot see that the dragon sustains the empire",
+        "cannot see herself becoming the new terror"
+      ],
+      "relationships": {
+        "the-dragon": "the beast she hunts",
+        "red-moon-kingdom": "the empire that doubted her and whose power rests on the dragon"
+      }
+    }
+  ],
+  "locations": [
+    {
+      "id": "wildfire-pass",
+      "name": "The Wildfire Pass",
+      "description": "A towering mountain pass ablaze with wildfire, cold rain falling through the flames; smoke, ember, and a blood-red moon above."
+    },
+    {
+      "id": "red-moon-kingdom",
+      "name": "The Red-Moon Kingdom",
+      "description": "A walled mythic kingdom of sun-gold stone and bronze, banners scorched, under a blood-red moon; its scorched walls seem to whisper."
+    },
+    {
+      "id": "volcanic-valley",
+      "name": "The Volcanic Valley",
+      "description": "A valley glowing molten gold — the dragon's lair; obsidian rock and rivers of lava."
+    },
+    {
+      "id": "dragon-spine",
+      "name": "The Dragon's Spine",
+      "description": "The ridged back of the colossal dragon, scales like shields, high above the molten valley."
+    },
+    {
+      "id": "ash-plaza",
+      "name": "The Ash Plaza",
+      "description": "The kingdom's great square at dawn, ash falling like snow, the empty throne visible."
+    }
+  ],
+  "props": [
+    {
+      "id": "notched-sword",
+      "name": "The Notched Sword",
+      "description": "A single notched, battle-worn sword — her only weapon; later alight with the dragon's own fire.",
+      "state": { "blade": "steel" }
+    },
+    {
+      "id": "the-dragon",
+      "name": "The Dragon",
+      "description": "A colossal immortal dragon, scales of obsidian and bronze, molten light between its plates — the terror the empire was built on.",
+      "state": { "status": "alive-unseen" }
+    }
+  ],
+  "wardrobe": [
+    {
+      "id": "bronze-scale-mail",
+      "name": "Bronze Scale-Mail",
+      "description": "Bronze scale-mail armor over henna-marked leather and a travel-worn cloak; scorches and ember-light accumulate across the film.",
+      "state": { "condition": "clean" }
+    }
+  ],
+  "setupPayoffs": [
+    {
+      "id": "sp-sword",
+      "detail": "The warrior's single notched sword",
+      "setupSceneId": "s0",
+      "payoffSceneId": "s7",
+      "initialMeaning": "Her only, fragile weapon against an immortal beast",
+      "finalMeaning": "Alight with the dragon's own fire as she is crowned by terror",
+      "isMotif": true
+    },
+    {
+      "id": "sp-fire",
+      "detail": "The wildfire she walks through",
+      "setupSceneId": "s0",
+      "payoffSceneId": "s7",
+      "initialMeaning": "The enemy element, the obstacle in her path",
+      "finalMeaning": "The fire is now inside her — she has become it",
+      "isMotif": true
+    },
+    {
+      "id": "sp-redmoon",
+      "detail": "The blood-red moon over the kingdom",
+      "setupSceneId": "s1",
+      "payoffSceneId": "s8",
+      "initialMeaning": "Omen of the dragon's terror",
+      "finalMeaning": "The sky finally turns blue — the old terror gone, replaced by her",
+      "isMotif": true
+    }
+  ],
+  "emotionalTrajectory": [
+    "grief-hardened resolve",
+    "committed dread",
+    "defiant purpose",
+    "ferocious certainty",
+    "savage grief",
+    "stunned stillness",
+    "triumphant release",
+    "cold doubt",
+    "terrible exaltation",
+    "hollow tenderness"
+  ],
+  "scenes": [
+    {
+      "id": "s0",
+      "index": 0,
+      "title": "Through the Wildfire",
+      "narrativePurpose": "Establish the warrior choosing to enter the dragon's domain alone.",
+      "protagonist": "aziza",
+      "objective": "Aziza must cross the burning pass to reach the dragon everyone fears.",
+      "opposition": "A wall of wildfire, choking smoke, and a mountain shaking underfoot.",
+      "visibleActions": [
+        {
+          "subject": "aziza",
+          "action": "walks straight into a towering wall of wildfire as rain hisses off her bronze armor",
+          "objectInteraction": "grips the notched sword",
+          "subtext": "she refuses to wait for a savior"
+        }
+      ],
+      "decision": "She steps into the flame instead of turning back.",
+      "change": "She crosses from the safe world into the dragon's domain.",
+      "consequence": "The kingdom's whisper — 'the dragon's not dead' — reaches her and hardens her resolve.",
+      "audienceLearns": "She is alone, armored in fury, hunting a monster everyone else fled.",
+      "emotionalStateStart": "grief-hardened resolve",
+      "emotionalStateEnd": "committed dread",
+      "startState": {
+        "armor": "clean",
+        "dragon": "alive-unseen",
+        "kingdom": "terrorized",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "endState": {
+        "armor": "soot",
+        "dragon": "alive-unseen",
+        "kingdom": "terrorized",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "causedByPreviousVia": null,
+      "setupPayoffRefs": ["sp-sword", "sp-fire"],
+      "durationSec": 18
+    },
+    {
+      "id": "s1",
+      "index": 1,
+      "title": "The Whispering Kingdom",
+      "narrativePurpose": "The kingdom's fear reveals the dragon is believed immortal; the beast shows itself.",
+      "protagonist": "aziza",
+      "objective": "Aziza must find the lair as the walled kingdom warns her the dragon cannot die.",
+      "opposition": "The kingdom's despair and the sense that the beast is immortal.",
+      "visibleActions": [
+        {
+          "subject": "aziza",
+          "action": "presses a henna-marked hand to the scorched city gate as the blood-red moon rises",
+          "subtext": "the whole kingdom is the dragon's prisoner"
+        }
+      ],
+      "decision": "She turns from the cowering gates toward the volcanic glow beyond.",
+      "change": "She rejects the kingdom's despair and fixes on the lair.",
+      "consequence": "The molten glow becomes her path; the beast stirs, sensing her.",
+      "audienceLearns": "The dragon is the empire's terror and its secret foundation.",
+      "emotionalStateStart": "committed dread",
+      "emotionalStateEnd": "defiant purpose",
+      "startState": {
+        "armor": "soot",
+        "dragon": "alive-unseen",
+        "kingdom": "terrorized",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "endState": {
+        "armor": "soot",
+        "dragon": "alive-revealed",
+        "kingdom": "terrorized",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "causedByPreviousVia": "because",
+      "setupPayoffRefs": ["sp-redmoon"],
+      "durationSec": 16
+    },
+    {
+      "id": "s2",
+      "index": 2,
+      "title": "War-Cry (Vision of Victory)",
+      "narrativePurpose": "A flash-forward of triumph — her intent made vision — planting the ashes image paid off for real later.",
+      "protagonist": "aziza",
+      "objective": "Aziza must steel herself; she envisions standing victorious in the ashes.",
+      "opposition": "Her own doubt and the beast's overwhelming scale.",
+      "visibleActions": [
+        {
+          "subject": "aziza",
+          "action": "raises the notched sword and roars soundlessly into the firelight as embers swirl around her",
+          "subtext": "she claims a victory she has not yet won"
+        }
+      ],
+      "decision": "She commits fully — no retreat, whatever it costs.",
+      "change": "Fear hardens into ferocious certainty.",
+      "consequence": "Her resolve propels her up toward the lair and the beast.",
+      "audienceLearns": "Her will may be as dangerous as the dragon itself.",
+      "emotionalStateStart": "defiant purpose",
+      "emotionalStateEnd": "ferocious certainty",
+      "startState": {
+        "armor": "soot",
+        "dragon": "alive-revealed",
+        "kingdom": "terrorized",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "endState": {
+        "armor": "soot",
+        "dragon": "alive-revealed",
+        "kingdom": "terrorized",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": [],
+      "durationSec": 24
+    },
+    {
+      "id": "s3",
+      "index": 3,
+      "title": "The Climb and the Kill",
+      "narrativePurpose": "The literal slaying — she climbs the beast over the molten valley and drives the blade home.",
+      "protagonist": "aziza",
+      "objective": "Aziza must reach the dragon's head and drive her blade through it.",
+      "opposition": "The beast's wings, claws, and fire, and the molten drop below.",
+      "visibleActions": [
+        {
+          "subject": "aziza",
+          "action": "climbs the dragon's spine over the molten valley and drives her sword through the crown of its skull",
+          "subtext": "grief and rage spent in a single mortal blow"
+        }
+      ],
+      "decision": "She drives the last blade home instead of retreating.",
+      "change": "The immortal beast is mortally struck and begins to fall.",
+      "consequence": "The fire goes silent; the beast crashes and the kingdom wakes.",
+      "audienceLearns": "Even the immortal can be killed by one relentless will.",
+      "emotionalStateStart": "ferocious certainty",
+      "emotionalStateEnd": "savage grief",
+      "startState": {
+        "armor": "soot",
+        "dragon": "alive-revealed",
+        "kingdom": "terrorized",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "endState": {
+        "armor": "scorched",
+        "dragon": "slain",
+        "kingdom": "terrorized",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-sword"],
+      "durationSec": 34
+    },
+    {
+      "id": "s4",
+      "index": 4,
+      "title": "The Fall",
+      "narrativePurpose": "The beast collapses; the kingdom wakes to the sound; the cost lands on her.",
+      "protagonist": "aziza",
+      "objective": "Aziza must survive the beast's collapse and witness what she's done.",
+      "opposition": "The dragon's death-throes and the shockwave of its fall.",
+      "visibleActions": [
+        {
+          "subject": "aziza",
+          "action": "rides the toppling beast down through smoke and lands kneeling in the ash as the shockwave rolls out",
+          "subtext": "the cost lands on her as the silence hits"
+        }
+      ],
+      "decision": "She stays with the body rather than flee.",
+      "change": "The beast is down; the kingdom stirs awake to the sound.",
+      "consequence": "The kingdom's people emerge and dawn starts to break.",
+      "audienceLearns": "The deed is done — but the silence is not relief.",
+      "emotionalStateStart": "savage grief",
+      "emotionalStateEnd": "stunned stillness",
+      "startState": {
+        "armor": "scorched",
+        "dragon": "slain",
+        "kingdom": "terrorized",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "endState": {
+        "armor": "scorched",
+        "dragon": "slain",
+        "kingdom": "waking",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": [],
+      "durationSec": 16
+    },
+    {
+      "id": "s5",
+      "index": 5,
+      "title": "Ashes at the Edge of Dawn",
+      "narrativePurpose": "The vision of s2 made real — she stands in true ashes; the triumph the song declares.",
+      "protagonist": "aziza",
+      "objective": "Aziza must claim the victory aloud over the fallen beast.",
+      "opposition": "Her own grief undercutting the triumph.",
+      "visibleActions": [
+        {
+          "subject": "aziza",
+          "action": "stands in the real ashes and shouts a name into the breaking dawn over the dead dragon",
+          "subtext": "the imagined victory is real now, but hollow"
+        }
+      ],
+      "decision": "She lets herself claim the win, naming who it was for.",
+      "change": "Dread gives way to triumphant release.",
+      "consequence": "As she exults, the dragon's surviving spark begins to seek her.",
+      "audienceLearns": "The victory is real — and something of the beast remains.",
+      "emotionalStateStart": "stunned stillness",
+      "emotionalStateEnd": "triumphant release",
+      "startState": {
+        "armor": "scorched",
+        "dragon": "slain",
+        "kingdom": "waking",
+        "sky": "red-moon",
+        "warrior_fire": "none"
+      },
+      "endState": {
+        "armor": "scorched",
+        "dragon": "slain",
+        "kingdom": "waking",
+        "sky": "dawn",
+        "warrior_fire": "none"
+      },
+      "causedByPreviousVia": "because",
+      "setupPayoffRefs": [],
+      "durationSec": 24
+    },
+    {
+      "id": "s6",
+      "index": 6,
+      "title": "Guardian or Curse",
+      "narrativePurpose": "The moral turn: the dragon was the empire's foundation; was she hero or destroyer?",
+      "protagonist": "aziza",
+      "objective": "Aziza must reckon with what the kingdom actually was.",
+      "opposition": "The dawning truth that the beast held the empire together.",
+      "visibleActions": [
+        {
+          "subject": "aziza",
+          "action": "looks from the dead beast to the crumbling kingdom as its dark blood runs down her arm",
+          "subtext": "she realizes she may have broken more than she freed"
+        }
+      ],
+      "decision": "She accepts the blood on her — she will not disown the deed.",
+      "change": "Triumph curdles into cold doubt as the beast's spark enters her.",
+      "consequence": "The surviving fire takes root in her; the transformation begins.",
+      "audienceLearns": "The dragon guarded the empire's sins; killing it unmakes the kingdom.",
+      "emotionalStateStart": "triumphant release",
+      "emotionalStateEnd": "cold doubt",
+      "startState": {
+        "armor": "scorched",
+        "dragon": "slain",
+        "kingdom": "waking",
+        "sky": "dawn",
+        "warrior_fire": "none"
+      },
+      "endState": {
+        "armor": "scorched",
+        "dragon": "slain-smoking",
+        "kingdom": "waking",
+        "sky": "dawn",
+        "warrior_fire": "kindled"
+      },
+      "causedByPreviousVia": "but",
+      "setupPayoffRefs": [],
+      "durationSec": 30
+    },
+    {
+      "id": "s7",
+      "index": 7,
+      "title": "I Left as the War",
+      "narrativePurpose": "She inherits the dragon's fire and becomes the new terror the kingdom fears.",
+      "protagonist": "aziza",
+      "objective": "Aziza must accept the fire now inside her.",
+      "opposition": "Her own humanity burning away.",
+      "visibleActions": [
+        {
+          "subject": "aziza",
+          "action": "rises as embers ignite in her eyes and molten light runs through her veins while the kingdom kneels in fear",
+          "subtext": "she has become the very thing she killed"
+        }
+      ],
+      "decision": "She embraces the fire instead of fighting it.",
+      "change": "The woman becomes a living embodiment of the dragon's fire.",
+      "consequence": "The kingdom now fears her as it once feared the beast.",
+      "audienceLearns": "In killing the monster she inherited it — the terror simply changed form.",
+      "emotionalStateStart": "cold doubt",
+      "emotionalStateEnd": "terrible exaltation",
+      "startState": {
+        "armor": "scorched",
+        "dragon": "slain-smoking",
+        "kingdom": "waking",
+        "sky": "dawn",
+        "warrior_fire": "kindled"
+      },
+      "endState": {
+        "armor": "ember-lit",
+        "dragon": "absorbed",
+        "kingdom": "kneeling",
+        "sky": "dawn",
+        "warrior_fire": "blazing"
+      },
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-sword", "sp-fire"],
+      "durationSec": 50
+    },
+    {
+      "id": "s8",
+      "index": 8,
+      "title": "I Did It for You",
+      "narrativePurpose": "The quiet, ironic coda: the sky clears, but she is the new power — and it was all for the very 'you' who now fears her.",
+      "protagonist": "aziza",
+      "objective": "Aziza must face the kingdom she saved and transformed.",
+      "opposition": "The tenderness of her motive against the terror she now is.",
+      "visibleActions": [
+        {
+          "subject": "aziza",
+          "action": "lowers the fire-alight sword and looks over the silent kingdom as the red sky finally turns blue",
+          "subtext": "everything she became, she became for them"
+        }
+      ],
+      "decision": "She turns to face the kingdom rather than vanish.",
+      "change": "The red moon yields to blue dawn; the old terror is gone, replaced by her.",
+      "consequence": "A new, uneasy peace under a new power — the real quest begins.",
+      "audienceLearns": "Love was the engine; the cost was becoming the thing they feared.",
+      "emotionalStateStart": "terrible exaltation",
+      "emotionalStateEnd": "hollow tenderness",
+      "startState": {
+        "armor": "ember-lit",
+        "dragon": "absorbed",
+        "kingdom": "kneeling",
+        "sky": "dawn",
+        "warrior_fire": "blazing"
+      },
+      "endState": {
+        "armor": "ember-lit",
+        "dragon": "absorbed",
+        "kingdom": "kneeling",
+        "sky": "blue",
+        "warrior_fire": "blazing-contained"
+      },
+      "causedByPreviousVia": "but",
+      "setupPayoffRefs": ["sp-redmoon"],
+      "durationSec": 42.6
+    }
+  ],
+  "shots": [
+    {
+      "id": "p0",
+      "sceneId": "s0",
+      "index": 0,
+      "durationSec": 8,
+      "subject": "Aziza, the bronze-armored warrior, small and resolute in a canyon of wildfire",
+      "environment": "A towering mountain pass ablaze, cold rain falling through flame, ember and smoke, blood-red moon above",
+      "action": "She walks forward into the wall of wildfire",
+      "cameraFraming": "establishing",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, wide, shallow",
+      "lighting": "volumetric firelight, cold rain backlight, teal-and-amber grade",
+      "emotionalIntention": "committed dread; the point of no return",
+      "temporalProgression": "she advances deeper into the flame as the camera pushes in",
+      "continuityConstraints": [
+        "bronze scale-mail, henna-marked hands, one notched sword",
+        "soot-streaked, rain-wet",
+        "2.39 letterbox, teal+amber grade, fine grain, no text"
+      ],
+      "referenceAssets": ["aziza", "bronze-scale-mail", "notched-sword"],
+      "startStateRef": "armor=clean",
+      "endStateRef": "armor=soot",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": false,
+        "sfx": ["wildfire roar", "rain hiss to steam", "ember crackle"],
+        "silence": false,
+        "note": "Veo native audio OFF; score to the original track"
+      },
+      "model": {
+        "provider": "fal",
+        "modelId": "fal-ai/veo3.1/image-to-video",
+        "rationale": "Veo 3.1 for photoreal fire/rain/atmosphere + motion; image-to-video from a flux keyframe for composition control",
+        "estCostUsd": 3.6,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "photoreal fire + volumetric light",
+        "no warping of the figure",
+        "rain visibly interacts with armor"
+      ],
+      "keyframePrompt": "A multicultural warrior woman (North African / Middle-Eastern / South-Asian, late 20s) in bronze scale-mail with henna-marked hands, small and resolute at the mouth of a towering canyon of wildfire, cold rain sheeting down through the flames, embers streaming, a blood-red moon above, sun-gold obsidian rock",
+      "veoPrompt": "Slow cinematic push-in as the warrior walks forward into the towering wall of wildfire; rain hisses to steam against her bronze armor; embers stream past; volumetric firelight; she does not slow. Photoreal, anamorphic, teal and amber, fine film grain.",
+      "useHeroAsFirstFrame": false
+    },
+    {
+      "id": "p1",
+      "sceneId": "s0",
+      "index": 1,
+      "durationSec": 8,
+      "subject": "Aziza's henna-marked hand tightening on the notched sword",
+      "environment": "Inside the burning pass, firelight raking the blade, ember and rain",
+      "action": "Her hand tightens on the sword hilt as firelight rakes the blade",
+      "cameraFraming": "insert",
+      "cameraMovement": "tracking",
+      "lensIntention": "macro, anamorphic, very shallow",
+      "lighting": "raking firelight, specular on steel, rain",
+      "emotionalIntention": "resolve made physical; the weapon motif",
+      "temporalProgression": "grip tightens, blade catches a flare of firelight",
+      "continuityConstraints": [
+        "bronze vambrace, henna-marked hand",
+        "notched battle-worn sword",
+        "2.39 letterbox, teal+amber grade, fine grain, no text"
+      ],
+      "referenceAssets": ["aziza", "notched-sword", "bronze-scale-mail"],
+      "startStateRef": "armor=soot",
+      "endStateRef": "armor=soot",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": false,
+        "sfx": ["leather creak", "blade ring", "distant fire"],
+        "silence": false,
+        "note": "Veo native audio OFF; score to the original track"
+      },
+      "model": {
+        "provider": "fal",
+        "modelId": "fal-ai/veo3.1/image-to-video",
+        "rationale": "Veo 3.1 macro insert; image-to-video from a flux keyframe to hold the sword motif",
+        "estCostUsd": 3.6,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "photoreal steel + skin",
+        "rain beads and runs",
+        "no extra fingers"
+      ],
+      "keyframePrompt": "Extreme close insert of a henna-marked hand gripping a notched, battle-worn sword, firelight raking the steel, ember and rain in the air, a bronze vambrace at the wrist",
+      "veoPrompt": "Tracking macro: the henna-marked hand tightens on the notched sword hilt, knuckles flexing, a flare of firelight rakes down the blade; rain beads and runs; ember drifts past. Photoreal, shallow anamorphic.",
+      "useHeroAsFirstFrame": false
+    },
+    {
+      "id": "p2",
+      "sceneId": "s1",
+      "index": 2,
+      "durationSec": 8,
+      "subject": "Aziza's scarred, rain-wet face lit by the red moon and distant fire",
+      "environment": "At the scorched kingdom gate under a blood-red moon; far off, a vast reptilian eye opens in the smoke",
+      "action": "She holds her gaze forward as a vast reptilian eye opens in the distant smoke",
+      "cameraFraming": "close-up",
+      "cameraMovement": "push-in",
+      "lensIntention": "85mm-equivalent, anamorphic, very shallow",
+      "lighting": "red-moon key, warm fire rim, rain speculars",
+      "emotionalIntention": "defiant purpose; she does not flinch",
+      "temporalProgression": "a single slow breath; far behind her the dragon's eye opens and glows ember-red",
+      "continuityConstraints": [
+        "same warrior face (hero reference)",
+        "soot-streaked, rain-wet",
+        "2.39 letterbox, teal+amber grade"
+      ],
+      "referenceAssets": ["aziza", "bronze-scale-mail"],
+      "startStateRef": "dragon=alive-unseen",
+      "endStateRef": "dragon=alive-revealed",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": false,
+        "sfx": ["low dragon rumble", "rain", "single heartbeat"],
+        "silence": false,
+        "note": "Veo native audio OFF; score to the original track"
+      },
+      "model": {
+        "provider": "fal",
+        "modelId": "fal-ai/veo3.1/image-to-video",
+        "rationale": "Veo 3.1 for photoreal human micro-expression; image-to-video seeded with the HERO reference still so the face is the canonical Aziza (continuity showcase)",
+        "estCostUsd": 3.6,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "photoreal skin + micro-expression",
+        "identity matches hero reference",
+        "eye reveal reads clearly in the smoke"
+      ],
+      "keyframePrompt": "A multicultural warrior woman (North African / Middle-Eastern / South-Asian, late 20s), scarred and rain-wet face in extreme close-up, lit by a blood-red moon and distant firelight, eyes fixed forward, burned kingdom walls behind her",
+      "veoPrompt": "Slow push-in on her scarred, rain-wet face; she holds her gaze and takes one slow breath; far behind her in the smoke a vast reptilian eye opens and glows ember-red; she does not flinch. Photoreal skin, true micro-expression, anamorphic.",
+      "useHeroAsFirstFrame": true
+    }
+  ],
+  "budget": { "maxUsd": 25, "spentUsd": 0, "requireApproval": false },
+  "qualityAcceptance": [
+    "Hyper-real: convincing on a paused frame AND in motion",
+    "HBO anamorphic 2.39, teal+amber grade, fine grain",
+    "One consistent warrior (Aziza) across every shot",
+    "No superimposed holograms/HUD/overlays — all photoreal",
+    "Score to the original 4:15 track; Veo native audio discarded"
+  ]
+}

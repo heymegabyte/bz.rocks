@@ -79,3 +79,6 @@ public/media/stems/
 
 # MiniMax video generation scratch (clips/frames; finals go to R2)
 .cache/
+# CINEMA MIND film outputs (heavy media — keep manifest source, ignore renders)
+scripts/films/*/preview.mp4
+scripts/films/*/ref/
