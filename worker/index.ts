@@ -2554,6 +2554,60 @@ export default {
         return jsonResponse({ why }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
       }
 
+      // AI "about this drop" album essay — a grounded 2-3 sentence read on the
+      // album's arc + what ties it together, from its name/tagline + track
+      // titles & vibes. Same Workers-AI + KV-cache + fail-soft pattern as
+      // /api/liner, lazily fetched per album card as it scrolls into view.
+      if (url.pathname === '/api/album-essay' && request.method === 'GET') {
+        const albumId = (url.searchParams.get('album') || '').trim();
+        if (!ALBUM_BY_ID.has(albumId)) return jsonResponse({ error: 'unknown_album' }, 404, {}, request);
+        const cacheK = `album-essay:${albumId}#v2`;
+        const cached = await env.COUNTERS.get(cacheK);
+        if (cached)
+          return jsonResponse(
+            { essay: cached, cached: true },
+            200,
+            { 'Cache-Control': 'public, max-age=86400' },
+            request
+          );
+        if (!env.AI) return jsonResponse({ essay: null }, 200, {}, request);
+        if (await rateLimitedCount(env.COUNTERS, ip, 'album-essay', 'minute', 20, 60))
+          return jsonResponse({ essay: null, throttled: true }, 200, {}, request);
+        const album = ALBUM_BY_ID.get(albumId)!;
+        const trackLines = album.trackIds
+          .map(id => TRACK_BY_ID.get(id))
+          .filter((t): t is NonNullable<typeof t> => Boolean(t))
+          .slice(0, 14)
+          .map(t => `${t.title} — ${t.vibe}`)
+          .join('\n');
+        const system =
+          "Write a short 'about this drop' essay for one of bZ's albums, GROUNDED ONLY in the album name, tagline, and its track titles + vibes — capture the album's arc, mood, and what ties it together. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. STRICT: 2-3 sentences, ~55 words max, zero drug references. NEVER invent people, names, dates, or facts — interpret the music, never a made-up backstory. No preamble, no quotation marks, no markdown.";
+        const user = `Album: "${album.name}".\nTagline: ${album.tagline}.\nTracks:\n${trackLines}`;
+        let essay = '';
+        try {
+          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: user }
+            ],
+            max_tokens: 200,
+            temperature: 0.7
+          })) as { response?: string };
+          // The prompt forbids quotation marks, but the model still quotes the
+          // album title mid-sentence — strip ALL double-quotes so no stray " leaks.
+          essay = (out.response || '')
+            .replace(/"/g, '')
+            .trim()
+            .replace(/^'+|'+$/g, '')
+            .trim();
+        } catch {
+          essay = '';
+        }
+        if (essay.length < 20) return jsonResponse({ essay: null }, 200, {}, request);
+        ctx.waitUntil(env.COUNTERS.put(cacheK, essay, { expirationTtl: 2592000 }));
+        return jsonResponse({ essay }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
+      }
+
       if (url.pathname === '/api/ai/chat' && request.method === 'POST') {
         if (!env.AI) return jsonResponse({ error: 'ai_not_configured' }, 503);
         // Two-tier rate limit: 8/min burst + 60/hr sustained per IP.

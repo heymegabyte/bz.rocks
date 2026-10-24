@@ -1556,6 +1556,34 @@ html.is-playing .brand__logo {
   text-transform: uppercase;
   color: var(--ink-mute);
 }
+/* AI "about this drop" album essay — grounded, lazily fetched per album card. */
+.album__drop {
+  margin: 14px 0 4px;
+  padding: 12px 14px;
+  border-left: 2px solid color-mix(in srgb, var(--album-accent, var(--accent)) 50%, transparent);
+  background: color-mix(in srgb, var(--album-accent, var(--accent)) 5%, transparent);
+  border-radius: 0 10px 10px 0;
+}
+.album__drop-eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-accent);
+  margin-bottom: 6px;
+}
+.album__drop-eyebrow em {
+  font-style: normal;
+  opacity: 0.6;
+}
+.album__drop-body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
 
 /* "Listen on" platform link strip — surfaces all configured distribution
    URLs (Spotify, Apple Music, YouTube Music, Tidal, Amazon Music,

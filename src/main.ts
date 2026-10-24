@@ -2282,6 +2282,60 @@ function renderListenOn(album: Album): string {
   return `<div class="album__platforms" role="group" aria-label="Listen on">${preSaveChip}${chips}</div>`;
 }
 
+// ── AI "about this drop" album essay ─────────────────────────────────────────
+// A grounded 2-3 sentence read on each album, lazily fetched per album card as
+// it scrolls into view (so a cold first load never fires 15 generations at
+// once) from /api/album-essay, memoized, fail-soft. KV-cached server-side.
+const albumEssayCache = new Map<string, string>();
+let albumEssayObserver: IntersectionObserver | null = null;
+function loadAlbumEssay(el: HTMLElement, albumId: string): void {
+  const body = el.querySelector('.album__drop-body') as HTMLElement | null;
+  if (!body) return;
+  const memo = albumEssayCache.get(albumId);
+  if (memo !== undefined) {
+    if (memo) {
+      body.textContent = memo;
+      el.hidden = false;
+    }
+    return;
+  }
+  albumEssayCache.set(albumId, ''); // in-flight guard; the real value overwrites
+  void (async () => {
+    try {
+      const r = await fetch(`/api/album-essay?album=${encodeURIComponent(albumId)}`);
+      const d = (await r.json()) as { essay?: string | null };
+      const essay = (d.essay || '').trim();
+      albumEssayCache.set(albumId, essay);
+      if (essay) {
+        body.textContent = essay;
+        el.hidden = false;
+      }
+    } catch {
+      /* fail-soft — the album card simply shows no essay */
+    }
+  })();
+}
+function observeAlbumEssays(host: HTMLElement): void {
+  albumEssayObserver?.disconnect();
+  albumEssayObserver = new IntersectionObserver(
+    (entries, obs) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const card = entry.target as HTMLElement;
+        const drop = card.querySelector<HTMLElement>('.album__drop[data-album-essay]');
+        const albumId = drop?.dataset.albumEssay;
+        if (drop && albumId) loadAlbumEssay(drop, albumId);
+        obs.unobserve(card);
+      }
+    },
+    { rootMargin: '200px' }
+  );
+  // Observe the always-visible album CARD, not the drop: the `.album__drop`
+  // starts `hidden` (display:none), and IntersectionObserver never fires for a
+  // display:none target — so watch the card and reveal its drop on essay load.
+  host.querySelectorAll<HTMLElement>('.album[data-album]').forEach(el => albumEssayObserver!.observe(el));
+}
+
 function renderAlbums(host: HTMLElement) {
   // The scrollable ancestor is now `.rail` (the foot rides the bottom of the
   // scroll flow), not `#albums` itself — preserve the rail's scroll across
@@ -2339,6 +2393,10 @@ function renderAlbums(host: HTMLElement) {
             ${renderListenOn(album)}
           </div>
         </header>
+        <div class="album__drop" data-album-essay="${album.id}" hidden>
+          <span class="album__drop-eyebrow">About this drop <em>· AI</em></span>
+          <p class="album__drop-body"></p>
+        </div>
         <ol class="album__tracks" role="list">
           ${tracks
             .map((t, idx) => {
@@ -2385,6 +2443,7 @@ function renderAlbums(host: HTMLElement) {
     bindAiPlaylist();
     refreshAiPlaylist();
   }
+  observeAlbumEssays(host);
 }
 
 // Batch-hydrate Spotify badges across every track row after render.
