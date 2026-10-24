@@ -2411,7 +2411,7 @@ export default {
         const trackId = (url.searchParams.get('track') || '').trim();
         if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
           return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
-        const cacheK = `liner:${trackId}#v2`;
+        const cacheK = `liner:${trackId}#v3`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2428,13 +2428,13 @@ export default {
         const album = ALBUM_BY_ID.get(track.album);
         // Sung lines only — skip the "# Title" heading + "[Section]" markers so
         // the model grounds on real lyrics, not markdown structure tokens.
-        const lyricSnippet = firstSungLines(track, 8).join(' / ');
+        const lyricSnippet = firstSungLines(track, 14).join(' / ');
         const system =
-          "Write a short 'story behind the song' liner note for bZ's track, GROUNDED ONLY in the provided title, album, vibe, wisdom line, and lyric excerpt — interpret the song's meaning and spirit. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. STRICT: 2-3 sentences, ~55 words max, zero drug references. NEVER invent people, names, places, dates, or biographical events — describe what the song is ABOUT, never a made-up backstory. No preamble, no quotation marks, no markdown. Output only the note.";
+          "Write a short 'story behind the song' liner note for bZ's track, drawing ONLY on the provided title, album, vibe, wisdom line, and lyric excerpt — interpret the song's meaning and spirit. Anchor the note in something CONCRETE + specific to THIS song — a real image, action, metaphor, or turn of phrase from its lyrics or title — NEVER interchangeable abstractions like 'resilience', 'determination', or 'hard-won wisdom' that could describe any track. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. STRICT: 2-3 sentences, ~55 words max, zero drug references. NEVER invent people, names, places, dates, or biographical events — describe what the song is ABOUT, never a made-up backstory. No preamble, no quotation marks, no markdown. Output only the note.";
         const user = `Track: "${track.title}" from the album "${album?.name ?? 'bZ'}".\nVibe: ${track.vibe}.\nWisdom line: ${track.wisdom}.\nLyric excerpt: ${lyricSnippet}`;
         let liner = '';
         try {
-          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+          const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
             messages: [
               { role: 'system', content: system },
               { role: 'user', content: user }
@@ -2461,7 +2461,7 @@ export default {
         const trackId = (url.searchParams.get('track') || '').trim();
         if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
           return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
-        const cacheK = `meaning:${trackId}#v1`;
+        const cacheK = `meaning:${trackId}#v2`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2477,11 +2477,11 @@ export default {
         const album = ALBUM_BY_ID.get(track.album);
         const lyricSnippet = firstSungLines(track, 20).join(' / ');
         const system =
-          "You interpret the MEANING of bZ's track in exactly 3 short beats, GROUNDED ONLY in the provided title, album, vibe, wisdom line, and lyric excerpt. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. Each beat is ONE plain sentence, max ~16 words, naming a real theme/tension/turn the lyrics carry (e.g. a struggle, a prayer, a redemption). STRICT: output EXACTLY 3 lines, one beat per line, zero drug references, NO numbering, NO bullets, NO markdown, NO preamble, NO quotation marks. NEVER invent people, names, places, dates, or biographical events — interpret the words given, never a made-up backstory.";
+          "You interpret the MEANING of bZ's track in exactly 3 short beats, drawing ONLY on the provided title, album, vibe, wisdom line, and lyric excerpt. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. Each beat is ONE plain sentence, max ~16 words, naming a real theme/tension/turn the lyrics carry (e.g. a struggle, a prayer, a redemption). STRICT: output EXACTLY 3 lines, one beat per line, zero drug references, NO numbering, NO bullets, NO markdown, NO preamble, NO quotation marks. NEVER invent people, names, places, dates, or biographical events — interpret the words given, never a made-up backstory.";
         const user = `Track: "${track.title}" from the album "${album?.name ?? 'bZ'}".\nVibe: ${track.vibe}.\nWisdom line: ${track.wisdom}.\nLyric excerpt: ${lyricSnippet}`;
         let points: string[] = [];
         try {
-          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+          const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
             messages: [
               { role: 'system', content: system },
               { role: 'user', content: user }
@@ -2583,7 +2583,7 @@ export default {
           !TRACK_BY_ID.has(toId)
         )
           return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
-        const cacheK = `segue:${fromId}>${toId}#v1`;
+        const cacheK = `segue:${fromId}>${toId}#v2`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2600,11 +2600,11 @@ export default {
         const fromAlbum = ALBUM_BY_ID.get(from.album);
         const toAlbum = ALBUM_BY_ID.get(to.album);
         const system =
-          "You are bZ's DJ explaining a segue — why the NEXT track flows from the CURRENT one, GROUNDED ONLY in the two tracks' titles, albums, vibes, and wisdom lines. Name the real bridge (shared mood, rising/falling energy, a thematic echo). Voice: Newark hustle-gospel, hard but holy. STRICT: ONE sentence, max ~16 words, no preamble, no markdown, no quotation marks, zero drug references. NEVER invent facts; interpret what's given.";
+          "You are bZ's DJ explaining a segue — why the NEXT track flows from the CURRENT one, drawing ONLY on the two tracks' titles, albums, vibes, and wisdom lines. Name the real bridge (shared mood, rising/falling energy, a thematic echo). Voice: Newark hustle-gospel, hard but holy. STRICT: ONE sentence, max ~16 words, no preamble, no markdown, no quotation marks, zero drug references. NEVER invent facts; interpret what's given.";
         const user = `CURRENT: "${from.title}" (${fromAlbum?.name ?? 'bZ'}) — vibe: ${from.vibe}; wisdom: ${from.wisdom}\nNEXT: "${to.title}" (${toAlbum?.name ?? 'bZ'}) — vibe: ${to.vibe}; wisdom: ${to.wisdom}`;
         let why = '';
         try {
-          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+          const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
             messages: [
               { role: 'system', content: system },
               { role: 'user', content: user }
@@ -2631,7 +2631,7 @@ export default {
       if (url.pathname === '/api/album-essay' && request.method === 'GET') {
         const albumId = (url.searchParams.get('album') || '').trim();
         if (!ALBUM_BY_ID.has(albumId)) return jsonResponse({ error: 'unknown_album' }, 404, {}, request);
-        const cacheK = `album-essay:${albumId}#v2`;
+        const cacheK = `album-essay:${albumId}#v4`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2651,11 +2651,11 @@ export default {
           .map(t => `${t.title} — ${t.vibe}`)
           .join('\n');
         const system =
-          "Write a short 'about this drop' essay for one of bZ's albums, GROUNDED ONLY in the album name, tagline, and its track titles + vibes — capture the album's arc, mood, and what ties it together. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. STRICT: 2-3 sentences, ~55 words max, zero drug references. NEVER invent people, names, dates, or facts — interpret the music, never a made-up backstory. No preamble, no quotation marks, no markdown.";
+          "Write a short 'about this drop' essay for one of bZ's albums, drawing ONLY on the album name, tagline, and its track titles + vibes — capture the album's arc, mood, and what ties it together. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. STRICT: 2-3 sentences, ~55 words max, zero drug references. NEVER invent people, names, dates, or facts — interpret the music, never a made-up backstory. Output ONLY the essay prose — never restate or echo these instructions. No preamble, no quotation marks, no markdown.";
         const user = `Album: "${album.name}".\nTagline: ${album.tagline}.\nTracks:\n${trackLines}`;
         let essay = '';
         try {
-          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+          const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
             messages: [
               { role: 'system', content: system },
               { role: 'user', content: user }
@@ -2673,6 +2673,10 @@ export default {
         } catch {
           essay = '';
         }
+        // Safety net: if the model echoed the grounding instruction into the prose
+        // (70B occasionally does), suppress rather than serve the leak — the rephrased
+        // prompt above prevents it; this guarantees a leaked essay is never shown.
+        if (/\b(?:grounded only|drawing only on)\b/i.test(essay)) essay = '';
         if (essay.length < 20) return jsonResponse({ essay: null }, 200, {}, request);
         ctx.waitUntil(env.COUNTERS.put(cacheK, essay, { expirationTtl: 2592000 }));
         return jsonResponse({ essay }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
@@ -2686,7 +2690,7 @@ export default {
         const trackId = (url.searchParams.get('track') || '').trim();
         if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
           return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
-        const cacheK = `similar:${trackId}#v1`;
+        const cacheK = `similar:${trackId}#v2`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2709,7 +2713,7 @@ export default {
         const user = `CURRENT: "${track.title}" (${trackAlbum?.name ?? 'bZ'}) — vibe: ${track.vibe}; wisdom: ${track.wisdom}\n\nCATALOG:\n${catalog}`;
         let similar: Array<{ id: string; why: string }> = [];
         try {
-          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+          const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
             messages: [
               { role: 'system', content: system },
               { role: 'user', content: user }
