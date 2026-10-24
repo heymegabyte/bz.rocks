@@ -638,8 +638,8 @@
       "emotionalIntention": "hard-won first victory; beauty answers perseverance (the women-of-victory motif, synced to the triumphant lyric)",
       "temporalProgression": "he breaks through the fire in triumph; from the embers and golden light a radiant beautiful woman coalesces behind him",
       "continuityConstraints": [
-        "same man (hero reference)",
-        "the woman is a NEW, dignified, radiant multicultural woman — a vision of victory, never exploitative",
+        "same man, in his established BRONZE-AND-LEATHER SCALE ARMOR (never shirtless)",
+        "the woman is a NEW, dignified, radiant multicultural goddess in FLOWING GOLDEN ROBES, fully clothed — a vision of victory, never exploitative",
         "2.39 letterbox, teal+amber grade, fine grain, no text"
       ],
       "referenceAssets": ["darius", "notched-sword"],
@@ -661,13 +661,14 @@
         "dryRun": false
       },
       "qualityConstraints": [
-        "photoreal fire + two photoreal humans",
-        "woman is dignified + radiant, not exploitative",
+        "photoreal fire + two photoreal humans, both fully clothed",
+        "man stays ARMORED (bronze scale), woman is a dignified robed goddess — never exploitative",
         "triumphant, heroic composition"
       ],
-      "keyframePrompt": "A scarred multicultural male warrior bursts through a towering wall of fire, triumphant, notched sword in hand; behind him, from the glowing embers and golden light, a radiant, beautiful multicultural woman appears — luminous, dignified, serene, a vision of victory; volcanic glow beyond",
-      "veoPrompt": "The warrior bursts through the wall of flame in triumph, sword raised; behind him, from the embers and golden light, a radiant beautiful woman appears and the firelight blooms warm around them; a heroic rising crane. Photoreal, two real people, anamorphic, teal and amber.",
-      "useHeroAsFirstFrame": false
+      "keyframePrompt": "A scarred multicultural male warrior in FULL bronze-and-leather scale armor bursts through a towering wall of fire, triumphant, notched sword raised; behind him, from the glowing embers and golden light, a radiant beautiful multicultural woman appears as a goddess-like vision in flowing golden robes, fully clothed, luminous, dignified, serene; volcanic glow beyond",
+      "veoPrompt": "The armored warrior bursts through the wall of flame in triumph, sword raised; behind him, from the embers and golden light, a radiant beautiful woman in flowing golden robes appears as a serene goddess-like vision and the firelight blooms warm around them; a heroic rising crane. Photoreal, two fully-clothed people, anamorphic, teal and amber.",
+      "useHeroAsFirstFrame": false,
+      "negativePrompt": "shirtless, bare chest, bare torso, naked, nudity, bikini, lingerie, underwear, cleavage, cheesecake, glamour model, pin-up, modern clothing"
     }
   ],
   "budget": { "maxUsd": 30, "spentUsd": 0, "requireApproval": false },

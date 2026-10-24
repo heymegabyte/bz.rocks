@@ -135,7 +135,8 @@ async function veoClip(tok, shot, heroFrame) {
           duration: '8s',
           resolution: '1080p',
           aspect_ratio: '16:9',
-          generate_audio: false
+          generate_audio: false,
+          ...(shot.negativePrompt ? { negative_prompt: shot.negativePrompt } : {})
         },
         `veo ${shot.id}`,
         10 * 60 * 1000
