@@ -2499,6 +2499,61 @@ export default {
         return jsonResponse({ picks }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
       }
 
+      // AI segue — "why the next track flows from this one". Grounds a one-line
+      // DJ transition on both tracks (title/album/vibe/wisdom). Same Workers-AI
+      // + KV-cache + fail-soft pattern as /api/liner. Powers the now-playing
+      // "Up next" card. Cheap inference → the autoplay hand-off gets a reason.
+      if (url.pathname === '/api/segue' && request.method === 'GET') {
+        const fromId = (url.searchParams.get('from') || '').trim();
+        const toId = (url.searchParams.get('to') || '').trim();
+        if (
+          !VALID_TRACK_ID.test(fromId) ||
+          !VALID_TRACK_ID.test(toId) ||
+          !TRACK_BY_ID.has(fromId) ||
+          !TRACK_BY_ID.has(toId)
+        )
+          return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
+        const cacheK = `segue:${fromId}>${toId}#v1`;
+        const cached = await env.COUNTERS.get(cacheK);
+        if (cached)
+          return jsonResponse(
+            { why: cached, cached: true },
+            200,
+            { 'Cache-Control': 'public, max-age=86400' },
+            request
+          );
+        if (!env.AI) return jsonResponse({ why: null }, 200, {}, request);
+        if (await rateLimitedCount(env.COUNTERS, ip, 'segue', 'minute', 20, 60))
+          return jsonResponse({ why: null, throttled: true }, 200, {}, request);
+        const from = TRACK_BY_ID.get(fromId)!;
+        const to = TRACK_BY_ID.get(toId)!;
+        const fromAlbum = ALBUM_BY_ID.get(from.album);
+        const toAlbum = ALBUM_BY_ID.get(to.album);
+        const system =
+          "You are bZ's DJ explaining a segue — why the NEXT track flows from the CURRENT one, GROUNDED ONLY in the two tracks' titles, albums, vibes, and wisdom lines. Name the real bridge (shared mood, rising/falling energy, a thematic echo). Voice: Newark hustle-gospel, hard but holy. STRICT: ONE sentence, max ~16 words, no preamble, no markdown, no quotation marks, zero drug references. NEVER invent facts; interpret what's given.";
+        const user = `CURRENT: "${from.title}" (${fromAlbum?.name ?? 'bZ'}) — vibe: ${from.vibe}; wisdom: ${from.wisdom}\nNEXT: "${to.title}" (${toAlbum?.name ?? 'bZ'}) — vibe: ${to.vibe}; wisdom: ${to.wisdom}`;
+        let why = '';
+        try {
+          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: user }
+            ],
+            max_tokens: 90,
+            temperature: 0.7
+          })) as { response?: string };
+          why = (out.response || '')
+            .split(/\r?\n/)[0]!
+            .trim()
+            .replace(/^["']+|["']+$/g, '');
+        } catch {
+          why = '';
+        }
+        if (why.length < 12) return jsonResponse({ why: null }, 200, {}, request);
+        ctx.waitUntil(env.COUNTERS.put(cacheK, why, { expirationTtl: 2592000 }));
+        return jsonResponse({ why }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
+      }
+
       if (url.pathname === '/api/ai/chat' && request.method === 'POST') {
         if (!env.AI) return jsonResponse({ error: 'ai_not_configured' }, 503);
         // Two-tier rate limit: 8/min burst + 60/hr sustained per IP.

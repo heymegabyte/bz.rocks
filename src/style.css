@@ -6835,6 +6835,58 @@ html.is-playing .np-panel.is-open .np-panel__stat strong {
   transform: rotate(45deg);
   opacity: 0.85;
 }
+.np-panel__segue {
+  margin: -4px 0 20px;
+}
+.np-panel__segue-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: color-mix(in srgb, var(--album-accent, var(--accent)) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--album-accent, var(--accent)) 18%, var(--line));
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+.np-panel__segue-btn:hover {
+  border-color: color-mix(in srgb, var(--album-accent, var(--accent)) 45%, transparent);
+  background: color-mix(in srgb, var(--album-accent, var(--accent)) 10%, transparent);
+}
+.np-panel__segue-btn:active {
+  transform: scale(0.99);
+}
+.np-panel__segue-btn:focus-visible {
+  outline: 2px solid var(--ink-accent);
+  outline-offset: 2px;
+}
+.np-panel__segue-title {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.np-panel__segue-title::before {
+  content: '▶ ';
+  color: var(--ink-accent);
+  font-size: 0.7em;
+}
+.np-panel__segue-why {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-style: italic;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--album-accent, var(--accent)) 60%, var(--ink-soft));
+}
+.np-panel__segue-why:empty {
+  display: none;
+}
 .np-panel__section-label {
   font-family: var(--font-mono);
   font-size: 0.6rem;

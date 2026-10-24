@@ -1702,6 +1702,15 @@ function setupShell(root: HTMLElement) {
           <ul class="np-panel__meaning-list" id="npPanelMeaningBody"></ul>
         </div>
 
+        <!-- AI segue — the next track + a grounded one-line "why it flows". -->
+        <div class="np-panel__segue" id="npPanelSegue" hidden>
+          <span class="np-panel__liner-eyebrow">Up next <em>· AI</em></span>
+          <button class="np-panel__segue-btn" id="npPanelSegueBtn" type="button" aria-label="Play the next track">
+            <span class="np-panel__segue-title" id="npPanelSegueTitle"></span>
+            <span class="np-panel__segue-why" id="npPanelSegueWhy"></span>
+          </button>
+        </div>
+
         <!-- Live lyric preview: previous + active + next line. Mirrors the
              karaoke overlay's word-perfect sync via the same activeLyrics
              bundle, but in a static 3-line view inside the modal. -->
@@ -6549,6 +6558,9 @@ function bindUi() {
 
   // Search overlay
   $('#btnSearch')?.addEventListener('click', () => openSearch());
+  $('#npPanelSegueBtn')?.addEventListener('click', () => {
+    if (segueNext) play(segueNext);
+  });
   $('#cmdk')?.addEventListener('click', e => {
     if ((e.target as HTMLElement).id === 'cmdk') closeSearch();
   });
@@ -7929,6 +7941,52 @@ async function loadMeaning(trackId: string | null): Promise<void> {
   }
 }
 
+// ── AI segue — "up next + why it flows" ──────────────────────────────────────
+// The next track in the REAL play order (catalogOrderedTracks, matching
+// nextTrack()) + a grounded one-line transition from /api/segue (Workers AI,
+// KV-cached, fail-soft). The up-next title shows instantly; the AI "why"
+// augments. Hidden while shuffle is on (the flow narrative doesn't hold).
+const segueCache = new Map<string, string>();
+let segueNext: Track | null = null;
+async function loadSegue(trackId: string | null): Promise<void> {
+  const wrap = $('#npPanelSegue') as HTMLElement | null;
+  const titleEl = $('#npPanelSegueTitle');
+  const whyEl = $('#npPanelSegueWhy');
+  if (!wrap || !titleEl || !whyEl) return;
+  segueNext = null;
+  if (!trackId || shuffleOn) {
+    wrap.hidden = true;
+    return;
+  }
+  const order = catalogOrderedTracks();
+  const idx = order.findIndex(t => t.id === trackId);
+  const next = idx >= 0 ? order[(idx + 1) % order.length] : undefined;
+  if (!next || next.id === trackId) {
+    wrap.hidden = true;
+    return;
+  }
+  segueNext = next;
+  titleEl.textContent = next.title;
+  whyEl.textContent = '';
+  wrap.hidden = false;
+  const key = `${trackId}>${next.id}`;
+  const memo = segueCache.get(key);
+  if (memo !== undefined) {
+    whyEl.textContent = memo;
+    return;
+  }
+  try {
+    const r = await fetch(`/api/segue?from=${encodeURIComponent(trackId)}&to=${encodeURIComponent(next.id)}`);
+    const d = (await r.json()) as { why?: string | null };
+    const why = (d.why || '').trim();
+    segueCache.set(key, why);
+    // Only render if this track is still the one on screen.
+    if (currentTrackId === trackId && why) whyEl.textContent = why;
+  } catch {
+    /* fail-soft — the up-next title still shows */
+  }
+}
+
 let npPanelRaf: number | null = null;
 
 function npFormatTime(sec: number): string {
@@ -8071,6 +8129,7 @@ function refreshNpPanel() {
   if (wisdom) wisdom.textContent = track?.wisdom ?? 'Play a track to see its wisdom.';
   void loadLinerNote(track?.id ?? null);
   void loadMeaning(track?.id ?? null);
+  void loadSegue(track?.id ?? null);
 
   // Stat chips — BPM/KEY/PLAYS, hidden when data unavailable
   const bpmChip = $('#npPanelStatBpm') as HTMLElement | null;
