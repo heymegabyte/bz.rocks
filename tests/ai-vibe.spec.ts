@@ -63,4 +63,32 @@ test.describe('AI vibe matcher (/api/vibe + Cmd+K)', () => {
       await expect(page.locator('.cmdk__group--ai')).toHaveCount(0);
     }
   });
+
+  test('"Play as a set" plays the AI picks as an ordered queue', async ({ page }) => {
+    await openPalette(page);
+    const respP = page.waitForResponse(r => r.url().includes('/api/vibe') && r.request().method() === 'GET', {
+      timeout: 30000
+    });
+    await page.locator('#cmdkInput').fill(MOOD);
+    const resp = await respP;
+    const picks = ((await resp.json()) as { picks?: Array<{ id: string; why: string }> }).picks ?? [];
+    test.skip(picks.length < 2, 'need >=2 AI picks to exercise the set queue');
+
+    await expect(page.locator('.cmdk__set-btn')).toBeVisible({ timeout: 10000 });
+    await page.locator('.cmdk__set-btn').click();
+
+    // Search closes and the first pick starts playing.
+    await expect(page.locator('#cmdk')).not.toHaveClass(/is-open/);
+    const title1 = (await page.locator('#transportNpTitle').innerText()).trim();
+    expect(title1.length).toBeGreaterThan(0);
+    expect(title1).not.toBe('Press play');
+
+    // Next walks the custom SET (not catalog order) → a different track.
+    await page.locator('#btnNext').click();
+    await expect(async () => {
+      const title2 = (await page.locator('#transportNpTitle').innerText()).trim();
+      expect(title2.length).toBeGreaterThan(0);
+      expect(title2).not.toBe(title1);
+    }).toPass({ timeout: 5000 });
+  });
 });

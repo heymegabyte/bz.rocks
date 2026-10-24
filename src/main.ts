@@ -98,6 +98,10 @@ let lyricsClickBound = false;
 let currentAlbumFilter: string | null = null;
 let autoplayPromptTrack: Track | null = null;
 let shuffleOn = false;
+// An AI "play as a set" queue. While the current track is part of it, next/prev
+// walk THIS order; stepping outside it (playing any other track) auto-reverts
+// to catalog order. Set by playVibeSet(), never torn down explicitly.
+let customQueue: Track[] | null = null;
 let aiPlaylistExpanded = false;
 let searchOpen = false;
 let searchActiveIdx = 0;
@@ -6587,6 +6591,11 @@ function bindUi() {
     }
   });
   $('#cmdkResults')?.addEventListener('click', e => {
+    // "Play as a set" on the AI vibe picks — ordered playback via customQueue.
+    if ((e.target as HTMLElement).closest('.cmdk__set-btn')) {
+      playVibeSet();
+      return;
+    }
     const item = (e.target as HTMLElement).closest('.cmdk__item') as HTMLElement | null;
     if (!item) return;
     // Content page hit?
@@ -6970,7 +6979,7 @@ function handleEnded() {
   // 'all' loops the full track list at end (default behavior); 'off' still advances
   // but if at the last track and not 'all', stops.
   if (loopMode === 'off') {
-    const order = catalogOrderedTracks();
+    const order = playbackOrder(currentTrackId);
     const idx = order.findIndex(t => t.id === currentTrackId);
     if (idx === order.length - 1) {
       engine.audio.pause();
@@ -7058,6 +7067,13 @@ function closeSmartLinkModal(): void {
   delete document.body.dataset.smartlinkOpen;
 }
 
+// The active play order: a "play as a set" customQueue while the current track
+// belongs to it, else the canonical catalog order. Used by next/prev, the
+// song-end handler, AND the now-playing "Up next" card so they never disagree.
+function playbackOrder(refId: string | null): Track[] {
+  return customQueue && refId && customQueue.some(t => t.id === refId) ? customQueue : catalogOrderedTracks();
+}
+
 function nextTrack(dir: 1 | -1) {
   if (shuffleOn && dir === 1) {
     const others = TRACKS.filter(t => t.id !== currentTrackId);
@@ -7065,10 +7081,7 @@ function nextTrack(dir: 1 | -1) {
     if (next) play(next);
     return;
   }
-  // Walk the catalog in canonical album order so playback is sequential by
-  // default — next flows into the next track of the album, then the next album.
-  // (Aeon's Choice stays a discovery rail; turn on Shuffle for random.)
-  const order = catalogOrderedTracks();
+  const order = playbackOrder(currentTrackId);
   const idx = order.findIndex(t => t.id === currentTrackId);
   const next = order[(idx + dir + order.length) % order.length];
   if (next) play(next);
@@ -7763,7 +7776,7 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
     })
     .join('');
   const aiHtml = ai.length
-    ? `<div class="cmdk__group cmdk__group--ai">AI vibe picks</div>` +
+    ? `<div class="cmdk__group cmdk__group--ai">AI vibe picks<button type="button" class="cmdk__set-btn" aria-label="Play these ${ai.length} tracks as a set">▶ Play as a set</button></div>` +
       ai
         .map((p, j) =>
           trackRowHtml(
@@ -7812,6 +7825,23 @@ function searchCommit() {
 // Fires only when the query reads like a MOOD (multi-word, or the literal
 // filter is thin) so we never run an LLM on a plain title prefix. Literal
 // results already painted; this layers AI-ranked picks on top (ai-first-search).
+// Play the current AI vibe picks as an ordered set — next/prev walk them in
+// order (via customQueue) until the listener steps outside the set. Turns the
+// vibe matcher into a generative playlist with zero new UI surface.
+function playVibeSet(): void {
+  const tracks = searchAiPicks.map(p => p.track);
+  if (!tracks.length) return;
+  customQueue = tracks;
+  if (shuffleOn) {
+    shuffleOn = false;
+    persist(LS_KEYS.shuffle, '0');
+    refreshShuffleBtn();
+  }
+  closeSearch();
+  const first = tracks[0];
+  if (first) play(first);
+}
+
 function maybeVibeSearch(query: string, literal: Track[]) {
   const q = query.trim();
   if (vibeTimer !== null) clearTimeout(vibeTimer);
@@ -7958,7 +7988,7 @@ async function loadSegue(trackId: string | null): Promise<void> {
     wrap.hidden = true;
     return;
   }
-  const order = catalogOrderedTracks();
+  const order = playbackOrder(trackId);
   const idx = order.findIndex(t => t.id === trackId);
   const next = idx >= 0 ? order[(idx + 1) % order.length] : undefined;
   if (!next || next.id === trackId) {
