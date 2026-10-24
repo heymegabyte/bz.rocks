@@ -6805,6 +6805,36 @@ html.is-playing .np-panel.is-open .np-panel__stat strong {
   color: var(--ink-soft);
   margin: 0;
 }
+.np-panel__meaning {
+  margin: -4px 0 20px;
+}
+.np-panel__meaning-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 7px;
+}
+.np-panel__meaning-list li {
+  position: relative;
+  padding-left: 16px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.np-panel__meaning-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--accent);
+  transform: rotate(45deg);
+  opacity: 0.85;
+}
 .np-panel__section-label {
   font-family: var(--font-mono);
   font-size: 0.6rem;

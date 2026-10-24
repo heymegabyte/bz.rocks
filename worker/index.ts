@@ -2382,6 +2382,61 @@ export default {
         return jsonResponse({ liner }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
       }
 
+      // AI lyric deep-dive — "what it's really saying": 3 grounded interpretive
+      // beats per track. Same Workers-AI + KV-cache + fail-soft pattern as
+      // /api/liner, but grounds on MORE sung lines and returns a typed string[]
+      // so the UI can render a list. Cheap inference → a thin surface (a flat
+      // liner note) taken 100 miles further (per ai-abundance-maximalism).
+      if (url.pathname === '/api/meaning' && request.method === 'GET') {
+        const trackId = (url.searchParams.get('track') || '').trim();
+        if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
+          return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
+        const cacheK = `meaning:${trackId}#v1`;
+        const cached = await env.COUNTERS.get(cacheK);
+        if (cached)
+          return jsonResponse(
+            { points: JSON.parse(cached) as string[], cached: true },
+            200,
+            { 'Cache-Control': 'public, max-age=86400' },
+            request
+          );
+        if (!env.AI) return jsonResponse({ points: [] }, 200, {}, request);
+        if (await rateLimitedCount(env.COUNTERS, ip, 'meaning', 'minute', 12, 60))
+          return jsonResponse({ points: [], throttled: true }, 200, {}, request);
+        const track = TRACK_BY_ID.get(trackId)!;
+        const album = ALBUM_BY_ID.get(track.album);
+        const lyricSnippet = firstSungLines(track, 20).join(' / ');
+        const system =
+          "You interpret the MEANING of bZ's track in exactly 3 short beats, GROUNDED ONLY in the provided title, album, vibe, wisdom line, and lyric excerpt. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. Each beat is ONE plain sentence, max ~16 words, naming a real theme/tension/turn the lyrics carry (e.g. a struggle, a prayer, a redemption). STRICT: output EXACTLY 3 lines, one beat per line, zero drug references, NO numbering, NO bullets, NO markdown, NO preamble, NO quotation marks. NEVER invent people, names, places, dates, or biographical events — interpret the words given, never a made-up backstory.";
+        const user = `Track: "${track.title}" from the album "${album?.name ?? 'bZ'}".\nVibe: ${track.vibe}.\nWisdom line: ${track.wisdom}.\nLyric excerpt: ${lyricSnippet}`;
+        let points: string[] = [];
+        try {
+          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: user }
+            ],
+            max_tokens: 220,
+            temperature: 0.7
+          })) as { response?: string };
+          points = (out.response || '')
+            .split(/\r?\n+/)
+            .map(l =>
+              l
+                .replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '')
+                .replace(/^["']+|["']+$/g, '')
+                .trim()
+            )
+            .filter(l => l.length >= 12)
+            .slice(0, 3);
+        } catch {
+          points = [];
+        }
+        if (points.length < 2) return jsonResponse({ points: [] }, 200, {}, request);
+        ctx.waitUntil(env.COUNTERS.put(cacheK, JSON.stringify(points), { expirationTtl: 2592000 }));
+        return jsonResponse({ points }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
+      }
+
       if (url.pathname === '/api/ai/chat' && request.method === 'POST') {
         if (!env.AI) return jsonResponse({ error: 'ai_not_configured' }, 503);
         // Two-tier rate limit: 8/min burst + 60/hr sustained per IP.

@@ -1696,6 +1696,12 @@ function setupShell(root: HTMLElement) {
           <p class="np-panel__liner-body" id="npPanelLinerBody"></p>
         </div>
 
+        <!-- AI lyric deep-dive — 3 grounded interpretive beats, lazily fetched. -->
+        <div class="np-panel__meaning" id="npPanelMeaning" hidden>
+          <span class="np-panel__liner-eyebrow">What it's really saying <em>· AI</em></span>
+          <ul class="np-panel__meaning-list" id="npPanelMeaningBody"></ul>
+        </div>
+
         <!-- Live lyric preview: previous + active + next line. Mirrors the
              karaoke overlay's word-perfect sync via the same activeLyrics
              bundle, but in a static 3-line view inside the modal. -->
@@ -7815,6 +7821,50 @@ async function loadLinerNote(trackId: string | null): Promise<void> {
   }
 }
 
+// ── AI lyric deep-dive — "what it's really saying" ───────────────────────────
+// 3 grounded interpretive beats per track from /api/meaning (Workers AI,
+// KV-cached server-side), memoized client-side, fail-soft. Rendered below the
+// liner note in the now-playing panel.
+const meaningCache = new Map<string, string[]>();
+async function loadMeaning(trackId: string | null): Promise<void> {
+  const wrap = $('#npPanelMeaning') as HTMLElement | null;
+  const listEl = $('#npPanelMeaningBody') as HTMLElement | null;
+  if (!wrap || !listEl) return;
+  if (!trackId) {
+    wrap.hidden = true;
+    return;
+  }
+  const render = (points: string[]): void => {
+    listEl.replaceChildren(
+      ...points.map(p => {
+        const li = document.createElement('li');
+        li.textContent = p;
+        return li;
+      })
+    );
+  };
+  const memo = meaningCache.get(trackId);
+  if (memo !== undefined) {
+    if (memo.length) render(memo);
+    wrap.hidden = memo.length === 0;
+    return;
+  }
+  wrap.hidden = true; // hide until real beats arrive (generation takes ~1-3s cold)
+  try {
+    const r = await fetch(`/api/meaning?track=${encodeURIComponent(trackId)}`);
+    const d = (await r.json()) as { points?: string[] | null };
+    const points = Array.isArray(d.points) ? d.points.filter(p => typeof p === 'string' && p.trim()) : [];
+    meaningCache.set(trackId, points);
+    // Only render if this track is still the one on screen.
+    if (currentTrackId === trackId && points.length) {
+      render(points);
+      wrap.hidden = false;
+    }
+  } catch {
+    /* fail-soft — no deep-dive shown */
+  }
+}
+
 let npPanelRaf: number | null = null;
 
 function npFormatTime(sec: number): string {
@@ -7956,6 +8006,7 @@ function refreshNpPanel() {
   if (title) title.textContent = track?.title ?? 'Press play';
   if (wisdom) wisdom.textContent = track?.wisdom ?? 'Play a track to see its wisdom.';
   void loadLinerNote(track?.id ?? null);
+  void loadMeaning(track?.id ?? null);
 
   // Stat chips — BPM/KEY/PLAYS, hidden when data unavailable
   const bpmChip = $('#npPanelStatBpm') as HTMLElement | null;
