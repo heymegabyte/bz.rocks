@@ -536,16 +536,20 @@ export class Visualizer {
     this.manualCycleStarted = false;
     this.emitMode();
   }
-  cycleMode() {
-    if (!this.manualCycleStarted) {
-      this.mode = MODE_ORDER[0];
-      this.manualCycleStarted = true;
-    } else {
+  cycleMode(keepAuto = false) {
+    if (this.manualCycleStarted || keepAuto) {
       const i = MODE_ORDER.indexOf(this.mode);
       this.mode = MODE_ORDER[(i + 1) % MODE_ORDER.length];
+    } else {
+      this.mode = MODE_ORDER[0];
+      this.manualCycleStarted = true;
     }
-    this.autoCycle = false;
-    this.emitMode();
+    // A click-to-advance on the visualization (keepAuto) skips to the next mode
+    // WITHOUT turning auto-cycle off, so clicking coexists with auto-cycling and
+    // the toggle doesn't flip to manual. Keyboard 'V' / arrows keep the old
+    // behavior (take manual control).
+    if (!keepAuto) this.autoCycle = false;
+    this.emitMode(keepAuto ? 'auto' : 'manual');
   }
   cycleModeReverse() {
     if (!this.manualCycleStarted) {

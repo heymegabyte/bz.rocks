@@ -2292,13 +2292,26 @@ const albumEssayCache = new Map<string, string>();
 let albumEssayObserver: IntersectionObserver | null = null;
 function loadAlbumEssay(el: HTMLElement, albumId: string): void {
   const body = el.querySelector('.album__drop-body') as HTMLElement | null;
+  const toggle = el.querySelector('.album__drop-toggle') as HTMLButtonElement | null;
   if (!body) return;
+  // Reveal the essay collapsed (2-line clamp via CSS); show the "Read more"
+  // toggle ONLY when the clamped text actually overflows.
+  const reveal = (essay: string): void => {
+    if (!essay) return;
+    body.textContent = essay;
+    el.hidden = false;
+    el.classList.remove('album__drop--expanded');
+    if (toggle) {
+      toggle.textContent = 'Read more';
+      toggle.setAttribute('aria-expanded', 'false');
+      requestAnimationFrame(() => {
+        toggle.hidden = body.scrollHeight <= body.clientHeight + 2;
+      });
+    }
+  };
   const memo = albumEssayCache.get(albumId);
   if (memo !== undefined) {
-    if (memo) {
-      body.textContent = memo;
-      el.hidden = false;
-    }
+    if (memo) reveal(memo);
     return;
   }
   albumEssayCache.set(albumId, ''); // in-flight guard; the real value overwrites
@@ -2308,10 +2321,7 @@ function loadAlbumEssay(el: HTMLElement, albumId: string): void {
       const d = (await r.json()) as { essay?: string | null };
       const essay = (d.essay || '').trim();
       albumEssayCache.set(albumId, essay);
-      if (essay) {
-        body.textContent = essay;
-        el.hidden = false;
-      }
+      reveal(essay);
     } catch {
       /* fail-soft — the album card simply shows no essay */
     }
@@ -2398,6 +2408,7 @@ function renderAlbums(host: HTMLElement) {
         <div class="album__drop" data-album-essay="${album.id}" hidden>
           <span class="album__drop-eyebrow">About this drop <em>· AI</em></span>
           <p class="album__drop-body"></p>
+          <button class="album__drop-toggle" type="button" aria-expanded="false" hidden>Read more</button>
         </div>
         <ol class="album__tracks" role="list">
           ${tracks
@@ -5865,6 +5876,22 @@ function bindUi() {
     const on = vizAutoCycle.checked;
     visualizer.setAutoCycle(on);
   });
+  // Click the BARE visualization (the background canvas or the viz hero) to
+  // advance to the next mode — never when a button, HUD, picker, nav, transport,
+  // or any floating control over the viz is clicked. Keeps auto-cycle running.
+  document.addEventListener('click', e => {
+    const t = e.target as HTMLElement | null;
+    if (!t) return;
+    const onVizArea = t === bg || t.id === 'bg' || !!t.closest('.viz');
+    if (!onVizArea) return;
+    if (
+      t.closest(
+        'button, a, input, select, textarea, label, [role="button"], [role="dialog"], [role="menu"], [role="menuitem"], [role="listbox"], [role="option"], [popover], .hud, .viz-picker, .topbar, .transport'
+      )
+    )
+      return;
+    visualizer.cycleMode(true);
+  });
   const dlg = $('#vizPicker') as HTMLElement | null;
   dlg?.addEventListener('toggle', e => {
     const open = (e as ToggleEvent).newState === 'open';
@@ -5963,6 +5990,15 @@ function bindUi() {
     const me = e as MouseEvent;
     if (me.metaKey || me.ctrlKey || me.shiftKey) return;
     const target = e.target as HTMLElement;
+    const dropToggle = target.closest('.album__drop-toggle') as HTMLButtonElement | null;
+    if (dropToggle) {
+      e.preventDefault();
+      const drop = dropToggle.closest('.album__drop');
+      const expanded = drop?.classList.toggle('album__drop--expanded') ?? false;
+      dropToggle.textContent = expanded ? 'Show less' : 'Read more';
+      dropToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      return;
+    }
     const shareTrackBtn = target.closest('[data-share-track]') as HTMLButtonElement | null;
     if (shareTrackBtn) {
       e.preventDefault();
