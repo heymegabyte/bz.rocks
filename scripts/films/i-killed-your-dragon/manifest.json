@@ -2,10 +2,10 @@
   "id": "i-killed-your-dragon",
   "createdAtIso": "2026-10-24T00:00:00Z",
   "brief": {
-    "concept": "Music video for bZ's 'I Killed Your Dragon' — a lone warrior (a MAN, to match the song's masculine energy) endures a trial of fire to overcome the immortal dragon the kingdom could not. A film about PERSEVERANCE, ADAPTABILITY, and SELF-MASTERY: he perseveres through the inferno, adapts to an impossible foe, and masters the beast within — and at each hard-won victory, synced to the triumphant lyrics, a radiant beautiful woman appears (dignified, powerful, never exploitative). Hyper-real, HBO-scale, anamorphic 2.39, teal+amber grade; no superimposed holograms/HUD/overlays — every element photoreal.",
+    "concept": "Music video for bZ's 'I Killed Your Dragon' — a HEROIC STORY OF CONQUERING: a lone warrior (a MAN, matching the song's masculine energy) fights through a brutal war and slays the immortal dragon the kingdom could not. HBO-level, genius production that HIGHLIGHTS grounded ACTION scenes fitting the song — the charge, the climb, the kill — never a montage. Spine: PERSEVERANCE, ADAPTABILITY, SELF-MASTERY. 100% photoreal, indistinguishable from real live-action; anamorphic 2.39, teal+amber grade. Fire ONLY when motivated (the dragon's breath, a burning field) — NEVER fire for no reason. Any women appear GROUNDED and real (standing/walking, NEVER floating or levitating), dignified, never exploitative. No superimposed holograms/HUD/overlays.",
     "durationSec": 254.6,
     "aspectRatio": "2.39:1",
-    "mood": "mythic, driving, heroic-tragic; endurance and grief under a set jaw; opulent and scorched",
+    "mood": "grounded, visceral, heroic; the grit and weight of real battle; hard-won conquest",
     "format": "music-video",
     "song": { "title": "I Killed Your Dragon" }
   },
@@ -666,9 +666,99 @@
         "triumphant, heroic composition"
       ],
       "keyframePrompt": "A scarred multicultural male warrior in FULL bronze-and-leather scale armor bursts through a towering wall of fire, triumphant, notched sword raised; behind him, from the glowing embers and golden light, a radiant beautiful multicultural woman appears as a goddess-like vision in flowing golden robes, fully clothed, luminous, dignified, serene; volcanic glow beyond",
-      "veoPrompt": "A real armored warrior bursts through a real wall of fire and raises his sword, roaring in triumph; behind him a real woman in flowing golden silk rises through the real smoke and firelight as if lifted on a hidden wire-rig with practical pyrotechnics, serene and dignified, fully clothed; a heroic rising crane; real flames and real embers.",
+      "veoPrompt": "A real armored warrior stands atop a rise, chest heaving, and raises his bloodied sword as a ragged army roars below; a real woman in flowing golden robes walks forward through the drifting smoke to stand at his side — grounded and dignified, never floating; cold dawn light, sparse motivated fire from the battlefield behind, not everywhere; a slow heroic push-in.",
       "useHeroAsFirstFrame": false,
       "negativePrompt": "shirtless, bare chest, bare torso, naked, nudity, bikini, lingerie, underwear, cleavage, cheesecake, glamour model, pin-up, modern clothing"
+    },
+    {
+      "id": "a1",
+      "sceneId": "s2",
+      "index": 4,
+      "durationSec": 6,
+      "subject": "Darius charging and cutting down an enemy in the thick of battle",
+      "environment": "A chaotic, muddy battlefield at dusk under a steel-grey overcast sky; rain, grit, distant smoke, almost no fire",
+      "action": "He sprints forward, parries a spear, and cuts down an armored enemy with one brutal diagonal swing",
+      "cameraFraming": "medium",
+      "cameraMovement": "handheld",
+      "lensIntention": "anamorphic 35mm, handheld, visceral",
+      "lighting": "overcast dusk, cold steel-grey, naturalistic",
+      "emotionalIntention": "relentless heroic aggression — conquering through sheer will",
+      "temporalProgression": "mid-charge he parries and strikes down a foe without breaking stride",
+      "continuityConstraints": [
+        "same man (Darius), battered bronze scale armor, notched sword",
+        "grounded, real combat weight",
+        "2.39 letterbox, teal+amber grade, NO gratuitous fire"
+      ],
+      "referenceAssets": ["darius", "notched-sword", "bronze-scale-mail"],
+      "startStateRef": "battle",
+      "endStateRef": "battle",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": false,
+        "sfx": ["battle roar", "clash of steel", "rain and mud"],
+        "silence": false,
+        "note": "native audio discarded; score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for grounded, photoreal combat action (cap-compliant $0.25/s, Brian's subscription)",
+        "estCostUsd": 1.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "grounded, visceral real combat",
+        "real weight + impact",
+        "minimal, motivated fire only — no fire for no reason"
+      ],
+      "veoPrompt": "A battle-hardened warrior in battered bronze scale armor sprints through the chaos of a muddy battlefield at dusk, rain and grit in the air; he parries a spear and cuts down an armored enemy with one brutal diagonal swing of his sword, never breaking stride; grounded, visceral, handheld camera tracking alongside him; overcast steel-grey sky, distant smoke, almost no fire.",
+      "useHeroAsFirstFrame": false
+    },
+    {
+      "id": "a2",
+      "sceneId": "s3",
+      "index": 5,
+      "durationSec": 6,
+      "subject": "Darius driving his sword through the skull of the fallen dragon — the kill",
+      "environment": "Atop a colossal fallen dragon on scorched rock at cold grey dawn; thin smoke, minimal fire",
+      "action": "He drives his sword two-handed down through the dragon's skull and it goes still",
+      "cameraFraming": "wide",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, heroic, grounded",
+      "lighting": "cold grey dawn, naturalistic, thin smoke",
+      "emotionalIntention": "the conquering climax — exhausted, hard-won triumph",
+      "temporalProgression": "he drives the blade down through the skull; the beast shudders and stills beneath him",
+      "continuityConstraints": [
+        "same man (Darius), battered bronze scale armor, notched sword",
+        "grounded real weight + impact, blood and grime",
+        "2.39 letterbox, teal+amber grade, minimal motivated fire"
+      ],
+      "referenceAssets": ["darius", "notched-sword", "the-dragon"],
+      "startStateRef": "dragon=alive-revealed",
+      "endStateRef": "dragon=slain",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": false,
+        "sfx": ["roar", "blade through bone", "the beast falls still"],
+        "silence": false,
+        "note": "native audio discarded; score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for grounded, photoreal conquering climax (cap-compliant $0.25/s, Brian's subscription)",
+        "estCostUsd": 1.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "photoreal, grounded dragon (HotD-grade, not cartoon)",
+        "real impact + weight",
+        "minimal motivated fire — NO floating people, NO fire for no reason"
+      ],
+      "veoPrompt": "A warrior scales the neck of a colossal fallen dragon and, with a roar, drives his sword two-handed down through the beast's skull; the dragon shudders and goes still beneath him; real weight and impact, blood and grime, grounded and visceral; cold grey dawn light, thin smoke rising, minimal fire; a slow push-in on the exhausted, victorious warrior atop the slain beast.",
+      "useHeroAsFirstFrame": false
     }
   ],
   "budget": { "maxUsd": 30, "spentUsd": 0, "requireApproval": false },
@@ -676,7 +766,8 @@
     "Hyper-real: convincing on a paused frame AND in motion",
     "HBO anamorphic 2.39, teal+amber grade, fine grain",
     "Lead is a MAN (matches the song's masculine energy); ONE consistent warrior (Darius) across every shot",
-    "Beautiful multicultural women appear synced to the VICTORIOUS lyric moments — dignified, powerful, never exploitative",
+    "Any women appear GROUNDED (standing/walking, NEVER floating/levitating) at the victorious moments — dignified, powerful, never exploitative",
+    "ACTION highlighted (charge/climb/kill); fire ONLY when motivated, never for no reason",
     "Theme reads: perseverance, adaptability, self-mastery",
     "No superimposed holograms/HUD/overlays — all photoreal; his eyes stay human until the final mastery",
     "Score to the original 4:15 track; Veo native audio discarded"
