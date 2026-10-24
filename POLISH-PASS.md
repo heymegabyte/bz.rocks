@@ -14,7 +14,7 @@ Brian directive 2026-10-24: _"Loop through every single component and screen and
 ## Surfaces (one per fire — mark ✅ when it clears the rubric + is screenshot-verified)
 
 - [x] Homepage hero / masthead — cinematic staggered entrance + breathing accent-glow
-- [ ] Album cards (cover mandala, head-meta, listen-on row, "about this drop" essay)
+- [x] Album cards — cinematic scroll-reveal entrance (covers/hovers/mandala already rich)
 - [ ] Track rows (trackrow, play state, stats)
 - [ ] Transport bar (controls, progress, now-playing mini)
 - [ ] Aeon's Choice / AI playlist rail
@@ -34,6 +34,7 @@ Brian directive 2026-10-24: _"Loop through every single component and screen and
 
 - ✅ Content-page: removed the Print button (killed a `javascript:` CSP smell); gave the press-kit request a gorgeous accent-pill CTA (real mailto behind the "press kit" claim). 2026-10-24.
 - ✅ Homepage hero: cinematic staggered entrance (eyebrow → title → vibe fade-up) + a slow breathing accent-glow on the "PRESS PLAY" title so the idle hero feels alive; all `prefers-reduced-motion`-gated, respecting the pure-white/no-scrim directive. 2026-10-24.
+- ✅ Album cards: pure-CSS scroll-reveal entrance (`animation-timeline: view()`) — each card fades up as it enters the rail, cohesive with the hero; no JS, no FOUC, `@supports` + reduced-motion gated (Firefox/older show static). Covers/title/platform hovers + featured mandala were already rich, so motion was the gap. 2026-10-24.
 
 ## Found during this pass (surface later)
 

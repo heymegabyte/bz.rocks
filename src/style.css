@@ -1434,6 +1434,29 @@ html.is-playing .brand__logo {
 .album:last-child {
   border-bottom: 0;
 }
+/* POLISH-PASS (album cards): cinematic scroll-reveal — each card fades up as it
+   enters the rail, cohesive with the hero entrance. Pure CSS scroll-timeline:
+   no JS, no FOUC (an above-the-fold card resolves straight to its final state),
+   gated on prefers-reduced-motion + @supports so Firefox/older just show static. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .album[data-album] {
+      animation: albumReveal linear both;
+      animation-timeline: view();
+      animation-range: entry 8% entry 46%;
+    }
+  }
+}
+@keyframes albumReveal {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .album__tagline {
   margin: 0 0 4px;
   font-size: 0.78rem;
