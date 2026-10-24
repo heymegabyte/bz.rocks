@@ -1048,7 +1048,7 @@ function renderWatchPage(trackId: string, origin: string): string {
  * KV play/share counters plus catalog totals. Served at /stats and cached 300s
  * at the edge so the ~252 KV reads per render amortize to ~$0.
  */
-async function renderStatsPage(env: Env, origin: string): Promise<string> {
+async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext): Promise<string> {
   const rows: Array<{
     id: string;
     title: string;
@@ -1059,14 +1059,29 @@ async function renderStatsPage(env: Env, origin: string): Promise<string> {
   }> = [];
   let totalPlays = 0;
   let totalShares = 0;
-  for (const [id, track] of TRACK_BY_ID) {
-    const [p, s] = await Promise.all([
-      readCount(env.COUNTERS, `play:${id}`),
-      readCount(env.COUNTERS, `share:${id}`)
-    ]);
+  // Read all per-track counters in PARALLEL (batched to stay well under the
+  // subrequest cap) instead of sequentially — the old serial loop over 168
+  // tracks × 2 KV reads made a cold /stats render take tens of seconds.
+  const ids = [...TRACK_BY_ID.keys()];
+  const CHUNK = 60;
+  const counts: Array<{ id: string; p: number; s: number }> = [];
+  for (let i = 0; i < ids.length; i += CHUNK) {
+    const batch = await Promise.all(
+      ids.slice(i, i + CHUNK).map(async id => {
+        const [p, s] = await Promise.all([
+          readCount(env.COUNTERS, `play:${id}`),
+          readCount(env.COUNTERS, `share:${id}`)
+        ]);
+        return { id, p, s };
+      })
+    );
+    counts.push(...batch);
+  }
+  for (const { id, p, s } of counts) {
     totalPlays += p;
     totalShares += s;
     if (p || s) {
+      const track = TRACK_BY_ID.get(id)!;
       const album = ALBUM_BY_ID.get(track.album);
       rows.push({
         id,
@@ -1082,6 +1097,43 @@ async function renderStatsPage(env: Env, origin: string): Promise<string> {
   const fmt = (n: number) => n.toLocaleString('en-US');
   const albumCount = ALBUMS.length;
   const trackCount = TRACK_BY_ID.size;
+
+  // AI "state of the catalog" read — a grounded 1-2 sentence insight over the
+  // live totals + most-played list. Cache HIT → inject; MISS → generate async
+  // (ctx.waitUntil) + cache for the next load, so the page NEVER blocks on AI.
+  const insight = (await env.COUNTERS.get('stats-insight#v2')) || '';
+  if (!insight && env.AI && top.length >= 3) {
+    const topList = top
+      .slice(0, 6)
+      .map((r, i) => `${i + 1}. ${r.title} (${r.album}) — ${r.plays} plays, ${r.shares} shares`)
+      .join('\n');
+    ctx.waitUntil(
+      (async () => {
+        try {
+          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+            messages: [
+              {
+                role: 'system',
+                content:
+                  "Write a short 'state of the catalog' read for bZ's live-stats page, GROUNDED ONLY in the totals + most-played list given. Name real trends (the leader, a dominant album, momentum). Voice: Newark hustle-gospel, Christian-gangster — hard but holy, confident. STRICT: 1-2 sentences, ~32 words max, no preamble, no markdown, no quotation marks, zero drug references, NEVER invent numbers or names, and LABEL every number correctly — PLAYS, SHARES, TRACKS, and ALBUMS are DIFFERENT metrics (e.g. never call the plays total 'tracks')."
+              },
+              {
+                role: 'user',
+                content: `TOTALS: ${totalPlays} plays, ${totalShares} shares, ${trackCount} tracks, ${albumCount} albums.\nMOST PLAYED:\n${topList}`
+              }
+            ],
+            max_tokens: 120,
+            temperature: 0.7
+          })) as { response?: string };
+          const text = (out.response || '').replace(/"/g, '').trim();
+          // Cache 1h — refreshes with the catalog's momentum, cheap to regen.
+          if (text.length >= 20) await env.COUNTERS.put('stats-insight#v2', text, { expirationTtl: 3600 });
+        } catch {
+          /* fail-soft — no insight this round; the page renders without it */
+        }
+      })()
+    );
+  }
 
   const topRows = top.length
     ? top
@@ -1137,6 +1189,8 @@ async function renderStatsPage(env: Env, origin: string): Promise<string> {
   .top .cta { text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:.72rem; text-transform:uppercase; letter-spacing:.18em; border:1px solid var(--line2); border-radius:999px; padding:8px 14px; color:var(--ink); }
   .hero { padding:64px 0 24px; text-align:center; }
   .hero .eyebrow { font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.32em; text-transform:uppercase; color:var(--accent); }
+  .hero .ai-read { margin:18px auto 0; max-width:58ch; font-family:'Sora',sans-serif; font-size:1.04rem; line-height:1.5; color:#9fb0cf; font-style:italic; }
+  .hero .ai-read em { font-style:normal; font-family:'JetBrains Mono',monospace; font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); opacity:.75; margin-left:4px; }
   .hero h1 { font-size:clamp(2.2rem,7vw,3.6rem); line-height:1.02; margin:.35em 0 .2em; font-weight:900; letter-spacing:-.02em; text-wrap:balance; }
   .hero p { color:var(--mute); max-width:52ch; margin:0 auto; line-height:1.55; }
   .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:40px 0; }
@@ -1168,6 +1222,7 @@ async function renderStatsPage(env: Env, origin: string): Promise<string> {
       <div class="eyebrow">By the numbers</div>
       <h1>The catalog, live.</h1>
       <p>Every play and share below is counted at the edge in real time. Newark hustle-gospel — written, produced, and engineered by bZ.</p>
+      ${insight ? `<p class="ai-read">${escapeHtmlAttr(insight)} <em>· AI read</em></p>` : ''}
     </header>
     <section class="grid" aria-label="Catalog totals">
       <div class="card"><div class="n">${fmt(totalPlays)}</div><div class="l">Plays</div></div>
@@ -3170,7 +3225,7 @@ export default {
       const cacheKey = new Request(`${url.origin}/stats#v1`, { method: 'GET' });
       const hit = await edge.match(cacheKey);
       if (hit) return hit;
-      const html = await renderStatsPage(env, url.origin);
+      const html = await renderStatsPage(env, url.origin, ctx);
       const resp = new Response(html, {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
