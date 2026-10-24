@@ -2,36 +2,33 @@
   "id": "i-killed-your-dragon",
   "createdAtIso": "2026-10-24T00:00:00Z",
   "brief": {
-    "concept": "Music video for bZ's 'I Killed Your Dragon' — a lone multicultural warrior crosses a burning mythic kingdom to slay the immortal dragon its empire was built on, and in the ashes inherits the beast's fire, becoming the very terror she destroyed. Hyper-real, HBO-scale, anamorphic 2.39, teal+amber grade; the woman is the dignified, powerful through-line. No superimposed holograms/HUD/overlays — every element photoreal.",
+    "concept": "Music video for bZ's 'I Killed Your Dragon' — a lone warrior (a MAN, to match the song's masculine energy) endures a trial of fire to overcome the immortal dragon the kingdom could not. A film about PERSEVERANCE, ADAPTABILITY, and SELF-MASTERY: he perseveres through the inferno, adapts to an impossible foe, and masters the beast within — and at each hard-won victory, synced to the triumphant lyrics, a radiant beautiful woman appears (dignified, powerful, never exploitative). Hyper-real, HBO-scale, anamorphic 2.39, teal+amber grade; no superimposed holograms/HUD/overlays — every element photoreal.",
     "durationSec": 254.6,
     "aspectRatio": "2.39:1",
-    "mood": "mythic, fervent, tragic-triumphant; grief under fury; opulent and scorched",
+    "mood": "mythic, driving, heroic-tragic; endurance and grief under a set jaw; opulent and scorched",
     "format": "music-video",
     "song": { "title": "I Killed Your Dragon" }
   },
-  "logline": "A lone warrior crosses a burning kingdom to slay the immortal dragon its empire was built on — and in the ashes inherits its fire, becoming the very terror she destroyed.",
-  "synopsis": "Aziza walks alone into a wildfire pass toward a kingdom the dragon has terrorized for generations. The people swear the beast cannot die; she climbs its spine over a molten valley and drives her one notched sword through its skull. But as it falls she sees the truth — the dragon was the empire's foundation, its guardian and its curse — and its surviving fire takes root in her. She rises transformed, ember-eyed and feared, the sky finally turning from blood-red to blue. She did it for the very 'you' who now kneels in terror of her.",
+  "logline": "A lone warrior endures a trial of fire to master the immortal beast — and himself — and at every hard-won triumph, beauty answers his perseverance.",
+  "synopsis": "Darius walks alone into a wildfire pass toward a kingdom the dragon has terrorized for generations. The people swear the beast cannot die; he perseveres through the inferno, adapts where brute force fails, and climbs its spine over a molten valley to drive his one notched sword through its skull. At each hard-won victory — synced to the triumphant lyrics — a radiant beautiful woman appears, beauty answering his will. But as the beast falls he sees the harder test is within: mastery and monstrosity look alike, and its surviving fire takes root in him. He masters the fire instead of being consumed, rising formidable as the sky turns from blood-red to blue. He endured it all to become who he needed to be.",
   "characters": [
     {
-      "id": "aziza",
-      "name": "Aziza",
-      "description": "A multicultural warrior woman — North African / Middle-Eastern / South-Asian features, late 20s — in bronze scale-mail with henna-marked hands, carrying one notched sword. Dignified and powerful, grief held under fury.",
+      "id": "darius",
+      "name": "Darius",
+      "description": "A multicultural warrior man — North African / Middle-Eastern / South-Asian features, early 30s — scarred and battle-worn, in bronze-and-leather scale armor, carrying one notched sword. Dignified and powerful; endurance and grief under a set jaw.",
       "state": { "armor": "clean", "warrior_fire": "none" },
-      "externalGoal": "Slay the immortal dragon that terrorizes the kingdom",
-      "internalNeed": "To be the savior no one else would be — to matter, to avenge the one she lost",
-      "contradiction": "To kill the monster she must become monstrous — she inherits its fire",
-      "voice": "Silent and resolute; speaks only in action; fury over grief",
-      "vulnerabilities": [
-        "grief for the one she lost",
-        "rage makes her reckless"
-      ],
+      "externalGoal": "Slay the immortal dragon — overcome the great obstacle that has beaten everyone before him",
+      "internalNeed": "To master himself — to persevere and adapt rather than break, and become who he needs to be",
+      "contradiction": "The only way through is to become as relentless and formidable as the beast — self-mastery that risks becoming monstrous",
+      "voice": "Silent, enduring, adaptive; speaks only in action",
+      "vulnerabilities": ["exhaustion and grief", "the temptation to quit"],
       "blindSpots": [
-        "cannot see that the dragon sustains the empire",
-        "cannot see herself becoming the new terror"
+        "that mastery and monstrosity can look alike",
+        "that becoming formidable carries a cost"
       ],
       "relationships": {
-        "the-dragon": "the beast she hunts",
-        "red-moon-kingdom": "the empire that doubted her and whose power rests on the dragon"
+        "the-dragon": "the great obstacle and the beast within he must master",
+        "red-moon-kingdom": "the kingdom that doubted he could endure"
       }
     }
   ],
@@ -66,7 +63,7 @@
     {
       "id": "notched-sword",
       "name": "The Notched Sword",
-      "description": "A single notched, battle-worn sword — her only weapon; later alight with the dragon's own fire.",
+      "description": "A single notched, battle-worn sword — his only weapon; later alight with the dragon's own fire.",
       "state": { "blade": "steel" }
     },
     {
@@ -79,8 +76,8 @@
   "wardrobe": [
     {
       "id": "bronze-scale-mail",
-      "name": "Bronze Scale-Mail",
-      "description": "Bronze scale-mail armor over henna-marked leather and a travel-worn cloak; scorches and ember-light accumulate across the film.",
+      "name": "Bronze Scale Armor",
+      "description": "Bronze-and-leather scale armor over a travel-worn cloak; scorches and ember-light accumulate across the film.",
       "state": { "condition": "clean" }
     }
   ],
@@ -90,17 +87,17 @@
       "detail": "The warrior's single notched sword",
       "setupSceneId": "s0",
       "payoffSceneId": "s7",
-      "initialMeaning": "Her only, fragile weapon against an immortal beast",
-      "finalMeaning": "Alight with the dragon's own fire as she is crowned by terror",
+      "initialMeaning": "His only, fragile weapon against an immortal beast",
+      "finalMeaning": "Alight with the dragon's own fire as he masters it",
       "isMotif": true
     },
     {
       "id": "sp-fire",
-      "detail": "The wildfire she walks through",
+      "detail": "The wildfire he walks through",
       "setupSceneId": "s0",
       "payoffSceneId": "s7",
-      "initialMeaning": "The enemy element, the obstacle in her path",
-      "finalMeaning": "The fire is now inside her — she has become it",
+      "initialMeaning": "The enemy element, the obstacle in his path",
+      "finalMeaning": "The fire is now his to command — mastered, not consumed",
       "isMotif": true
     },
     {
@@ -109,43 +106,51 @@
       "setupSceneId": "s1",
       "payoffSceneId": "s8",
       "initialMeaning": "Omen of the dragon's terror",
-      "finalMeaning": "The sky finally turns blue — the old terror gone, replaced by her",
+      "finalMeaning": "The sky finally turns blue — the trial endured, the man transformed",
+      "isMotif": true
+    },
+    {
+      "id": "sp-muse",
+      "detail": "A radiant beautiful woman appears at each moment of victory",
+      "setupSceneId": "s2",
+      "payoffSceneId": "s7",
+      "initialMeaning": "The first radiant vision that answers his perseverance",
+      "finalMeaning": "Triumph fully manifest — beauty crowning his hard-won self-mastery",
       "isMotif": true
     }
   ],
   "emotionalTrajectory": [
     "grief-hardened resolve",
-    "committed dread",
-    "defiant purpose",
+    "enduring dread",
     "ferocious certainty",
+    "adaptive fury",
     "savage grief",
-    "stunned stillness",
-    "triumphant release",
+    "hard-won triumph",
     "cold doubt",
-    "terrible exaltation",
-    "hollow tenderness"
+    "mastered exaltation",
+    "earned peace"
   ],
   "scenes": [
     {
       "id": "s0",
       "index": 0,
       "title": "Through the Wildfire",
-      "narrativePurpose": "Establish the warrior choosing to enter the dragon's domain alone.",
-      "protagonist": "aziza",
-      "objective": "Aziza must cross the burning pass to reach the dragon everyone fears.",
+      "narrativePurpose": "Establish the man choosing to endure the trial of fire alone — perseverance.",
+      "protagonist": "darius",
+      "objective": "Darius must cross the burning pass to reach the dragon everyone fears.",
       "opposition": "A wall of wildfire, choking smoke, and a mountain shaking underfoot.",
       "visibleActions": [
         {
-          "subject": "aziza",
-          "action": "walks straight into a towering wall of wildfire as rain hisses off her bronze armor",
+          "subject": "darius",
+          "action": "walks straight into a towering wall of wildfire as rain hisses off his bronze armor",
           "objectInteraction": "grips the notched sword",
-          "subtext": "she refuses to wait for a savior"
+          "subtext": "he will endure what broke everyone before him"
         }
       ],
-      "decision": "She steps into the flame instead of turning back.",
-      "change": "She crosses from the safe world into the dragon's domain.",
-      "consequence": "The kingdom's whisper — 'the dragon's not dead' — reaches her and hardens her resolve.",
-      "audienceLearns": "She is alone, armored in fury, hunting a monster everyone else fled.",
+      "decision": "He steps into the flame instead of turning back.",
+      "change": "He crosses from the safe world into the dragon's domain.",
+      "consequence": "The kingdom's whisper — 'the dragon's not dead' — reaches him and hardens his resolve.",
+      "audienceLearns": "He is alone and will endure the fire everyone else fled — perseverance made flesh.",
       "emotionalStateStart": "grief-hardened resolve",
       "emotionalStateEnd": "committed dread",
       "startState": {
@@ -170,21 +175,21 @@
       "id": "s1",
       "index": 1,
       "title": "The Whispering Kingdom",
-      "narrativePurpose": "The kingdom's fear reveals the dragon is believed immortal; the beast shows itself.",
-      "protagonist": "aziza",
-      "objective": "Aziza must find the lair as the walled kingdom warns her the dragon cannot die.",
+      "narrativePurpose": "The obstacle is called immortal; he adapts rather than despair; the beast shows itself.",
+      "protagonist": "darius",
+      "objective": "Darius must find the lair as the walled kingdom warns him the dragon cannot die.",
       "opposition": "The kingdom's despair and the sense that the beast is immortal.",
       "visibleActions": [
         {
-          "subject": "aziza",
-          "action": "presses a henna-marked hand to the scorched city gate as the blood-red moon rises",
-          "subtext": "the whole kingdom is the dragon's prisoner"
+          "subject": "darius",
+          "action": "presses a scarred hand to the scorched city gate as the blood-red moon rises",
+          "subtext": "where others gave up, he looks for the way through"
         }
       ],
-      "decision": "She turns from the cowering gates toward the volcanic glow beyond.",
-      "change": "She rejects the kingdom's despair and fixes on the lair.",
-      "consequence": "The molten glow becomes her path; the beast stirs, sensing her.",
-      "audienceLearns": "The dragon is the empire's terror and its secret foundation.",
+      "decision": "He turns from the cowering gates toward the volcanic glow beyond.",
+      "change": "He rejects the kingdom's despair and fixes on the lair.",
+      "consequence": "The molten glow becomes his path; the beast stirs, sensing him.",
+      "audienceLearns": "The obstacle calls itself immortal; he adapts instead of breaking.",
       "emotionalStateStart": "committed dread",
       "emotionalStateEnd": "defiant purpose",
       "startState": {
@@ -208,22 +213,22 @@
     {
       "id": "s2",
       "index": 2,
-      "title": "War-Cry (Vision of Victory)",
-      "narrativePurpose": "A flash-forward of triumph — her intent made vision — planting the ashes image paid off for real later.",
-      "protagonist": "aziza",
-      "objective": "Aziza must steel herself; she envisions standing victorious in the ashes.",
-      "opposition": "Her own doubt and the beast's overwhelming scale.",
+      "title": "War-Cry (First Victory)",
+      "narrativePurpose": "His first triumphant beat — his will as his weapon; the women-of-victory motif plants as a radiant woman appears on the victorious lyric.",
+      "protagonist": "darius",
+      "objective": "Darius must break through the wall of flame and seize his first victory.",
+      "opposition": "His own doubt and the beast's overwhelming scale.",
       "visibleActions": [
         {
-          "subject": "aziza",
-          "action": "raises the notched sword and roars soundlessly into the firelight as embers swirl around her",
-          "subtext": "she claims a victory she has not yet won"
+          "subject": "darius",
+          "action": "bursts through the wall of flame and raises the notched sword in triumph as a radiant woman appears in the embers",
+          "subtext": "perseverance is answered — beauty crowns the first victory"
         }
       ],
-      "decision": "She commits fully — no retreat, whatever it costs.",
-      "change": "Fear hardens into ferocious certainty.",
-      "consequence": "Her resolve propels her up toward the lair and the beast.",
-      "audienceLearns": "Her will may be as dangerous as the dragon itself.",
+      "decision": "He commits fully — no retreat, whatever it costs.",
+      "change": "Doubt hardens into ferocious certainty as a radiant woman appears in the firelight — the first vision of victory.",
+      "consequence": "His triumph propels him up toward the lair and the beast.",
+      "audienceLearns": "His will is his weapon; triumph summons beauty — perseverance is rewarded.",
       "emotionalStateStart": "defiant purpose",
       "emotionalStateEnd": "ferocious certainty",
       "startState": {
@@ -241,28 +246,28 @@
         "warrior_fire": "none"
       },
       "causedByPreviousVia": "therefore",
-      "setupPayoffRefs": [],
+      "setupPayoffRefs": ["sp-muse"],
       "durationSec": 24
     },
     {
       "id": "s3",
       "index": 3,
       "title": "The Climb and the Kill",
-      "narrativePurpose": "The literal slaying — she climbs the beast over the molten valley and drives the blade home.",
-      "protagonist": "aziza",
-      "objective": "Aziza must reach the dragon's head and drive her blade through it.",
+      "narrativePurpose": "Adaptability and skill — he climbs the beast over the molten valley and drives the blade home where brute force fails.",
+      "protagonist": "darius",
+      "objective": "Darius must reach the dragon's head and drive his blade through it.",
       "opposition": "The beast's wings, claws, and fire, and the molten drop below.",
       "visibleActions": [
         {
-          "subject": "aziza",
-          "action": "climbs the dragon's spine over the molten valley and drives her sword through the crown of its skull",
-          "subtext": "grief and rage spent in a single mortal blow"
+          "subject": "darius",
+          "action": "climbs the dragon's spine over the molten valley and drives his sword through the crown of its skull",
+          "subtext": "skill and will do what strength alone could not"
         }
       ],
-      "decision": "She drives the last blade home instead of retreating.",
+      "decision": "He drives the last blade home instead of retreating.",
       "change": "The immortal beast is mortally struck and begins to fall.",
       "consequence": "The fire goes silent; the beast crashes and the kingdom wakes.",
-      "audienceLearns": "Even the immortal can be killed by one relentless will.",
+      "audienceLearns": "He adapts and masters the climb — skill and will over brute impossibility.",
       "emotionalStateStart": "ferocious certainty",
       "emotionalStateEnd": "savage grief",
       "startState": {
@@ -287,21 +292,21 @@
       "id": "s4",
       "index": 4,
       "title": "The Fall",
-      "narrativePurpose": "The beast collapses; the kingdom wakes to the sound; the cost lands on her.",
-      "protagonist": "aziza",
-      "objective": "Aziza must survive the beast's collapse and witness what she's done.",
+      "narrativePurpose": "Endurance of consequence — the beast collapses; the kingdom wakes; the cost lands on him.",
+      "protagonist": "darius",
+      "objective": "Darius must survive the beast's collapse and witness what he's done.",
       "opposition": "The dragon's death-throes and the shockwave of its fall.",
       "visibleActions": [
         {
-          "subject": "aziza",
+          "subject": "darius",
           "action": "rides the toppling beast down through smoke and lands kneeling in the ash as the shockwave rolls out",
-          "subtext": "the cost lands on her as the silence hits"
+          "subtext": "endurance means staying with the cost, not fleeing it"
         }
       ],
-      "decision": "She stays with the body rather than flee.",
+      "decision": "He stays with the body rather than flee.",
       "change": "The beast is down; the kingdom stirs awake to the sound.",
       "consequence": "The kingdom's people emerge and dawn starts to break.",
-      "audienceLearns": "The deed is done — but the silence is not relief.",
+      "audienceLearns": "Endurance means staying with the cost, not fleeing it.",
       "emotionalStateStart": "savage grief",
       "emotionalStateEnd": "stunned stillness",
       "startState": {
@@ -325,22 +330,22 @@
     {
       "id": "s5",
       "index": 5,
-      "title": "Ashes at the Edge of Dawn",
-      "narrativePurpose": "The vision of s2 made real — she stands in true ashes; the triumph the song declares.",
-      "protagonist": "aziza",
-      "objective": "Aziza must claim the victory aloud over the fallen beast.",
-      "opposition": "Her own grief undercutting the triumph.",
+      "title": "Triumph at the Edge of Dawn",
+      "narrativePurpose": "Hard-won victory made real — he roars in triumph and beautiful women appear around him in the dawn, beauty answering his perseverance.",
+      "protagonist": "darius",
+      "objective": "Darius must claim the victory he endured for.",
+      "opposition": "His own grief undercutting the triumph.",
       "visibleActions": [
         {
-          "subject": "aziza",
-          "action": "stands in the real ashes and shouts a name into the breaking dawn over the dead dragon",
-          "subtext": "the imagined victory is real now, but hollow"
+          "subject": "darius",
+          "action": "stands in the real ashes and roars in triumph as beautiful women appear around him in the dawn light",
+          "subtext": "the victory is real, and beauty answers the man who endured"
         }
       ],
-      "decision": "She lets herself claim the win, naming who it was for.",
-      "change": "Dread gives way to triumphant release.",
-      "consequence": "As she exults, the dragon's surviving spark begins to seek her.",
-      "audienceLearns": "The victory is real — and something of the beast remains.",
+      "decision": "He lets himself claim the win he fought for.",
+      "change": "Dread gives way to hard-won triumph as women of victory appear in the dawn.",
+      "consequence": "As he exults, the dragon's surviving spark begins to seek him.",
+      "audienceLearns": "The victory is real; beauty and triumph answer his perseverance.",
       "emotionalStateStart": "stunned stillness",
       "emotionalStateEnd": "triumphant release",
       "startState": {
@@ -358,28 +363,28 @@
         "warrior_fire": "none"
       },
       "causedByPreviousVia": "because",
-      "setupPayoffRefs": [],
+      "setupPayoffRefs": ["sp-muse"],
       "durationSec": 24
     },
     {
       "id": "s6",
       "index": 6,
       "title": "Guardian or Curse",
-      "narrativePurpose": "The moral turn: the dragon was the empire's foundation; was she hero or destroyer?",
-      "protagonist": "aziza",
-      "objective": "Aziza must reckon with what the kingdom actually was.",
+      "narrativePurpose": "The inner test — mastery and monstrosity look alike; was he hero or destroyer?",
+      "protagonist": "darius",
+      "objective": "Darius must reckon with what the kingdom actually was.",
       "opposition": "The dawning truth that the beast held the empire together.",
       "visibleActions": [
         {
-          "subject": "aziza",
-          "action": "looks from the dead beast to the crumbling kingdom as its dark blood runs down her arm",
-          "subtext": "she realizes she may have broken more than she freed"
+          "subject": "darius",
+          "action": "looks from the dead beast to the crumbling kingdom as its dark blood runs down his arm",
+          "subtext": "the real test was never the dragon — it is within him"
         }
       ],
-      "decision": "She accepts the blood on her — she will not disown the deed.",
-      "change": "Triumph curdles into cold doubt as the beast's spark enters her.",
-      "consequence": "The surviving fire takes root in her; the transformation begins.",
-      "audienceLearns": "The dragon guarded the empire's sins; killing it unmakes the kingdom.",
+      "decision": "He accepts the blood on him — he will not disown the deed.",
+      "change": "Triumph curdles into cold doubt as the beast's spark enters him.",
+      "consequence": "The surviving fire takes root in him; the final test of self-mastery begins.",
+      "audienceLearns": "Mastery and monstrosity can look alike — the real test is within.",
       "emotionalStateStart": "triumphant release",
       "emotionalStateEnd": "cold doubt",
       "startState": {
@@ -403,24 +408,24 @@
     {
       "id": "s7",
       "index": 7,
-      "title": "I Left as the War",
-      "narrativePurpose": "She inherits the dragon's fire and becomes the new terror the kingdom fears.",
-      "protagonist": "aziza",
-      "objective": "Aziza must accept the fire now inside her.",
-      "opposition": "Her own humanity burning away.",
+      "title": "Master of the Fire",
+      "narrativePurpose": "Self-mastery: he masters the dragon's fire instead of being consumed and rises formidable; the women-of-victory motif pays off in full.",
+      "protagonist": "darius",
+      "objective": "Darius must master the fire now inside him instead of being consumed.",
+      "opposition": "The fire's pull to burn away his humanity.",
       "visibleActions": [
         {
-          "subject": "aziza",
-          "action": "rises as embers ignite in her eyes and molten light runs through her veins while the kingdom kneels in fear",
-          "subtext": "she has become the very thing she killed"
+          "subject": "darius",
+          "action": "rises as embers ignite in his eyes and molten light runs through his veins, radiant women of victory around him while the kingdom kneels",
+          "subtext": "he masters the beast within — self-mastery, not surrender"
         }
       ],
-      "decision": "She embraces the fire instead of fighting it.",
-      "change": "The woman becomes a living embodiment of the dragon's fire.",
-      "consequence": "The kingdom now fears her as it once feared the beast.",
-      "audienceLearns": "In killing the monster she inherited it — the terror simply changed form.",
+      "decision": "He masters the fire rather than let it master him.",
+      "change": "The man becomes a living master of the dragon's fire — formidable, not consumed.",
+      "consequence": "The kingdom now reveres and fears the man who endured and mastered it all.",
+      "audienceLearns": "True self-mastery: he masters the fire instead of being consumed — he becomes formidable.",
       "emotionalStateStart": "cold doubt",
-      "emotionalStateEnd": "terrible exaltation",
+      "emotionalStateEnd": "mastered exaltation",
       "startState": {
         "armor": "scorched",
         "dragon": "slain-smoking",
@@ -436,30 +441,30 @@
         "warrior_fire": "blazing"
       },
       "causedByPreviousVia": "therefore",
-      "setupPayoffRefs": ["sp-sword", "sp-fire"],
+      "setupPayoffRefs": ["sp-sword", "sp-fire", "sp-muse"],
       "durationSec": 50
     },
     {
       "id": "s8",
       "index": 8,
       "title": "I Did It for You",
-      "narrativePurpose": "The quiet, ironic coda: the sky clears, but she is the new power — and it was all for the very 'you' who now fears her.",
-      "protagonist": "aziza",
-      "objective": "Aziza must face the kingdom she saved and transformed.",
-      "opposition": "The tenderness of her motive against the terror she now is.",
+      "narrativePurpose": "Earned peace: the sky clears; he endured and mastered himself — and did it to become who he needed to be.",
+      "protagonist": "darius",
+      "objective": "Darius must face the kingdom he saved and the man he's become.",
+      "opposition": "The tenderness of his motive against the formidable figure he now is.",
       "visibleActions": [
         {
-          "subject": "aziza",
+          "subject": "darius",
           "action": "lowers the fire-alight sword and looks over the silent kingdom as the red sky finally turns blue",
-          "subtext": "everything she became, she became for them"
+          "subtext": "everything he endured, he endured to become who he needed to be"
         }
       ],
-      "decision": "She turns to face the kingdom rather than vanish.",
-      "change": "The red moon yields to blue dawn; the old terror is gone, replaced by her.",
-      "consequence": "A new, uneasy peace under a new power — the real quest begins.",
-      "audienceLearns": "Love was the engine; the cost was becoming the thing they feared.",
-      "emotionalStateStart": "terrible exaltation",
-      "emotionalStateEnd": "hollow tenderness",
+      "decision": "He turns to face the kingdom rather than vanish.",
+      "change": "The red moon yields to blue dawn; the trial is endured, the man transformed.",
+      "consequence": "A new, hard-won peace — the real quest, mastery of the self, goes on.",
+      "audienceLearns": "Perseverance, adaptability, self-mastery — he did it to become who he needed to be.",
+      "emotionalStateStart": "mastered exaltation",
+      "emotionalStateEnd": "earned peace",
       "startState": {
         "armor": "ember-lit",
         "dragon": "absorbed",
@@ -485,21 +490,21 @@
       "sceneId": "s0",
       "index": 0,
       "durationSec": 8,
-      "subject": "Aziza, the bronze-armored warrior, small and resolute in a canyon of wildfire",
+      "subject": "Darius, the scarred bronze-armored warrior, small and resolute in a canyon of wildfire",
       "environment": "A towering mountain pass ablaze, cold rain falling through flame, ember and smoke, blood-red moon above",
-      "action": "She walks forward into the wall of wildfire",
+      "action": "He walks forward into the wall of wildfire",
       "cameraFraming": "establishing",
       "cameraMovement": "push-in",
       "lensIntention": "anamorphic 35mm, wide, shallow",
       "lighting": "volumetric firelight, cold rain backlight, teal-and-amber grade",
-      "emotionalIntention": "committed dread; the point of no return",
-      "temporalProgression": "she advances deeper into the flame as the camera pushes in",
+      "emotionalIntention": "committed endurance; the point of no return",
+      "temporalProgression": "he advances deeper into the flame as the camera pushes in",
       "continuityConstraints": [
-        "bronze scale-mail, henna-marked hands, one notched sword",
+        "scarred man, bronze-and-leather scale armor, one notched sword",
         "soot-streaked, rain-wet",
         "2.39 letterbox, teal+amber grade, fine grain, no text"
       ],
-      "referenceAssets": ["aziza", "bronze-scale-mail", "notched-sword"],
+      "referenceAssets": ["darius", "bronze-scale-mail", "notched-sword"],
       "startStateRef": "armor=clean",
       "endStateRef": "armor=soot",
       "transition": "cut",
@@ -522,8 +527,8 @@
         "no warping of the figure",
         "rain visibly interacts with armor"
       ],
-      "keyframePrompt": "A multicultural warrior woman (North African / Middle-Eastern / South-Asian, late 20s) in bronze scale-mail with henna-marked hands, small and resolute at the mouth of a towering canyon of wildfire, cold rain sheeting down through the flames, embers streaming, a blood-red moon above, sun-gold obsidian rock",
-      "veoPrompt": "Slow cinematic push-in as the warrior walks forward into the towering wall of wildfire; rain hisses to steam against her bronze armor; embers stream past; volumetric firelight; she does not slow. Photoreal, anamorphic, teal and amber, fine film grain.",
+      "keyframePrompt": "A scarred multicultural male warrior (North African / Middle-Eastern / South-Asian, early 30s) in bronze-and-leather scale armor, one notched sword in hand, small and resolute at the mouth of a towering canyon of wildfire, cold rain sheeting down through the flames, embers streaming, a blood-red moon above, sun-gold obsidian rock",
+      "veoPrompt": "Slow cinematic push-in as the warrior walks forward into the towering wall of wildfire; rain hisses to steam against his bronze armor; embers stream past; volumetric firelight; he does not slow. Photoreal, anamorphic, teal and amber, fine film grain.",
       "useHeroAsFirstFrame": false
     },
     {
@@ -531,9 +536,9 @@
       "sceneId": "s0",
       "index": 1,
       "durationSec": 8,
-      "subject": "Aziza's henna-marked hand tightening on the notched sword",
+      "subject": "Darius's scarred hand tightening on the notched sword",
       "environment": "Inside the burning pass, firelight raking the blade, ember and rain",
-      "action": "Her hand tightens on the sword hilt as firelight rakes the blade",
+      "action": "His hand tightens on the sword hilt as firelight rakes the blade",
       "cameraFraming": "insert",
       "cameraMovement": "tracking",
       "lensIntention": "macro, anamorphic, very shallow",
@@ -541,11 +546,11 @@
       "emotionalIntention": "resolve made physical; the weapon motif",
       "temporalProgression": "grip tightens, blade catches a flare of firelight",
       "continuityConstraints": [
-        "bronze vambrace, henna-marked hand",
+        "scarred, battle-worn man's hand, bronze vambrace",
         "notched battle-worn sword",
         "2.39 letterbox, teal+amber grade, fine grain, no text"
       ],
-      "referenceAssets": ["aziza", "notched-sword", "bronze-scale-mail"],
+      "referenceAssets": ["darius", "notched-sword", "bronze-scale-mail"],
       "startStateRef": "armor=soot",
       "endStateRef": "armor=soot",
       "transition": "cut",
@@ -568,8 +573,8 @@
         "rain beads and runs",
         "no extra fingers"
       ],
-      "keyframePrompt": "Extreme close insert of a henna-marked hand gripping a notched, battle-worn sword, firelight raking the steel, ember and rain in the air, a bronze vambrace at the wrist",
-      "veoPrompt": "Tracking macro: the henna-marked hand tightens on the notched sword hilt, knuckles flexing, a flare of firelight rakes down the blade; rain beads and runs; ember drifts past. Photoreal, shallow anamorphic.",
+      "keyframePrompt": "Extreme close insert of a scarred, battle-worn man's hand gripping a notched, battle-worn sword, firelight raking the steel, ember and rain in the air, a bronze vambrace at the wrist",
+      "veoPrompt": "Tracking macro: the scarred man's hand tightens on the notched sword hilt, knuckles flexing, a flare of firelight rakes down the blade; rain beads and runs; ember drifts past. Photoreal, shallow anamorphic.",
       "useHeroAsFirstFrame": false
     },
     {
@@ -577,54 +582,102 @@
       "sceneId": "s1",
       "index": 2,
       "durationSec": 8,
-      "subject": "Aziza's scarred, rain-wet face lit by the red moon and distant fire",
-      "environment": "At the scorched kingdom gate under a blood-red moon; far off, a vast reptilian eye opens in the smoke",
-      "action": "She holds her gaze forward as a vast reptilian eye opens in the distant smoke",
+      "subject": "Darius's scarred, rain-wet face lit by the red moon and distant fire",
+      "environment": "At the scorched kingdom gate under a blood-red moon; far behind him, deep in the smoke, the faint ember-glow of something immense",
+      "action": "He holds his gaze forward, unflinching, rain running down his face",
       "cameraFraming": "close-up",
       "cameraMovement": "push-in",
       "lensIntention": "85mm-equivalent, anamorphic, very shallow",
       "lighting": "red-moon key, warm fire rim, rain speculars",
-      "emotionalIntention": "defiant purpose; she does not flinch",
-      "temporalProgression": "a single slow breath; far behind her the dragon's eye opens and glows ember-red",
+      "emotionalIntention": "self-mastery under pressure; he does not flinch",
+      "temporalProgression": "one slow breath; far behind him, deep in the smoke, an immense ember-glow swells; his eyes stay human",
       "continuityConstraints": [
-        "same warrior face (hero reference)",
+        "scarred man's face, human eyes, set jaw",
         "soot-streaked, rain-wet",
         "2.39 letterbox, teal+amber grade"
       ],
-      "referenceAssets": ["aziza", "bronze-scale-mail"],
+      "referenceAssets": ["darius", "bronze-scale-mail"],
       "startStateRef": "dragon=alive-unseen",
       "endStateRef": "dragon=alive-revealed",
       "transition": "cut",
       "audio": {
         "dialogue": false,
         "music": false,
-        "sfx": ["low dragon rumble", "rain", "single heartbeat"],
+        "sfx": ["low distant rumble", "rain", "single heartbeat"],
         "silence": false,
         "note": "Veo native audio OFF; score to the original track"
       },
       "model": {
         "provider": "fal",
         "modelId": "fal-ai/veo3.1/image-to-video",
-        "rationale": "Veo 3.1 for photoreal human micro-expression; image-to-video seeded with the HERO reference still so the face is the canonical Aziza (continuity showcase)",
+        "rationale": "Veo 3.1 for photoreal human micro-expression; image-to-video from a dedicated CLOSE-UP flux keyframe of Darius (not the full-body hero). The threat is a DISTANT ember-glow in the smoke — no creature-eye near the face (avoids Veo's human/creature safety refusal).",
         "estCostUsd": 3.6,
         "dryRun": false
       },
       "qualityConstraints": [
         "photoreal skin + micro-expression",
-        "identity matches hero reference",
-        "eye reveal reads clearly in the smoke"
+        "his eyes remain fully human",
+        "the distant ember-glow reads as a far-off threat, never on his face"
       ],
-      "keyframePrompt": "A multicultural warrior woman (North African / Middle-Eastern / South-Asian, late 20s), scarred and rain-wet face in extreme close-up, lit by a blood-red moon and distant firelight, eyes fixed forward, burned kingdom walls behind her",
-      "veoPrompt": "Slow push-in on her scarred, rain-wet face; she holds her gaze and takes one slow breath; far behind her in the smoke a vast reptilian eye opens and glows ember-red; she does not flinch. Photoreal skin, true micro-expression, anamorphic.",
-      "useHeroAsFirstFrame": true
+      "keyframePrompt": "A scarred multicultural male warrior (North African / Middle-Eastern / South-Asian, early 30s), rain-wet face in extreme close-up, jaw set, human eyes fixed forward, lit by a blood-red moon and distant firelight; far behind him, deep in the smoke, a faint immense ember-glow",
+      "veoPrompt": "Slow push-in on his scarred, rain-wet face; he holds his gaze and takes one slow breath; far behind him, deep in the background smoke, an immense ember-glow swells; he does not flinch. Photoreal skin, true micro-expression, anamorphic, teal and amber.",
+      "useHeroAsFirstFrame": false
+    },
+    {
+      "id": "p3",
+      "sceneId": "s2",
+      "index": 3,
+      "durationSec": 8,
+      "subject": "Darius bursting through the wall of flame in triumph as a radiant beautiful woman appears",
+      "environment": "The breached wall of wildfire, embers and golden light blooming; the volcanic glow beyond",
+      "action": "He bursts through the wall of flame as a radiant woman appears in the embers behind him",
+      "cameraFraming": "wide",
+      "cameraMovement": "crane",
+      "lensIntention": "anamorphic 35mm, heroic low angle, shallow",
+      "lighting": "triumphant firelight, golden ember bloom, the woman luminous and warm",
+      "emotionalIntention": "hard-won first victory; beauty answers perseverance (the women-of-victory motif, synced to the triumphant lyric)",
+      "temporalProgression": "he breaks through the fire in triumph; from the embers and golden light a radiant beautiful woman coalesces behind him",
+      "continuityConstraints": [
+        "same man (hero reference)",
+        "the woman is a NEW, dignified, radiant multicultural woman — a vision of victory, never exploitative",
+        "2.39 letterbox, teal+amber grade, fine grain, no text"
+      ],
+      "referenceAssets": ["darius", "notched-sword"],
+      "startStateRef": "dragon=alive-revealed",
+      "endStateRef": "dragon=alive-revealed",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": false,
+        "sfx": ["fire whoosh", "triumphant swell", "ember roar"],
+        "silence": false,
+        "note": "Veo native audio OFF; score to the original track — this cut lands on the first triumphant lyric"
+      },
+      "model": {
+        "provider": "fal",
+        "modelId": "fal-ai/veo3.1/image-to-video",
+        "rationale": "Veo 3.1 heroic victory beat; image-to-video from a flux keyframe staging the man's triumph + the radiant woman appearing (demonstrates the woman-on-victory sync)",
+        "estCostUsd": 3.6,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "photoreal fire + two photoreal humans",
+        "woman is dignified + radiant, not exploitative",
+        "triumphant, heroic composition"
+      ],
+      "keyframePrompt": "A scarred multicultural male warrior bursts through a towering wall of fire, triumphant, notched sword in hand; behind him, from the glowing embers and golden light, a radiant, beautiful multicultural woman appears — luminous, dignified, serene, a vision of victory; volcanic glow beyond",
+      "veoPrompt": "The warrior bursts through the wall of flame in triumph, sword raised; behind him, from the embers and golden light, a radiant beautiful woman appears and the firelight blooms warm around them; a heroic rising crane. Photoreal, two real people, anamorphic, teal and amber.",
+      "useHeroAsFirstFrame": false
     }
   ],
-  "budget": { "maxUsd": 25, "spentUsd": 0, "requireApproval": false },
+  "budget": { "maxUsd": 30, "spentUsd": 0, "requireApproval": false },
   "qualityAcceptance": [
     "Hyper-real: convincing on a paused frame AND in motion",
     "HBO anamorphic 2.39, teal+amber grade, fine grain",
-    "One consistent warrior (Aziza) across every shot",
-    "No superimposed holograms/HUD/overlays — all photoreal",
+    "Lead is a MAN (matches the song's masculine energy); ONE consistent warrior (Darius) across every shot",
+    "Beautiful multicultural women appear synced to the VICTORIOUS lyric moments — dignified, powerful, never exploitative",
+    "Theme reads: perseverance, adaptability, self-mastery",
+    "No superimposed holograms/HUD/overlays — all photoreal; his eyes stay human until the final mastery",
     "Score to the original 4:15 track; Veo native audio discarded"
   ]
 }

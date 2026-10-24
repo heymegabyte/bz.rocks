@@ -258,9 +258,9 @@ async function run() {
   const m = JSON.parse(await readFile(MANIFEST, 'utf8'));
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : m.shots.length;
   const shots = m.shots.slice(0, limit);
-  const isPreview = shots.length < m.shots.length || m.shots.length <= 3;
+  const isFull = process.env.FULL === '1'; // default = preview; set FULL=1 for the full-length film
   log(
-    `${m.id}: ${shots.length}/${m.shots.length} shots ${isPreview ? '(PREVIEW)' : '(FULL)'} · Veo 3.1 via Fal`
+    `${m.id}: ${shots.length}/${m.shots.length} shots ${isFull ? '(FULL)' : '(PREVIEW)'} · Veo 3.1 via Fal`
   );
 
   let clips;
@@ -295,7 +295,7 @@ async function run() {
   log('concatenating (hard cuts)…');
   const reelDur = await concatReel(norms, reel);
 
-  const suffix = isPreview ? '_PREVIEW' : '';
+  const suffix = isFull ? '' : '_PREVIEW';
   const final = path.join(OUT, `${FILM_ID}${suffix}.mp4`);
   log(`scoring (${reelDur.toFixed(1)}s of the track)…`);
   await score(reel, reelDur, final);
