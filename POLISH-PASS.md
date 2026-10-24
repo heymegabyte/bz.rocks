@@ -28,7 +28,7 @@ Brian directive 2026-10-24: _"Loop through every single component and screen and
 - [ ] Video-cinema overlay
 - [ ] Merch cart + checkout + success
 - [ ] Newsletter signup (inline + end-of-list)
-- [ ] Chrome: PWA install banner, autoplay prompt, toasts, 404 / error states
+- [~] Chrome: PWA install banner, autoplay prompt, toasts — PENDING · 404 state ✅ (friendly banner), error states next
 
 ## Done this pass
 
@@ -38,6 +38,8 @@ Brian directive 2026-10-24: _"Loop through every single component and screen and
 - ✅ /stats page: (1) a grounded AI "state of the catalog" read — 1-2 sentences over the live totals + most-played list, generated async (ctx.waitUntil, never blocks) + KV-cached 1h, SSR so it's CRAWLABLE; (2) PERF — the cold render read 336 KV counters SERIALLY (47.8s); batched-parallel now renders in 1.77s. Transport bar reviewed = clean. 2026-10-24.
 - ✅ PERF sweep (last fire's Rec): `/api/stats` had the SAME serial per-track KV loop (polled every 30s by the client + hit by the Aeon SSR) — 9.02s cold. Batched-parallel → 0.88s (~10×). Speeds up Aeon's Choice load + the client re-sync poll. 2026-10-24.
 - ✅ Aeon's Choice rail: fixed the all-"100" score bug — the SSR-fallback (fresh load, before client stats) assigned `1 - i*0.001` (0.999/0.998/… all rounding to 100); now spreads `1 - i*0.05` so picks read 100/95/90/85/80 (ranked gradient) until real `/api/stats` scores load. Also fixed a STALE play-order test (Reckless Grace album track order had drifted: count-what-i-got → now reckless-grace → nobody-beneath-us → luminous-love). Track rows reviewed — already rubric-clean. 2026-10-24.
+
+- ✅ Chrome / 404 state: a **friendly, dismissible 404 banner** instead of silently showing the homepage on a mistyped/retired URL. The worker is authoritative — `TelemetryRewriter` injects `window.__IS_404` (true only when the path matches no SEO route, no file ext, no embed/known-non-SEO route) AND serves a real `404` status while still booting the SPA shell; the client reads that one flag and shows the banner (no client-side route logic to drift). Banner is DOM-built (Trusted-Types-safe), accent-pill styled, `top:112px` so it clears the top-right BPM/KEY HUD, with a one-tap dismiss. E2E 4/4 green (unknown route → banner + dismiss; known routes → never). 2026-10-24.
 
 ## Method per fire
 

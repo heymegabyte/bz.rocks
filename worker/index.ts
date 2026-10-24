@@ -696,7 +696,10 @@ class SeoBodyRewriter {
  * block needs a per-request nonce — track that in citations.md follow-up.
  */
 class TelemetryRewriter {
-  constructor(private env: Env) {}
+  constructor(
+    private env: Env,
+    private is404 = false
+  ) {}
   async element(el: Element) {
     const key = (this.env.POSTHOG_PUBLIC_KEY || '').replace(/[^a-zA-Z0-9_-]/g, '');
     // We don't expose the full Sentry DSN — observability.ts only needs to
@@ -712,7 +715,7 @@ class TelemetryRewriter {
     } catch {
       /* KV blip → client computes its own order */
     }
-    const snippet = `<script>window.__POSTHOG_KEY__=${JSON.stringify(key)};window.__SENTRY_DSN__=${JSON.stringify(sentryEnabled ? 'configured' : '')};window.__AEON_SSR=${aeon};</script>`;
+    const snippet = `<script>window.__POSTHOG_KEY__=${JSON.stringify(key)};window.__SENTRY_DSN__=${JSON.stringify(sentryEnabled ? 'configured' : '')};window.__AEON_SSR=${aeon};window.__IS_404=${this.is404 ? 'true' : 'false'};</script>`;
     el.append(snippet, { html: true });
   }
 }
@@ -3554,7 +3557,15 @@ export default {
       // Telemetry config injection — fires for every HTML response so
       // observability.ts has the PostHog key + Sentry endpoint marker even
       // on routes without a seoMatch (404, /share-target, /spotify/callback).
-      const telemetry = new TelemetryRewriter(env);
+      // Authoritative soft-404 determination (mirrors the status + noindex
+      // below) — injected as window.__IS_404 so the SPA renders its own 404 UI
+      // instead of silently showing the homepage on a mistyped/retired URL.
+      const is404 =
+        !seoMatch &&
+        !/\.[a-z0-9]+$/i.test(url.pathname) &&
+        !isEmbedRoute &&
+        !isKnownNonSeoHtmlRoute(url.pathname);
+      const telemetry = new TelemetryRewriter(env, is404);
       if (seoMatch) {
         const rewritten = new HTMLRewriter()
           .on('title', new MetaRewriter(seoMatch))
@@ -3575,8 +3586,7 @@ export default {
       // the SPA can render its own 404 UI) but with a 404 status + noindex so
       // crawlers don't accrue soft-404s. Embed routes are excluded (they serve
       // embed.html with no seoMatch by design).
-      const looksLikeAsset = /\.[a-z0-9]+$/i.test(url.pathname);
-      const isUnknownRoute = !looksLikeAsset && !isEmbedRoute && !isKnownNonSeoHtmlRoute(url.pathname);
+      const isUnknownRoute = is404;
       let telemetryOnlyRewriter = new HTMLRewriter().on('head', telemetry);
       if (isUnknownRoute) {
         telemetryOnlyRewriter = telemetryOnlyRewriter.on('meta[name="robots"]', new RobotsNoindexRewriter());

@@ -16158,6 +16158,106 @@ select:focus-visible,
   color: color-mix(in srgb, var(--album-accent, var(--accent)) 65%, var(--ink-soft));
 }
 
+/* ── Friendly 404 banner (shown on window.__IS_404) ───────────────── */
+.notfound-banner {
+  position: fixed;
+  /* Below the top-right HUD so the pill never overlaps the BPM/KEY readouts. */
+  top: 112px;
+  left: 50%;
+  transform: translate(-50%, -16px);
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 12px 10px 16px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(14, 14, 30, 0.92), rgba(6, 6, 16, 0.9));
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line-strong));
+  box-shadow:
+    0 18px 50px -18px rgba(0, 229, 255, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  opacity: 0;
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.9, 0.25, 1),
+    opacity 0.4s ease;
+}
+.notfound-banner.is-in {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+.notfound-banner__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-accent);
+  box-shadow: 0 0 10px var(--ink-accent);
+  flex: 0 0 auto;
+  animation: nfbPulse 1.8s ease-in-out infinite;
+}
+@keyframes nfbPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+.notfound-banner__text {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.notfound-banner__x {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ink-soft);
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.notfound-banner__x:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--ink);
+}
+.notfound-banner__x:focus-visible {
+  outline: 2px solid var(--ink-accent);
+  outline-offset: 2px;
+}
+@media (max-width: 560px) {
+  .notfound-banner {
+    top: 56px;
+  }
+  .notfound-banner__text {
+    white-space: normal;
+    font-size: 0.76rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .notfound-banner {
+    transition: opacity 0.2s ease;
+    transform: translate(-50%, 0);
+  }
+  .notfound-banner__dot {
+    animation: none;
+  }
+}
+
 /* ── Print stylesheet ───────────────────────────────────────────── */
 @media print {
   html,

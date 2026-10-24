@@ -7984,6 +7984,39 @@ function maybeVibeSearch(query: string, literal: Track[]) {
   }, 450);
 }
 
+// Friendly 404 banner — the worker serves the SPA shell with a 404 status +
+// window.__IS_404 on a mistyped/retired URL. Rather than silently show the
+// homepage, surface a dismissible "page not found" note (the player is still
+// right here). DOM-built (no innerHTML) for Trusted Types safety.
+function showNotFoundBanner(): void {
+  if (document.querySelector('.notfound-banner')) return;
+  const el = document.createElement('div');
+  el.className = 'notfound-banner';
+  el.setAttribute('role', 'status');
+  const dot = document.createElement('span');
+  dot.className = 'notfound-banner__dot';
+  dot.setAttribute('aria-hidden', 'true');
+  const text = document.createElement('span');
+  text.className = 'notfound-banner__text';
+  text.textContent = "That page slipped the net — but you're on the player. Press play.";
+  const x = document.createElement('button');
+  x.type = 'button';
+  x.className = 'notfound-banner__x';
+  x.setAttribute('aria-label', 'Dismiss');
+  x.textContent = '✕';
+  el.appendChild(dot);
+  el.appendChild(text);
+  el.appendChild(x);
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('is-in'));
+  const dismiss = (): void => {
+    el.classList.remove('is-in');
+    window.setTimeout(() => el.remove(), 400);
+  };
+  x.addEventListener('click', dismiss);
+  window.setTimeout(dismiss, 9000);
+}
+
 function showWisdomToast(track: Track) {
   if (!track.wisdom) return;
   if (wisdomTimer !== null) {
@@ -8696,6 +8729,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // browser showing its own cached history. /api/stats then fills exact counts.
   setupShell(root);
   renderAlbums($('#albums')!);
+  if ((window as unknown as { __IS_404?: boolean }).__IS_404) showNotFoundBanner();
   renderNowPlaying(null);
   bindUi();
   bindIntegrations();
