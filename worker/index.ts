@@ -2608,6 +2608,65 @@ export default {
         return jsonResponse({ essay }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
       }
 
+      // AI "more like this" — 3 grounded most-similar tracks for a given track
+      // (sound / mood / theme), ranked over the real catalog. Every returned id
+      // is re-validated against TRACK_BY_ID and must differ from the anchor —
+      // the AI ranks, the catalog is the source of truth. KV-cached, fail-soft.
+      if (url.pathname === '/api/similar' && request.method === 'GET') {
+        const trackId = (url.searchParams.get('track') || '').trim();
+        if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
+          return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
+        const cacheK = `similar:${trackId}#v1`;
+        const cached = await env.COUNTERS.get(cacheK);
+        if (cached)
+          return jsonResponse(
+            { similar: JSON.parse(cached) as Array<{ id: string; why: string }>, cached: true },
+            200,
+            { 'Cache-Control': 'public, max-age=86400' },
+            request
+          );
+        if (!env.AI) return jsonResponse({ similar: [] }, 200, {}, request);
+        if (await rateLimitedCount(env.COUNTERS, ip, 'similar', 'minute', 15, 60))
+          return jsonResponse({ similar: [], throttled: true }, 200, {}, request);
+        const track = TRACK_BY_ID.get(trackId)!;
+        const trackAlbum = ALBUM_BY_ID.get(track.album);
+        const catalog = [...TRACK_BY_ID.values()]
+          .filter(t => t.id !== trackId)
+          .map(t => `${t.id} | ${t.title} | ${t.vibe}`)
+          .join('\n');
+        const system =
+          "You are bZ's music matchmaker. Given the CURRENT track and the CATALOG (each line `id | title | vibe`), pick the 3 tracks MOST SIMILAR to the current one in sound, mood, and theme. Output ONLY lines formatted `id | reason` — the id copied EXACTLY from the catalog, the reason a short phrase (max ~10 words) on what they share. Best match first. No preamble, no markdown, no numbering, NEVER the current track, NEVER a track absent from the catalog. Christian-gangster ethic; zero drug references.";
+        const user = `CURRENT: "${track.title}" (${trackAlbum?.name ?? 'bZ'}) — vibe: ${track.vibe}; wisdom: ${track.wisdom}\n\nCATALOG:\n${catalog}`;
+        let similar: Array<{ id: string; why: string }> = [];
+        try {
+          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: user }
+            ],
+            max_tokens: 200,
+            temperature: 0.5
+          })) as { response?: string };
+          const seen = new Set<string>([trackId]);
+          for (const line of (out.response || '').split(/\r?\n+/)) {
+            const parts = line.split('|');
+            const rawId = parts[0];
+            if (parts.length < 2 || !rawId) continue;
+            const id = rawId.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '').trim();
+            const why = parts.slice(1).join('|').trim().replace(/"/g, '');
+            if (!TRACK_BY_ID.has(id) || seen.has(id) || why.length < 3) continue;
+            seen.add(id);
+            similar.push({ id, why });
+            if (similar.length >= 3) break;
+          }
+        } catch {
+          similar = [];
+        }
+        if (!similar.length) return jsonResponse({ similar: [] }, 200, {}, request);
+        ctx.waitUntil(env.COUNTERS.put(cacheK, JSON.stringify(similar), { expirationTtl: 2592000 }));
+        return jsonResponse({ similar }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
+      }
+
       if (url.pathname === '/api/ai/chat' && request.method === 'POST') {
         if (!env.AI) return jsonResponse({ error: 'ai_not_configured' }, 503);
         // Two-tier rate limit: 8/min burst + 60/hr sustained per IP.

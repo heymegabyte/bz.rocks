@@ -1715,6 +1715,12 @@ function setupShell(root: HTMLElement) {
           </button>
         </div>
 
+        <!-- AI "more like this" — 3 grounded similar tracks as tappable chips. -->
+        <div class="np-panel__similar" id="npPanelSimilar" hidden>
+          <span class="np-panel__liner-eyebrow">More like this <em>· AI</em></span>
+          <div class="np-panel__similar-chips" id="npPanelSimilarChips" role="group" aria-label="Similar tracks"></div>
+        </div>
+
         <!-- Live lyric preview: previous + active + next line. Mirrors the
              karaoke overlay's word-perfect sync via the same activeLyrics
              bundle, but in a static 3-line view inside the modal. -->
@@ -6624,6 +6630,13 @@ function bindUi() {
   $('#npPanelSegueBtn')?.addEventListener('click', () => {
     if (segueNext) play(segueNext);
   });
+  $('#npPanelSimilarChips')?.addEventListener('click', e => {
+    const chip = (e.target as HTMLElement).closest('.np-panel__similar-chip') as HTMLElement | null;
+    const id = chip?.dataset.trackId;
+    if (!id) return;
+    const t = TRACKS.find(x => x.id === id);
+    if (t) play(t);
+  });
   $('#cmdk')?.addEventListener('click', e => {
     if ((e.target as HTMLElement).id === 'cmdk') closeSearch();
   });
@@ -8076,6 +8089,58 @@ async function loadSegue(trackId: string | null): Promise<void> {
   }
 }
 
+// ── AI "more like this" — grounded similar tracks ────────────────────────────
+// The 3 most-similar tracks for the current song from /api/similar (Workers AI,
+// KV-cached, fail-soft), rendered as tappable chips in the now-playing panel.
+const similarCache = new Map<string, Array<{ id: string; why: string }>>();
+async function loadSimilar(trackId: string | null): Promise<void> {
+  const wrap = $('#npPanelSimilar') as HTMLElement | null;
+  const chips = $('#npPanelSimilarChips') as HTMLElement | null;
+  if (!wrap || !chips) return;
+  if (!trackId) {
+    wrap.hidden = true;
+    return;
+  }
+  const render = (items: Array<{ id: string; why: string }>): void => {
+    chips.replaceChildren(
+      ...items
+        .map(it => {
+          const t = TRACKS.find(x => x.id === it.id);
+          if (!t) return null;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'np-panel__similar-chip';
+          btn.dataset.trackId = t.id;
+          btn.textContent = t.title;
+          btn.title = it.why;
+          btn.setAttribute('aria-label', `Play ${t.title} — ${it.why}`);
+          return btn;
+        })
+        .filter((b): b is HTMLButtonElement => b !== null)
+    );
+  };
+  const memo = similarCache.get(trackId);
+  if (memo !== undefined) {
+    if (memo.length) render(memo);
+    wrap.hidden = memo.length === 0;
+    return;
+  }
+  wrap.hidden = true;
+  try {
+    const r = await fetch(`/api/similar?track=${encodeURIComponent(trackId)}`);
+    const d = (await r.json()) as { similar?: Array<{ id: string; why: string }> };
+    const items = Array.isArray(d.similar) ? d.similar.filter(x => x && typeof x.id === 'string') : [];
+    similarCache.set(trackId, items);
+    // Only render if this track is still the one on screen.
+    if (currentTrackId === trackId && items.length) {
+      render(items);
+      wrap.hidden = false;
+    }
+  } catch {
+    /* fail-soft — no similar shown */
+  }
+}
+
 let npPanelRaf: number | null = null;
 
 function npFormatTime(sec: number): string {
@@ -8219,6 +8284,7 @@ function refreshNpPanel() {
   void loadLinerNote(track?.id ?? null);
   void loadMeaning(track?.id ?? null);
   void loadSegue(track?.id ?? null);
+  void loadSimilar(track?.id ?? null);
 
   // Stat chips — BPM/KEY/PLAYS, hidden when data unavailable
   const bpmChip = $('#npPanelStatBpm') as HTMLElement | null;
