@@ -2011,13 +2011,25 @@ export default {
         const cacheKey = new Request(`${url.origin}/api/stats`, { method: 'GET' });
         const hit = await edge.match(cacheKey);
         if (hit) return hit;
+        // Read all per-track counters in PARALLEL (batched under the subrequest
+        // cap) rather than serially — the old loop over ~168 tracks × 2 KV reads
+        // made the cold path ~9s (hiding behind the 15s edge cache isn't a fix).
         const out: Record<string, { plays: number; shares: number }> = {};
-        for (const id of TRACK_BY_ID.keys()) {
-          const [p, s] = await Promise.all([
-            readCount(env.COUNTERS, `play:${id}`),
-            readCount(env.COUNTERS, `share:${id}`)
-          ]);
-          if (p || s) out[id] = { plays: p, shares: s };
+        const statIds = [...TRACK_BY_ID.keys()];
+        const STAT_CHUNK = 60;
+        for (let i = 0; i < statIds.length; i += STAT_CHUNK) {
+          const batch = await Promise.all(
+            statIds.slice(i, i + STAT_CHUNK).map(async id => {
+              const [p, s] = await Promise.all([
+                readCount(env.COUNTERS, `play:${id}`),
+                readCount(env.COUNTERS, `share:${id}`)
+              ]);
+              return [id, p, s] as const;
+            })
+          );
+          for (const [id, p, s] of batch) {
+            if (p || s) out[id] = { plays: p, shares: s };
+          }
         }
         // 15s edge cache (was 60s) so every browser converges on the same global
         // counts within seconds — still cheap (one warm snapshot shared per colo).
