@@ -43,6 +43,8 @@ Brian directive 2026-10-24: _"Loop through every single component and screen and
 
 - ✅ Visualizer HUD BPM consistency fix (found via the now-playing visual audit): the HUD read the **live in-browser beat estimate**, which locks onto a ~1.5× harmonic (142-bpm track → HUD showed 205–214, nondeterministic) and **contradicted** the transport + cast, both of which show the authoritative `SUNO_META.sunoBpm` (142). Now the HUD sources that same authoritative, build-time aubio-measured value → accurate, stable, and identical across HUD/transport/cast. Motion is untouched (it already seeds from `engine.bpm` = the correct 142). RED→GREEN proven: `tests/hud-bpm-consistency.spec.ts` failed pre-fix (206≠142), passes post-fix (142==142) at 390 + 1280. 2026-10-24.
 
+- ✅ Visualizer HUD KEY consistency fix (companion to the BPM fix, closes last fire's Rec): the HUD "KEY" cell showed `hzToNote(peakHz)` — the live peak-frequency **note** with an octave digit ("C#4") — which was (a) mislabeled (users read "KEY" as the song's musical key) and (b) redundant with the adjacent "PK" peak-Hz cell. Now it shows the authoritative `SUNO_META.sunoKey` (the same source the transport + np-panel use), compacted to "C#m"/"A" via a new shared `fmtKeyCompact()` (format.ts, 16 unit tests), "—" when a track has no stored key (117/151 tracks have one). Dropped the now-unused `hzToNote` import from main.ts. RED→GREEN: `tests/hud-bpm-consistency.spec.ts` KEY test fails pre-fix ("C#4" has an octave digit), passes post-fix ("C#m"/"—", none). 2026-10-24.
+
 ## Method per fire
 
 1. Pick the top unchecked surface. 2. Screenshot current state (`npm run test:e2e:chrome`, flip screenshot on). 3. Apply the rubric. 4. Re-screenshot + review. 5. E2E green at 390/1280. 6. Deploy + check ✅ here.

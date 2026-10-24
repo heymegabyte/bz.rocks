@@ -20,7 +20,7 @@ import {
 import { SUNO_META } from './suno-meta';
 import { TRACK_TAGS, getTrackTags } from './tags';
 import { CONTENT_PAGE_BY_SLUG, CONTENT_PAGES } from './content-pages';
-import { fmtTime, fmtClock, fmtHz, hzToNote } from './format';
+import { fmtTime, fmtClock, fmtHz, fmtKeyCompact } from './format';
 import { TRACK_DURATIONS } from './durations';
 import type { Track, Album } from './types';
 import { cast } from './cast';
@@ -5702,10 +5702,15 @@ function startHud() {
         peakEl.textContent = fmtHz(m.peakHz);
         lastPeak = peakVal;
       }
-      const noteVal = hzToNote(m.peakHz);
-      if (keyEl && noteVal !== lastKey) {
-        keyEl.textContent = noteVal;
-        lastKey = noteVal;
+      // Show the authoritative musical key (SUNO_META.sunoKey — same source as the
+      // transport + np-panel stat), compacted to "C#m"/"A". A key is constant per
+      // track, so this matches those readouts instead of showing the live
+      // peak-frequency note ("C#4"), which was both mislabeled under "KEY" and
+      // redundant with the adjacent PK (peak Hz) cell. "—" when a track has no key.
+      const keyVal = fmtKeyCompact(currentTrackId ? SUNO_META[currentTrackId]?.sunoKey : null);
+      if (keyEl && keyVal !== lastKey) {
+        keyEl.textContent = keyVal;
+        lastKey = keyVal;
       }
       if (timeEl) {
         const a = engine.audio;

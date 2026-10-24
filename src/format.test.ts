@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { fmtTime, fmtClock, fmtHz, hzToNote } from './format';
+import { fmtTime, fmtClock, fmtHz, hzToNote, fmtKeyCompact } from './format';
 
 describe('fmtTime', () => {
   it('formats whole minutes + zero-padded seconds', () => {
@@ -74,5 +74,34 @@ describe('hzToNote', () => {
 
   it('uses sharps for the accidental notes', () => {
     expect(hzToNote(466.16)).toBe('A♯4');
+  });
+});
+
+describe('fmtKeyCompact', () => {
+  it('compacts major/minor to standard shorthand (major bare, minor + m)', () => {
+    expect(fmtKeyCompact('A major')).toBe('A');
+    expect(fmtKeyCompact('a minor')).toBe('Am');
+    expect(fmtKeyCompact('C# minor')).toBe('C#m');
+    expect(fmtKeyCompact('D# major')).toBe('D#');
+    expect(fmtKeyCompact('d minor')).toBe('Dm');
+  });
+
+  it('normalizes case + accidental', () => {
+    expect(fmtKeyCompact('f minor')).toBe('Fm');
+    expect(fmtKeyCompact('Bb major')).toBe('Bb');
+    expect(fmtKeyCompact('C♯ minor')).toBe('C#m');
+  });
+
+  it('returns the em-dash placeholder for missing keys', () => {
+    expect(fmtKeyCompact(null)).toBe('—');
+    expect(fmtKeyCompact(undefined)).toBe('—');
+    expect(fmtKeyCompact('')).toBe('—');
+  });
+
+  it('carries NO octave digit — the signature that distinguishes a musical key from a peak note', () => {
+    expect(fmtKeyCompact('C# minor')).not.toMatch(/\d/);
+    expect(fmtKeyCompact('A major')).not.toMatch(/\d/);
+    // hzToNote (the old HUD KEY source) always carries an octave digit:
+    expect(hzToNote(277.18)).toMatch(/\d/);
   });
 });

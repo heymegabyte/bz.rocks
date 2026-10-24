@@ -31,3 +31,19 @@ export function hzToNote(hz: number): string {
   const oct = Math.floor(midi / 12) - 1;
   return `${name}${oct}`;
 }
+
+/**
+ * Authoritative musical key → compact HUD shorthand: `"C# minor"` → `"C#m"`,
+ * `"a major"` → `"A"`. Capitalizes the note, normalizes the accidental to `#`/`b`,
+ * and appends `m` for minor (major stays bare — standard chord/key notation). A
+ * musical key is constant per track and carries NO octave digit, which is what
+ * distinguishes it from a live peak-frequency note like `"C#4"`. Missing/empty → `—`.
+ */
+export function fmtKeyCompact(key: string | null | undefined): string {
+  if (!key) return '—';
+  const m = key.trim().match(/^([A-Ga-g])\s*([#b♯♭]?)\s*(major|minor)$/i);
+  if (!m) return key.trim();
+  const acc = m[2] === 'b' || m[2] === '♭' ? 'b' : m[2] ? '#' : '';
+  const note = m[1].toUpperCase() + acc;
+  return m[3].toLowerCase() === 'minor' ? `${note}m` : note;
+}
