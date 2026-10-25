@@ -266,6 +266,21 @@ type BokehItem = {
   alpha: number;
 };
 
+/**
+ * Should the visualizer SKIP its heavy draw() this frame to yield the main
+ * thread to a just-fired user interaction? Lab + field data on bz.rocks showed
+ * INP is ~100% PRESENTATION delay — the handler runs in ~0ms but the next paint
+ * is delayed ~110ms because the full-screen canvas render competes for the
+ * frame. Skipping a couple of ambient-background frames right after a tap/keydown
+ * lets the browser paint the interaction's result immediately (imperceptible on a
+ * 60fps background), then the viz resumes. Pure + one-shot: a single tap yields
+ * only for `yieldMs`, never forever, and never before the first interaction.
+ */
+export function vizShouldYield(now: number, lastInteraction: number, yieldMs: number): boolean {
+  if (lastInteraction <= 0) return false;
+  return now - lastInteraction < yieldMs;
+}
+
 export class Visualizer {
   private bg: HTMLCanvasElement;
   private bgCtx: CanvasRenderingContext2D;
@@ -301,6 +316,12 @@ export class Visualizer {
   // True while a near-opaque full-screen overlay covers the canvas — keeps the
   // renderer paused across tab-visibility changes (see setOccluded).
   private occluded = false;
+  // Timestamp (performance.now) of the most recent user interaction. The tick
+  // loop skips draw() for `interactionYieldMs` after it so the interaction's
+  // paint isn't blocked by a canvas frame (INP presentation-delay fix). 100ms
+  // ≈ 6 skipped ambient frames — below the notice threshold on a background.
+  private lastInteraction = 0;
+  private readonly interactionYieldMs = 100;
   private t0 = performance.now();
   private accent: [number, number, number] = [0, 229, 255];
   private mode: VizMode = 'starfield';
@@ -407,6 +428,18 @@ export class Visualizer {
       if (document.hidden) this.stop();
       else if (this.rafId === null && !this.occluded) this.start();
     });
+    // Interaction yield — record when the user acts so the tick loop can skip a
+    // few ambient frames and let the interaction's result paint unimpeded. Only
+    // the interaction START events (pointerdown / keydown) + the tap release
+    // (pointerup, where a tap's visual result usually lands); pointermove is
+    // deliberately excluded so a scrub/drag doesn't freeze the viz the whole time.
+    // Passive + capture so we never delay the event and always see it first.
+    const markInteraction = () => {
+      this.lastInteraction = performance.now();
+    };
+    for (const evt of ['pointerdown', 'pointerup', 'keydown'] as const) {
+      window.addEventListener(evt, markInteraction, { passive: true, capture: true });
+    }
     this.prewarmHeavyState();
   }
 
@@ -593,6 +626,15 @@ export class Visualizer {
     if (this.rafId !== null) return;
     let prev = performance.now();
     const tick = (now: number) => {
+      // Interaction yield (INP presentation-delay fix) — if the user just acted,
+      // skip this heavy draw() so the browser can paint the interaction result
+      // without the canvas competing for the frame. Still schedules the next
+      // rAF so motion resumes the instant the ~100ms window elapses. prev is
+      // left untouched; the resumed frame's larger delta just draws promptly.
+      if (vizShouldYield(now, this.lastInteraction, this.interactionYieldMs)) {
+        this.rafId = requestAnimationFrame(tick);
+        return;
+      }
       // FPS cap — skip frames until the budget has elapsed. Desktop uses 0
       // (every rAF tick draws). Mobile uses 33ms → ~30fps. Skipped ticks still
       // schedule the next rAF so we resume cleanly when the budget catches up.

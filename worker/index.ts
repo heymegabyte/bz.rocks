@@ -2104,13 +2104,46 @@ export default {
           .map(([target, vals]) => ({ target, n: vals.length, p75: p75(vals) }))
           .sort((a, b) => b.n - a.n)
           .slice(0, 12);
+        // Phase breakdown of the slow (>200ms) interactions — the FIELD answer to
+        // "input-delay vs processing vs presentation" (single-frame INP is too
+        // noisy to measure in a headless lab). Tells us where INP time actually
+        // goes in the wild + whether the viz interaction-yield cut presentation.
+        const slowRows = rows.filter(r => typeof r.inp === 'number' && (r.inp as number) > 200);
+        const phaseVals = {
+          inputDelay: [] as number[],
+          processing: [] as number[],
+          presentation: [] as number[]
+        };
+        const byType = new Map<string, number>();
+        for (const r of slowRows) {
+          if (typeof r.inpd === 'number') phaseVals.inputDelay.push(r.inpd);
+          if (typeof r.inpp === 'number') phaseVals.processing.push(r.inpp);
+          if (typeof r.inpz === 'number') phaseVals.presentation.push(r.inpz);
+          const n = typeof r.inpn === 'string' && r.inpn ? r.inpn : '(none)';
+          byType.set(n, (byType.get(n) ?? 0) + 1);
+        }
+        const phaseP75 = {
+          inputDelay: p75(phaseVals.inputDelay),
+          processing: p75(phaseVals.processing),
+          presentation: p75(phaseVals.presentation)
+        };
+        const dominantPhase =
+          (['inputDelay', 'processing', 'presentation'] as const)
+            .map(k => ({ k, v: phaseP75[k] ?? 0 }))
+            .sort((a, b) => b.v - a.v)[0]?.k ?? null;
+        const inpTypes = [...byType.entries()]
+          .map(([type, n]) => ({ type, n }))
+          .sort((a, b) => b.n - a.n)
+          .slice(0, 6);
         const payload = {
           window: '24h',
           samples: rows.length,
           note: 'p75 per metric; lcp/inp/ttfb in ms, cls unitless. CWV targets: LCP<=2500, INP<=200, CLS<=0.1.',
           overall: agg(rows),
           byRoute,
-          slowInteractions
+          slowInteractions,
+          inpPhases: { p75: phaseP75, dominant: dominantPhase, n: slowRows.length },
+          inpTypes
         };
         const resp = jsonResponse(payload, 200, { 'Cache-Control': 'public, max-age=300' }, request);
         ctx.waitUntil(cache.put(cacheKey, resp.clone()));

@@ -80,6 +80,14 @@ const vitals: Record<string, number> = {};
 // Which element drove the worst interaction (INP) — so field attribution
 // (aggregated in GET /api/vitals) names the slow interaction, not just its value.
 let inpTarget = '';
+// Phase breakdown of the worst interaction + its event type. Lab proved single-
+// frame INP is unmeasurable in headless (noise swamps a ~100ms effect), so the
+// FIELD is the only source of truth for WHICH phase dominates — input-delay
+// (main thread busy at tap), processing (slow handler), or presentation (paint
+// competes, e.g. the canvas render). This is what tells us where to spend the
+// next fix + whether the viz interaction-yield moved the needle.
+let inpName = '';
+const inpPhase = { in: 0, proc: 0, pres: 0 };
 
 function pushVital(name: string, value: number) {
   vitals[name] = value;
@@ -95,6 +103,10 @@ function flushVitals() {
           JSON.stringify({
             ...vitals,
             inpt: inpTarget,
+            inpn: inpName,
+            inpd: inpPhase.in,
+            inpp: inpPhase.proc,
+            inpz: inpPhase.pres,
             url: location.pathname,
             ua: navigator.userAgent,
             ts: Date.now()
@@ -137,6 +149,16 @@ if ('PerformanceObserver' in window) {
       for (const e of list.getEntries()) {
         if (e.duration <= maxDur) continue;
         maxDur = e.duration;
+        // Phase breakdown of this (new worst) interaction. Event Timing exposes
+        // processingStart/End + startTime + duration; the three phases sum to the
+        // interaction's INP. presentation = time from handler-end to next paint.
+        const te = e as PerformanceEntry & { processingStart?: number; processingEnd?: number };
+        const ps = te.processingStart ?? e.startTime;
+        const pe = te.processingEnd ?? ps;
+        inpPhase.in = Math.round(ps - e.startTime);
+        inpPhase.proc = Math.round(pe - ps);
+        inpPhase.pres = Math.round(e.startTime + e.duration - pe);
+        inpName = (e.name || '').slice(0, 20);
         // Record the element that drove the worst interaction (prefer id, then a
         // data-aichat hook, then the first class, then the tag) — low-cardinality
         // so /api/vitals can rank the slow interactions.
