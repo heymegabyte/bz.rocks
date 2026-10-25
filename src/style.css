@@ -7763,6 +7763,48 @@ button:not(:disabled):active {
   border-bottom: 1px solid var(--line);
   flex-shrink: 0;
 }
+/* Collapsed-by-default AI deep-dive — one line until opened, so it never
+   distracts the karaoke read; reuses the np-panel's grounded /api/meaning. */
+.lyrics-fs__meaning {
+  flex-shrink: 0;
+  margin-top: 12px;
+  border: 1px solid color-mix(in srgb, var(--album-accent, var(--accent)) 24%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--album-accent, var(--accent)) 6%, transparent);
+  padding: 0 14px;
+}
+.lyrics-fs__meaning-sum {
+  cursor: pointer;
+  list-style: none;
+  padding: 11px 0;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-album-accent-neon, var(--ink-accent-neon, var(--accent)));
+}
+.lyrics-fs__meaning-sum::-webkit-details-marker {
+  display: none;
+}
+.lyrics-fs__meaning-sum::after {
+  content: '＋';
+  float: right;
+  opacity: 0.6;
+}
+.lyrics-fs__meaning[open] .lyrics-fs__meaning-sum::after {
+  content: '－';
+}
+.lyrics-fs__meaning-list {
+  margin: 0;
+  padding: 0 0 13px 1.1em;
+  display: grid;
+  gap: 6px;
+}
+.lyrics-fs__meaning-list li {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
 .lyrics-fs__cover {
   border-radius: 8px;
 }

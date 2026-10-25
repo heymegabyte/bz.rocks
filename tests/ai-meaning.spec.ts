@@ -60,4 +60,33 @@ test.describe('AI lyric deep-dive (/api/meaning)', () => {
       await expect(meaning).toBeHidden();
     }
   });
+
+  test('fullscreen lyrics surfaces the SAME grounded deep-dive (collapsed, reused)', async ({
+    page
+  }) => {
+    const respP = page.waitForResponse(
+      r => r.url().includes('/api/meaning') && r.request().method() === 'GET',
+      { timeout: 30000 }
+    );
+    await openNowPlaying(page);
+    const points = ((await (await respP).json()) as { points?: string[] }).points ?? [];
+
+    // From the now-playing panel, open the fullscreen lyrics view.
+    await page.locator('[data-np-action="fs-lyrics"]').click();
+    await expect(page.locator('#lyricsFs.is-open')).toHaveCount(1, { timeout: 8000 });
+
+    const fsMeaning = page.locator('#lyricsFsMeaning');
+    await expect(fsMeaning).toHaveCount(1); // wired either way
+    if (points.length >= 2) {
+      // Collapsed by default (never distracts karaoke), visible once beats land.
+      await expect(fsMeaning).toBeVisible({ timeout: 10000 });
+      await expect(fsMeaning).not.toHaveAttribute('open', /.*/); // starts collapsed
+      await page.locator('#lyricsFsMeaning summary').click();
+      const li = page.locator('#lyricsFsMeaningBody li');
+      expect(await li.count()).toBeGreaterThanOrEqual(2);
+      expect((await li.first().innerText()).trim().length).toBeGreaterThan(8);
+    } else {
+      await expect(fsMeaning).toBeHidden();
+    }
+  });
 });

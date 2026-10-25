@@ -2011,6 +2011,10 @@ function setupShell(root: HTMLElement) {
           <h3 class="lyrics-fs__title" id="lyricsFsTitle">—</h3>
         </div>
       </div>
+      <details class="lyrics-fs__meaning" id="lyricsFsMeaning" hidden>
+        <summary class="lyrics-fs__meaning-sum">✦ What it's really saying</summary>
+        <ul class="lyrics-fs__meaning-list" id="lyricsFsMeaningBody"></ul>
+      </details>
       <div class="lyrics-fs__inner" id="lyricsFsInner" tabindex="0" role="region" aria-label="Lyrics"></div>
     </div>
 
@@ -7766,6 +7770,7 @@ function openLyricsFs() {
   el?.classList.add('is-open');
   document.documentElement.classList.add('is-lyrics-fs');
   refreshLyricsFs();
+  void loadFsMeaning(currentTrackId); // grounded "what it's really saying" (collapsed)
   ensureLyricsRendered();
   if (lyricsRaf === null) startKaraoke();
   // Re-fit on viewport resize so lines never wrap after a rotation/resize.
@@ -8962,6 +8967,31 @@ async function loadLinerNote(trackId: string | null): Promise<void> {
 // KV-cached server-side), memoized client-side, fail-soft. Rendered below the
 // liner note in the now-playing panel.
 const meaningCache = new Map<string, string[]>();
+// Shared fetch+memo for the interpretive beats — reused by the np-panel AND the
+// fullscreen-lyrics deep-dive, so the grounded /api/meaning artifact is fetched
+// once and surfaced wherever it adds value. Fail-soft to [].
+async function fetchMeaningPoints(trackId: string): Promise<string[]> {
+  const memo = meaningCache.get(trackId);
+  if (memo !== undefined) return memo;
+  try {
+    const r = await fetch(`/api/meaning?track=${encodeURIComponent(trackId)}`);
+    const d = (await r.json()) as { points?: string[] | null };
+    const points = Array.isArray(d.points) ? d.points.filter(p => typeof p === 'string' && p.trim()) : [];
+    meaningCache.set(trackId, points);
+    return points;
+  } catch {
+    return [];
+  }
+}
+function renderMeaningList(listEl: HTMLElement, points: string[]): void {
+  listEl.replaceChildren(
+    ...points.map(p => {
+      const li = document.createElement('li');
+      li.textContent = p;
+      return li;
+    })
+  );
+}
 async function loadMeaning(trackId: string | null): Promise<void> {
   const wrap = $('#npPanelMeaning') as HTMLElement | null;
   const listEl = $('#npPanelMeaningBody') as HTMLElement | null;
@@ -8970,35 +9000,32 @@ async function loadMeaning(trackId: string | null): Promise<void> {
     wrap.hidden = true;
     return;
   }
-  const render = (points: string[]): void => {
-    listEl.replaceChildren(
-      ...points.map(p => {
-        const li = document.createElement('li');
-        li.textContent = p;
-        return li;
-      })
-    );
-  };
   const memo = meaningCache.get(trackId);
   if (memo !== undefined) {
-    if (memo.length) render(memo);
+    if (memo.length) renderMeaningList(listEl, memo);
     wrap.hidden = memo.length === 0;
     return;
   }
   wrap.hidden = true; // hide until real beats arrive (generation takes ~1-3s cold)
-  try {
-    const r = await fetch(`/api/meaning?track=${encodeURIComponent(trackId)}`);
-    const d = (await r.json()) as { points?: string[] | null };
-    const points = Array.isArray(d.points) ? d.points.filter(p => typeof p === 'string' && p.trim()) : [];
-    meaningCache.set(trackId, points);
-    // Only render if this track is still the one on screen.
-    if (currentTrackId === trackId && points.length) {
-      render(points);
-      wrap.hidden = false;
-    }
-  } catch {
-    /* fail-soft — no deep-dive shown */
+  const points = await fetchMeaningPoints(trackId);
+  if (currentTrackId === trackId && points.length) {
+    renderMeaningList(listEl, points);
+    wrap.hidden = false;
   }
+}
+// Surface the same grounded "what it's really saying" beats in the fullscreen
+// lyrics view (collapsed by default so it never distracts the karaoke read).
+async function loadFsMeaning(trackId: string | null): Promise<void> {
+  const wrap = $('#lyricsFsMeaning') as HTMLDetailsElement | null;
+  const listEl = $('#lyricsFsMeaningBody') as HTMLElement | null;
+  if (!wrap || !listEl) return;
+  wrap.hidden = true;
+  wrap.open = false;
+  if (!trackId) return;
+  const points = await fetchMeaningPoints(trackId);
+  if (!lyricsFsOpen || currentTrackId !== trackId || !points.length) return;
+  renderMeaningList(listEl, points);
+  wrap.hidden = false;
 }
 
 // ── AI segue — "up next + why it flows" ──────────────────────────────────────
