@@ -178,6 +178,13 @@ const ROTATING_PROMPTS = [
 interface MountOpts {
   engine?: AudioEngine | null;
   onCommand?: (cmd: string, args: string[]) => boolean | void;
+  /**
+   * The track currently IN FOCUS via SPA routing — set the moment you land on a
+   * track page, BEFORE playback starts (the audio engine only has a track once
+   * you press play). Lets the context-aware welcome chip personalize for a
+   * shared-link visitor who opens the DJ before pressing play.
+   */
+  getLoadedTrack?: () => Track | null;
 }
 
 let mounted = false;
@@ -2665,14 +2672,28 @@ export function mountAIChat(opts: MountOpts = {}) {
   let lastCoverSrc = '';
   let lastFabTitle = '';
   let lastNowChipId = '';
+  // Context-aware welcome chip — names the track IN FOCUS so the DJ's empty state
+  // is about what you're about to hear. Grounded: the DJ answers from the catalog
+  // in its system prompt. Guarded on track id (refreshNow runs every rAF frame).
+  function updateNowChip(track: Track | null) {
+    const id = track?.id ?? '';
+    if (id === lastNowChipId) return;
+    lastNowChipId = id;
+    if (!track) {
+      nowChip.hidden = true;
+      return;
+    }
+    nowChip.textContent = `✦ Story behind "${track.title}"`;
+    nowChip.dataset.prompt = `Tell me the real story behind the track "${track.title}".`;
+    nowChip.hidden = false;
+  }
   function refreshNow() {
     const st = opts.engine?.state();
+    // The chip follows the FOCUS track: the playing track if any, else the track
+    // the SPA has loaded (a shared-link visitor who hasn't pressed play yet).
+    updateNowChip(st?.track ?? opts.getLoadedTrack?.() ?? null);
     if (!st?.track) {
       now.hidden = true;
-      if (lastNowChipId) {
-        nowChip.hidden = true;
-        lastNowChipId = '';
-      }
       if (lastFabTitle) {
         fabTip.hidden = true;
         fabTip.textContent = '';
@@ -2682,16 +2703,6 @@ export function mountAIChat(opts: MountOpts = {}) {
     }
     now.hidden = false;
     nowTitle.textContent = st.track.title;
-    if (st.track.id !== lastNowChipId) {
-      lastNowChipId = st.track.id;
-      // Context-aware welcome chip — names the CURRENT track so the DJ's empty
-      // state is about what you're actually playing. Grounded: the DJ answers
-      // from the catalog in its system prompt. Updated only on track change
-      // (refreshNow runs every rAF frame, so guard on the id to avoid DOM churn).
-      nowChip.textContent = `✦ Story behind "${st.track.title}"`;
-      nowChip.dataset.prompt = `Tell me the real story behind the track "${st.track.title}".`;
-      nowChip.hidden = false;
-    }
     const min = Math.floor((st.currentTime || 0) / 60);
     const sec = Math.floor((st.currentTime || 0) % 60)
       .toString()

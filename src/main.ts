@@ -10103,7 +10103,14 @@ window.addEventListener('DOMContentLoaded', () => {
     if (aiChatMounted) return;
     aiChatMounted = true;
     const { mountAIChat } = await import('./ai-chat');
-    mountAIChat({ engine, onCommand: aiChatOnCommand });
+    mountAIChat({
+      engine,
+      onCommand: aiChatOnCommand,
+      // The SPA's in-focus track (set on navigation, before playback) so the
+      // DJ's context-aware chip personalizes for shared-link visitors who open
+      // the chat before pressing play.
+      getLoadedTrack: () => (currentTrackId ? (TRACK_BY_ID.get(currentTrackId) ?? null) : null)
+    });
   };
   // Pre-warm on first user interaction so the bundle is ready by the time
   // the user actually hits Cmd+I / Cmd+K / clicks the FAB area.
