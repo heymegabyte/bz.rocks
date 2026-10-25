@@ -1495,7 +1495,7 @@ export function mountAIChat(opts: MountOpts = {}) {
         const code = (errBody as { error?: string }).error || res.statusText;
         aiMsg.content =
           code === 'ai_not_configured'
-            ? '**AI is offline.** The worker needs an `ANTHROPIC_API_KEY` secret before this chat can answer. Tap a quick reply or try again later.'
+            ? "**The DJ stepped out for a sec.** The Llama model (Cloudflare Workers AI) is momentarily unavailable — the catalog, search, and each track's liner notes still work. Try again in a moment."
             : `**Couldn't reach the model.** \`${code}\` — try again in a moment.`;
         renderMessages();
         return;

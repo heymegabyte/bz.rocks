@@ -7199,10 +7199,11 @@ function bindUi() {
       typeof (t as Element).matches === 'function' &&
       (t as Element).matches('input, textarea, select')
     );
-    // Cmd+K / Ctrl+K: open AI chat (matches the FAB's visible ⌘K label).
-    // Search moved to Cmd+/ — a common alternative when Cmd+K is the AI/command surface.
-    // Search palette: ⌘K (the cmdk convention + what the UI advertises) AND ⌘/.
-    if ((e.metaKey || e.ctrlKey) && (e.code === 'Slash' || e.code === 'KeyK')) {
+    // Search palette: ⌘/ ONLY — matches the search button's visible ⌘/ label.
+    // ⌘K is reserved for the AI chat drawer (its FAB advertises ⌘K) and is owned
+    // solely by the handler in ai-chat.ts — binding it here too made ⌘K open BOTH
+    // the search overlay and the chat drawer at once (a shortcut collision).
+    if ((e.metaKey || e.ctrlKey) && e.code === 'Slash') {
       e.preventDefault();
       openSearch();
       return;
