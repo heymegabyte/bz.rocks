@@ -26,11 +26,21 @@ test.describe('AI more-like-this (/api/similar + NP chips)', () => {
     expect(ok.status()).toBe(200);
     const body = (await ok.json()) as { similar?: Array<{ id: string; why: string }> };
     expect(Array.isArray(body.similar)).toBe(true);
+    const whys: string[] = [];
+    // Every track is gospel-rap, so a bare genre label is a non-reason (the #1
+    // generic-prose tell). Reasons must be SPECIFIC + grounded + DISTINCT.
+    const bareGenre =
+      /^(?:(?:epic|latin|hard|holy|dark|raw)\s+)?gospel[\s-]?trap(?:\s+(?:vibe|sound|energy))?$|^(?:same|similar)\s+(?:vibe|sound|genre|energy)$|^(?:same|shared)\s+genre$/i;
     for (const s of body.similar ?? []) {
       expect(typeof s.id).toBe('string');
       expect(s.id).not.toBe(TRACK);
       expect(typeof s.why).toBe('string');
+      expect(s.why.trim().length).toBeGreaterThan(2);
+      expect(s.why, `bare genre label is not a real connection: "${s.why}"`).not.toMatch(bareGenre);
+      whys.push(s.why.trim().toLowerCase());
     }
+    // No repeated reason across the picks (the clustered-album failure mode).
+    expect(new Set(whys).size, `duplicate reasons: ${JSON.stringify(whys)}`).toBe(whys.length);
 
     const bad = await request.get(`${BASE}/api/similar?track=not-a-real-track-xyz`);
     expect(bad.status()).toBe(404);
