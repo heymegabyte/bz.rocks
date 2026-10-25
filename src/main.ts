@@ -6815,12 +6815,24 @@ function bindUi() {
   $('#cmdk')?.addEventListener('click', e => {
     if ((e.target as HTMLElement).id === 'cmdk') closeSearch();
   });
+  // Coalesce filter+render to one animation frame per burst: the keystroke
+  // handler just stashes the latest value + schedules a frame, so rapid typing
+  // renders once per frame instead of rebuilding the result DOM on every key
+  // (that drove search-typing INP to ~128-216ms). The input itself stays
+  // instant; results lag by ≤1 frame (imperceptible).
+  let searchQueued: string | null = null;
+  let searchFrame = 0;
   $('#cmdkInput')?.addEventListener('input', e => {
-    const q = (e.target as HTMLInputElement).value;
-    searchActiveIdx = 0;
-    const literal = filterTracks(q);
-    renderSearchResults(literal);
-    maybeVibeSearch(q, literal);
+    searchQueued = (e.target as HTMLInputElement).value;
+    if (searchFrame) return;
+    searchFrame = requestAnimationFrame(() => {
+      searchFrame = 0;
+      const q = searchQueued ?? '';
+      searchActiveIdx = 0;
+      const literal = filterTracks(q);
+      renderSearchResults(literal);
+      maybeVibeSearch(q, literal);
+    });
   });
   $('#cmdkInput')?.addEventListener('keydown', e => {
     if (e.key === 'ArrowDown') {
@@ -7925,18 +7937,25 @@ let searchAiPicks: Array<{ track: Track; why: string }> = [];
 let vibeTimer: number | null = null;
 let vibeController: AbortController | null = null;
 
+// Lowercased search text per track (title + vibe + album + all lyrics), built
+// ONCE on first use + memoized. The old filterTracks re-lowercased every track's
+// full lyrics array on EVERY keystroke, which drove search-typing INP to
+// ~144-216ms (over the 100ms target). Now a keystroke is just a substring scan
+// of the cached blob — the expensive lowercasing happens once per track.
+const trackSearchBlobs = new Map<string, string>();
+function trackSearchBlob(t: Track): string {
+  let blob = trackSearchBlobs.get(t.id);
+  if (blob === undefined) {
+    const album = ALBUM_BY_ID.get(t.album);
+    blob = `${t.title} ${t.vibe} ${album?.name ?? ''} ${t.lyrics.join(' ')}`.toLowerCase();
+    trackSearchBlobs.set(t.id, blob);
+  }
+  return blob;
+}
 function filterTracks(query: string): Track[] {
   if (!query.trim()) return [...TRACKS];
   const q = query.toLowerCase().trim();
-  return TRACKS.filter(t => {
-    const album = ALBUM_BY_ID.get(t.album);
-    return (
-      t.title.toLowerCase().includes(q) ||
-      t.vibe.toLowerCase().includes(q) ||
-      (album?.name.toLowerCase().includes(q) ?? false) ||
-      t.lyrics.some(l => l.toLowerCase().includes(q))
-    );
-  });
+  return TRACKS.filter(t => trackSearchBlob(t).includes(q));
 }
 
 function filterContentPages(
@@ -7978,12 +7997,19 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
   const pages = filterContentPages(input?.value ?? '');
   // AI picks already surfaced by the literal filter are redundant — drop them.
   const ai = aiPicks.filter(p => !tracks.some(t => t.id === p.track.id));
+  // Cap the rendered track rows — an empty/short query matches the whole catalog,
+  // and rebuilding 40-50 image rows per keystroke was the search-typing INP cost.
+  // 24 covers the common refined case; the count shows the true total so the user
+  // knows to narrow. Keyboard nav + re-render use the capped set so indices align.
+  const SEARCH_RENDER_CAP = 24;
+  const totalTracks = tracks.length;
+  const shownTracks = totalTracks > SEARCH_RENDER_CAP ? tracks.slice(0, SEARCH_RENDER_CAP) : tracks;
   // SSOT for keyboard nav + commit + click: literal rows first, AI rows after
   // (appending keeps literal indices stable if AI resolves mid-arrow).
-  searchLiteral = tracks;
+  searchLiteral = shownTracks;
   searchAiPicks = ai;
-  searchRows = [...tracks, ...ai.map(p => p.track)];
-  if (!tracks.length && !pages.length && !ai.length) {
+  searchRows = [...shownTracks, ...ai.map(p => p.track)];
+  if (!totalTracks && !pages.length && !ai.length) {
     results.innerHTML = '';
     empty.hidden = false;
     count.textContent = '0 results';
@@ -7991,7 +8017,11 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
     return;
   }
   empty.hidden = true;
-  const parts: string[] = [`${tracks.length} track${tracks.length !== 1 ? 's' : ''}`];
+  const parts: string[] = [
+    `${totalTracks} track${totalTracks !== 1 ? 's' : ''}${
+      totalTracks > SEARCH_RENDER_CAP ? ` · top ${SEARCH_RENDER_CAP}` : ''
+    }`
+  ];
   if (pages.length) parts.push(`${pages.length} page${pages.length !== 1 ? 's' : ''}`);
   if (ai.length) parts.push(`${ai.length} vibe pick${ai.length !== 1 ? 's' : ''}`);
   count.textContent = parts.join(' · ');
@@ -8016,7 +8046,7 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
         .join('') +
       (tracks.length ? `<div class="cmdk__group">tracks</div>` : '')
     : '';
-  const tracksHtml = tracks
+  const tracksHtml = shownTracks
     .map((t, i) => {
       const album = ALBUM_BY_ID.get(t.album);
       return trackRowHtml(t, i, `${escapeHtml(album?.name ?? 'bZ')} · ${escapeHtml(t.vibe)}`, '');
@@ -8028,7 +8058,7 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
         .map((p, j) =>
           trackRowHtml(
             p.track,
-            tracks.length + j,
+            shownTracks.length + j,
             `<span class="cmdk__why">${escapeHtml(p.why)}</span>`,
             '<span class="cmdk__item-badge cmdk__item-badge--inline cmdk__item-badge--ai">AI</span>'
           )
@@ -8044,6 +8074,15 @@ function openSearch() {
   searchActiveIdx = 0;
   renderSearchResults(filterTracks(''));
   requestAnimationFrame(() => ($('#cmdkInput') as HTMLInputElement | null)?.focus());
+  // Warm the lowercased search blobs off the critical path (on idle, after focus)
+  // so the FIRST keystroke doesn't pay the one-time build cost mid-typing.
+  const warmBlobs = () => {
+    for (const t of TRACKS) trackSearchBlob(t);
+  };
+  const ric = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number })
+    .requestIdleCallback;
+  if (ric) ric(warmBlobs, { timeout: 500 });
+  else setTimeout(warmBlobs, 50);
 }
 
 function closeSearch() {
