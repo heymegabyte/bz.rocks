@@ -57,4 +57,29 @@ test.describe('Cmd+K search — capped render', () => {
       )
       .toBe(true);
   });
+
+  test('section markers (chorus/verse) do not pollute the lyric index', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page
+      .locator('#apClose')
+      .click({ timeout: 2000 })
+      .catch(() => {});
+    await page.locator('#btnSearch').click();
+    const input = page.locator('#cmdkInput');
+    // Before the fix these matched EVERY track carrying a '**[Chorus]**' /
+    // '**[Pre-Chorus]**' / '**[Outro]**' section marker (33 / 28 / 14). Stripping
+    // the markers from the index leaves only tracks that SING those words — a
+    // sharp drop. (Avoid "verse": it's a legit substring of universe/diverse/reverse.)
+    for (const [q, max] of [
+      ['chorus', 12],
+      ['pre-chorus', 5],
+      ['outro', 6]
+    ] as const) {
+      await input.fill(q);
+      await page.waitForTimeout(500);
+      const countText = (await page.locator('#cmdkCount').textContent()) ?? '';
+      const n = Number(/^(\d+)\s*track/.exec(countText)?.[1] ?? '999');
+      expect(n, `"${q}" matched ${n} tracks — section markers should be out of the index`).toBeLessThan(max);
+    }
+  });
 });

@@ -7960,7 +7960,16 @@ function searchFields(t: Track): TrackSearchFields {
     const title = t.title.toLowerCase();
     const vibe = t.vibe.toLowerCase();
     const album = (ALBUM_BY_ID.get(t.album)?.name ?? '').toLowerCase();
-    f = { title, vibe, album, blob: `${title} ${vibe} ${album} ${t.lyrics.join(' ').toLowerCase()}` };
+    // Lyric CONTENT is searchable, but the markdown SECTION MARKERS
+    // ('**[Chorus]**', '**[Verse 1]**', '[Intro]') are structure, not words —
+    // indexing them made "chorus"/"verse" match every track (33/56 noise hits).
+    // Drop pure-marker lines + strip markdown emphasis so only real words index.
+    const lyricWords = t.lyrics
+      .filter(l => !/^\s*\*{0,2}\[[^\]]*\]\*{0,2}\s*$/.test(l))
+      .join(' ')
+      .replace(/[*_`#]/g, '')
+      .toLowerCase();
+    f = { title, vibe, album, blob: `${title} ${vibe} ${album} ${lyricWords}` };
     trackSearchFields.set(t.id, f);
   }
   return f;
