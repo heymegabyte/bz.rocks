@@ -24,6 +24,7 @@ import { mkdir, readFile, writeFile, stat, copyFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { promisify } from 'node:util';
 import path from 'node:path';
+import { detectBeats } from './detect-beats.mjs';
 
 const execFileP = promisify(execFile);
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
@@ -48,6 +49,8 @@ const MINIMAX_MODEL = 'MiniMax-Hailuo-02';
 const MINIMAX_BASE = 'https://api.minimax.io/v1';
 const SEEDANCE = process.env.SEEDANCE === '1'; // SEEDANCE=1 → ByteDance Seedance 2.5 via Fal (top-tier model, 4-30s, 720p native)
 const SEEDANCE_MODEL = 'bytedance/seedance-2.5/text-to-video';
+const SEEDANCE_REF_MODEL = 'bytedance/seedance-2.5/reference-to-video'; // character consistency via a hero reference pack
+const BEATCUT = process.env.BEATCUT === '1'; // BEATCUT=1 → cut on the song's beats (music-video edit)
 const CONCURRENCY = 3;
 const AUDIO_REL = `public/audio/${FILM_ID}.mp3`;
 
@@ -127,7 +130,7 @@ async function dataUri(file) {
   return `data:image/jpeg;base64,${(await readFile(file)).toString('base64')}`;
 }
 
-async function veoClip(tok, shot, heroFrame) {
+async function veoClip(tok, shot, heroFrame, heroPack) {
   const dest = path.join(CLIPS, `${shot.id}.mp4`);
   if (existsSync(dest) && (await stat(dest)).size > 100_000) {
     log(`clip ${shot.id}: cached ✓`);
@@ -138,8 +141,21 @@ async function veoClip(tok, shot, heroFrame) {
   // Seedance 2.5 (top-tier, no keyframe) · Veo T2V · or Veo image-to-video from a photoreal keyframe.
   let model, input;
   if (SEEDANCE) {
-    model = SEEDANCE_MODEL;
-    input = { prompt, resolution: '720p', duration: 8, aspect_ratio: '16:9', generate_audio: false };
+    if (shot.seedanceRef && heroPack && heroPack.length) {
+      // reference-to-video: lock the lead's exact face + armor to the hero pack across every shot
+      model = SEEDANCE_REF_MODEL;
+      input = {
+        prompt: `Keep the SAME warrior as @Image1 — his exact face, beard, and battered bronze scale armor, unchanged. ${prompt}`,
+        image_urls: heroPack,
+        resolution: '720p',
+        duration: 8,
+        aspect_ratio: '16:9',
+        generate_audio: false
+      };
+    } else {
+      model = SEEDANCE_MODEL;
+      input = { prompt, resolution: '720p', duration: 8, aspect_ratio: '16:9', generate_audio: false };
+    }
   } else if (T2V) {
     model = T2V_MODEL;
     input = {
@@ -177,6 +193,11 @@ async function veoClip(tok, shot, heroFrame) {
     } catch (e) {
       log(`clip ${shot.id}: attempt ${attempt} failed — ${e.message}`);
       if (attempt === 2) throw e;
+      if (SEEDANCE && model === SEEDANCE_REF_MODEL) {
+        log(`clip ${shot.id}: ref→t2v fallback`);
+        model = SEEDANCE_MODEL;
+        input = { prompt, resolution: '720p', duration: 8, aspect_ratio: '16:9', generate_audio: false };
+      }
       await sleep(6000);
     }
   }
@@ -353,6 +374,81 @@ async function score(reel, reelDur, dest) {
   ]);
 }
 
+// Hero reference pack — stills of the lead from several angles; Seedance reference-to-video
+// anchors every hero shot to these so the face + armor stay consistent across the whole film.
+async function makeHeroPack(tok, lead) {
+  if (!lead) return null;
+  const angles = [
+    'head-and-shoulders portrait, facing camera, neutral grey background',
+    'three-quarter profile, determined',
+    'full-body stance, sword lowered, ready'
+  ];
+  const pack = [];
+  for (let i = 0; i < angles.length; i++) {
+    const dest = path.join(REF, `hero-${i}.jpg`);
+    await flux(tok, `${lead.description} ${angles[i]}, rain-damp, cinematic key light`, dest, `heroref-${i}`);
+    pack.push(await dataUri(dest));
+  }
+  log(`hero pack ready (${pack.length} refs) — locking the character across shots`);
+  return pack;
+}
+
+// Beat-synced edit: cut ON the song's beats, cycling a reusable shot POOL to fill the track.
+// Cut pace varies (2-4 beats per cut); each segment is a fresh slice of a pool clip.
+async function beatCutReel(norms, beats, songDur, dest) {
+  const poolDur = [];
+  for (const n of norms) poolDur.push(await probeDuration(n));
+  const segs = [];
+  let bi = 0,
+    t = 0,
+    idx = 0;
+  while (t < songDur - 0.1 && beats.length) {
+    let nb = bi + (2 + (idx % 3)); // 2,3,4 beats per cut
+    if (nb >= beats.length) nb = beats.length - 1;
+    let len = (beats[nb] ?? songDur) - (beats[bi] ?? t);
+    if (!(len > 0.3)) len = 1.2;
+    len = Math.min(len, songDur - t);
+    const ci = idx % norms.length;
+    const room = Math.max(0.1, poolDur[ci] - len - 0.05);
+    segs.push({ clip: norms[ci], inPoint: +((idx * 1.9) % room).toFixed(2), len: +len.toFixed(2) });
+    t += len;
+    idx++;
+    bi = nb + 1;
+    if (bi >= beats.length) {
+      bi = beats.findIndex(b => b > t);
+      if (bi < 0) bi = 0;
+    }
+  }
+  const segFiles = [];
+  for (let i = 0; i < segs.length; i++) {
+    const f = path.join(NORM, `seg-${String(i).padStart(4, '0')}.mp4`);
+    await ff([
+      '-ss',
+      String(segs[i].inPoint),
+      '-i',
+      segs[i].clip,
+      '-t',
+      String(segs[i].len),
+      '-an',
+      '-c:v',
+      'libx264',
+      '-crf',
+      '18',
+      '-preset',
+      'veryfast',
+      '-pix_fmt',
+      'yuv420p',
+      f
+    ]);
+    segFiles.push(f);
+  }
+  const listFile = path.join(OUT, 'beatlist.txt');
+  await writeFile(listFile, segFiles.map(f => `file '${f}'`).join('\n'));
+  await ff(['-f', 'concat', '-safe', '0', '-i', listFile, '-c', 'copy', dest]);
+  log(`beat-cut: ${segs.length} cuts on beats → ${t.toFixed(1)}s`);
+  return t;
+}
+
 async function run() {
   for (const d of [REF, FRAMES, CLIPS, NORM, OUT]) await mkdir(d, { recursive: true });
   const m = JSON.parse(await readFile(MANIFEST, 'utf8'));
@@ -389,10 +485,12 @@ async function run() {
             'hero'
           )
         : null;
+    const heroPack =
+      SEEDANCE && shots.some(s => s.seedanceRef) ? await makeHeroPack(tok, m.characters?.[0]) : null;
     log(
       `generating ${shots.length} ${SEEDANCE ? 'Seedance 2.5 (8s, 720p)' : `Veo 3.1 ${T2V ? 'text-to-video' : 'image-to-video'} (8s, 1080p)`} clips, audio off, concurrency ${CONCURRENCY}…`
     );
-    clips = await pool(shots, CONCURRENCY, shot => veoClip(tok, shot, heroFrame));
+    clips = await pool(shots, CONCURRENCY, shot => veoClip(tok, shot, heroFrame, heroPack));
   }
 
   log(`normalizing ${clips.length} clips → 2.39 letterbox…`);
@@ -404,8 +502,15 @@ async function run() {
   }
 
   const reel = path.join(OUT, `${FILM_ID}.reel.mp4`);
-  log('concatenating (hard cuts)…');
-  const reelDur = await concatReel(norms, reel);
+  let reelDur;
+  if (BEATCUT) {
+    const { beats, duration, src } = await detectBeats(path.join(ROOT, AUDIO_REL));
+    log(`beat-cut: ${beats.length} beats (${src}), cutting ${norms.length} pool clips to the beat…`);
+    reelDur = await beatCutReel(norms, beats, duration, reel);
+  } else {
+    log('concatenating (hard cuts)…');
+    reelDur = await concatReel(norms, reel);
+  }
 
   const suffix = isFull ? '' : '_PREVIEW';
   const final = path.join(OUT, `${FILM_ID}${suffix}.mp4`);

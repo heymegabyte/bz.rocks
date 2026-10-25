@@ -802,7 +802,8 @@
         "no dragon, no gore, minimal fire"
       ],
       "veoPrompt": "A lone battle-worn warrior in battered bronze scale armor stands at the front of a vast silent army massed on a muddy ridge at cold grey dawn; rain drifts, breath steams, heavy banners hang; he grips his notched sword and fixes his gaze on the enemy line across the field, utterly still before the storm; a slow wide push-in; grounded, epic scale, photoreal, overcast steel-grey, minimal fire.",
-      "useHeroAsFirstFrame": false
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": true
     },
     {
       "id": "b2",
@@ -934,7 +935,313 @@
         "no dragon, no gore, thin smoke only"
       ],
       "veoPrompt": "A battle-worn warrior stands atop a rise on the won battlefield, sword raised overhead in triumph, as his surviving army roars and raises their weapons behind him; tattered banners against a breaking dawn sky, thin smoke; a slow heroic low-angle push-in; grounded, epic, photoreal, hard-won victory.",
-      "useHeroAsFirstFrame": false
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": true
+    },
+    {
+      "id": "c1",
+      "sceneId": "s1",
+      "index": 10,
+      "durationSec": 8,
+      "subject": "The warrior marches alone through a smoking, war-torn battlefield",
+      "environment": "A war-torn battlefield at grey dawn, tattered banners, distant soldiers in the haze, no dragon on screen",
+      "action": "He marches forward through the smoke, boots in the mud, soldiers behind him in the fog",
+      "cameraFraming": "medium",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, tracking",
+      "lighting": "grey dawn, overcast, smoky",
+      "emotionalIntention": "lone resolve; the long march to the beast",
+      "temporalProgression": "he advances steadily as the camera tracks beside him",
+      "continuityConstraints": [
+        "same warrior (hero pack), battered bronze scale armor, notched sword",
+        "grounded, many soldiers deep in fog"
+      ],
+      "referenceAssets": ["darius", "bronze-scale-mail", "notched-sword"],
+      "transition": "cut",
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/reference-to-video",
+        "rationale": "Seedance ref-to-video; hero locked to the reference pack",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "photoreal, grounded",
+        "character matches the hero pack"
+      ],
+      "veoPrompt": "A lone warrior in battered bronze scale armor marches through a smoking, war-torn battlefield at grey dawn, tattered banners and distant soldiers behind him in the haze; a slow tracking shot beside him, boots in the mud; grounded, cinematic, soldiers deep in the fog.",
+      "seedanceRef": true
+    },
+    {
+      "id": "c2",
+      "sceneId": "s1",
+      "index": 11,
+      "durationSec": 8,
+      "subject": "An enormous winged shadow sweeps across the army (the dragon, oblique)",
+      "environment": "A vast army on a muddy field under grey dawn; the dragon itself stays OUT of frame — only its colossal shadow",
+      "action": "A huge winged shadow races across the ground and the soldiers, who flinch and look up",
+      "cameraFraming": "wide",
+      "cameraMovement": "drone",
+      "lensIntention": "anamorphic, high wide",
+      "lighting": "grey dawn darkening as the shadow passes",
+      "emotionalIntention": "dread; the unseen beast's scale",
+      "temporalProgression": "the shadow sweeps across the whole army, darkening the field",
+      "continuityConstraints": [
+        "the DRAGON stays off-screen — only its shadow + the wind of its passing",
+        "no dragon body visible (dodges Seedance copyright)",
+        "grounded, epic"
+      ],
+      "referenceAssets": ["the-dragon"],
+      "transition": "cut",
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/text-to-video",
+        "rationale": "Seedance epic scale; dragon oblique (shadow only) to pass the copyright checker",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "only the shadow — never the dragon body",
+        "epic grounded scale, real crowd reaction"
+      ],
+      "veoPrompt": "An enormous winged shadow sweeps across a vast army and the muddy ground, blotting out the grey dawn light; soldiers look up and flinch as the darkness races over them; the beast itself stays entirely out of frame — only its colossal shadow and the wind of its passing; grounded, epic, ominous.",
+      "seedanceRef": false
+    },
+    {
+      "id": "c3",
+      "sceneId": "s2",
+      "index": 12,
+      "durationSec": 8,
+      "subject": "Extreme close-up of the warrior's grim rain-soaked face",
+      "environment": "In the battle haze, distant firelight flickering, ash drifting",
+      "action": "He holds his gaze and exhales once, firelight in his eyes",
+      "cameraFraming": "extreme-close-up",
+      "cameraMovement": "push-in",
+      "lensIntention": "85mm, very shallow",
+      "lighting": "distant fire rim, grey key, rain",
+      "emotionalIntention": "cold focus before the charge",
+      "temporalProgression": "a single slow breath as the camera pushes in",
+      "continuityConstraints": [
+        "same warrior face (hero pack), human eyes",
+        "photoreal skin + micro-expression"
+      ],
+      "referenceAssets": ["darius"],
+      "transition": "cut",
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/reference-to-video",
+        "rationale": "Seedance ref-to-video for a consistent hero close-up",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "photoreal micro-expression",
+        "face matches the hero pack",
+        "human eyes"
+      ],
+      "veoPrompt": "Extreme close-up of the warrior's grim, rain-soaked face, jaw set, distant firelight flickering in his eyes, ash drifting past; he exhales once; a slow push-in; photoreal skin and true micro-expression.",
+      "seedanceRef": true
+    },
+    {
+      "id": "c4",
+      "sceneId": "s2",
+      "index": 13,
+      "durationSec": 8,
+      "subject": "Sweeping aerial over the massive army advancing",
+      "environment": "A scarred grey valley toward a distant burning horizon, endless ranks, drifting smoke",
+      "action": "The army advances in endless ranks across the valley",
+      "cameraFraming": "establishing",
+      "cameraMovement": "drone",
+      "lensIntention": "anamorphic, high aerial",
+      "lighting": "grey overcast, distant fire glow",
+      "emotionalIntention": "awe at the scale of the war",
+      "temporalProgression": "the drone sweeps over the advancing host toward the burning horizon",
+      "continuityConstraints": [
+        "epic grounded scale, endless real ranks",
+        "no dragon body (distant glow only)"
+      ],
+      "referenceAssets": [],
+      "transition": "cut",
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/text-to-video",
+        "rationale": "Seedance peerless for massive aerial army scale",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": ["huge grounded scale", "real endless ranks"],
+      "veoPrompt": "A sweeping aerial drone shot high over a massive army advancing across a scarred grey valley toward a distant burning horizon, banners and spears in endless ranks, smoke drifting; epic grounded scale, photoreal.",
+      "seedanceRef": false
+    },
+    {
+      "id": "c5",
+      "sceneId": "s3",
+      "index": 14,
+      "durationSec": 8,
+      "subject": "The warrior charges sword-first into the battle",
+      "environment": "The heart of the battle, soldiers clashing, mud and rain",
+      "action": "He charges forward into the clash, sword leading, relentless",
+      "cameraFraming": "medium",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic, fast tracking",
+      "lighting": "grey overcast, chaotic",
+      "emotionalIntention": "unstoppable heroic aggression",
+      "temporalProgression": "he drives into the melee without slowing, camera racing with him",
+      "continuityConstraints": [
+        "same warrior (hero pack), bronze scale armor, notched sword",
+        "grounded readable action, no gore"
+      ],
+      "referenceAssets": ["darius", "notched-sword"],
+      "transition": "cut",
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/reference-to-video",
+        "rationale": "Seedance ref-to-video; consistent hero in action",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "grounded visceral action, no gore",
+        "character matches hero pack"
+      ],
+      "veoPrompt": "The warrior charges sword-first into the heart of the battle, soldiers clashing around him, mud and rain flying, relentless and unstoppable; a fast tracking shot alongside him; grounded, visceral, readable action, no gore.",
+      "seedanceRef": true
+    },
+    {
+      "id": "c6",
+      "sceneId": "s3",
+      "index": 15,
+      "durationSec": 8,
+      "subject": "A wall of dragonfire rolls across the far battlefield (fire motivated, dragon oblique)",
+      "environment": "The far end of the battlefield; the fire's source stays off-screen",
+      "action": "A towering wall of fire rolls across the field as soldiers scatter before it",
+      "cameraFraming": "wide",
+      "cameraMovement": "locked-off",
+      "lensIntention": "anamorphic, wide",
+      "lighting": "roaring firelight against grey",
+      "emotionalIntention": "terror at the beast's power",
+      "temporalProgression": "the wall of flame sweeps forward; silhouetted soldiers scatter",
+      "continuityConstraints": [
+        "the fire's SOURCE (dragon) stays off-screen — only the flame + smoke",
+        "real roaring fire, grounded, terrifying scale"
+      ],
+      "referenceAssets": ["the-dragon"],
+      "transition": "cut",
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/text-to-video",
+        "rationale": "Seedance for epic fire; dragon oblique (off-screen source)",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "real roaring fire + smoke",
+        "dragon never shown — only its fire"
+      ],
+      "veoPrompt": "A towering wall of dragonfire rolls across the far end of the battlefield from beyond the frame, soldiers silhouetted and scattering before it; the fire's source stays off-screen; real roaring flame and billowing smoke; grounded, terrifying scale.",
+      "seedanceRef": false
+    },
+    {
+      "id": "c7",
+      "sceneId": "s3",
+      "index": 16,
+      "durationSec": 8,
+      "subject": "The warrior mid-swing in the churning melee",
+      "environment": "In the thick of the clash, shields and spears, rain",
+      "action": "He swings through the melee, teeth bared with effort, shields crashing around him",
+      "cameraFraming": "medium",
+      "cameraMovement": "handheld",
+      "lensIntention": "anamorphic, handheld",
+      "lighting": "grey overcast, rain on the lens",
+      "emotionalIntention": "relentless struggle",
+      "temporalProgression": "he fights through the crush, cuts readable, never stopping",
+      "continuityConstraints": [
+        "same warrior (hero pack), bronze scale armor, notched sword",
+        "visceral readable, no gore"
+      ],
+      "referenceAssets": ["darius", "notched-sword"],
+      "transition": "cut",
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/reference-to-video",
+        "rationale": "Seedance ref-to-video; consistent hero in the melee",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "grounded readable combat, no gore",
+        "character matches hero pack"
+      ],
+      "veoPrompt": "The warrior mid-swing in the churning melee, shields and spears crashing around him, rain streaking the frame, teeth bared with effort; handheld, visceral, in the thick of it, no gore.",
+      "seedanceRef": true
+    },
+    {
+      "id": "c8",
+      "sceneId": "s4",
+      "index": 17,
+      "durationSec": 8,
+      "subject": "A colossal fallen form in the distance (the slain dragon, oblique)",
+      "environment": "The ruined battlefield through drifting smoke at dawn; the beast half-seen in silhouette far off",
+      "action": "Weary soldiers lower their weapons and stare at the vast fallen shape in the smoke",
+      "cameraFraming": "wide",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic, wide",
+      "lighting": "grey dawn, heavy smoke",
+      "emotionalIntention": "awe; the beast is defeated",
+      "temporalProgression": "a slow push-in past the soldiers toward the distant fallen form",
+      "continuityConstraints": [
+        "the dragon is DISTANT + half-seen in silhouette/smoke (oblique, dodges copyright)",
+        "grounded, awe, no gore"
+      ],
+      "referenceAssets": ["the-dragon"],
+      "transition": "cut",
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/text-to-video",
+        "rationale": "Seedance for the awe of the aftermath; dragon oblique (distant silhouette)",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "dragon only distant + half-seen in smoke",
+        "grounded, real crowd awe"
+      ],
+      "veoPrompt": "In the far distance through drifting smoke, a colossal fallen form lies still across the ruined battlefield — vast and dark, half-seen in silhouette — as weary soldiers lower their weapons and stare; grounded, awe, the beast defeated yet oblique.",
+      "seedanceRef": false
+    },
+    {
+      "id": "c9",
+      "sceneId": "s5",
+      "index": 18,
+      "durationSec": 8,
+      "subject": "A beautiful woman walks forward through the victorious ranks (grounded)",
+      "environment": "The won battlefield at dawn, soldiers parting, banners behind",
+      "action": "She walks forward through the ranks, grounded, soldiers parting before her",
+      "cameraFraming": "medium",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic, elegant tracking",
+      "lighting": "breaking dawn, warm",
+      "emotionalIntention": "reverent; beauty answering the victory",
+      "temporalProgression": "she advances through the parting ranks toward the hero, feet on the earth",
+      "continuityConstraints": [
+        "a beautiful woman, GROUNDED (walking, feet on the earth, NEVER floating), dignified, never exploitative, flowing deep-red robes",
+        "grounded, elegant"
+      ],
+      "referenceAssets": [],
+      "transition": "cut",
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/text-to-video",
+        "rationale": "Seedance for an elegant grounded crowd walk",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "beautiful + dignified + GROUNDED (never floating)",
+        "real parting crowd"
+      ],
+      "veoPrompt": "A beautiful woman in flowing deep-red robes walks forward through the ranks of the victorious army on the won battlefield at dawn, dignified and grounded — feet on the earth, never floating — soldiers parting before her, banners behind; cinematic, elegant, reverent.",
+      "seedanceRef": false
     }
   ],
   "budget": { "maxUsd": 40, "spentUsd": 0, "requireApproval": false },
