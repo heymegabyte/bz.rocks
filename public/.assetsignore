@@ -25,4 +25,14 @@ brand/logo-spray*.png
 
 # Media (wav/mp4/stems) is served from R2 via the MEDIA binding + /media/* worker route.
 # public/media is gitignored (CI deploys empty); locally it holds ~30G — never upload as assets.
-media/
+# NOTE: `media/*` (not `media/`) excludes the mirror's CONTENTS while leaving the
+# directory itself un-excluded, so the `media/pub/` publish lane below can be
+# re-included. A bare `media/` would make git/assets ignore pub/ too.
+media/*
+
+# PUBLISH LANE — the R2-outage fallback. Files dropped here ARE uploaded + served
+# as static assets, and the /media/* worker route serves them via env.ASSETS when
+# R2 is unavailable or missing the object. To ship a video WITHOUT R2: drop the
+# mp4 at public/media/pub/<id>.mp4 (optionally public/media/pub/<id>.vtt for
+# lyric captions) and set the track's `video: '/media/pub/<id>.mp4'` in src/data.ts.
+!media/pub/

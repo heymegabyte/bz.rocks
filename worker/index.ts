@@ -998,6 +998,23 @@ function renderWatchPage(trackId: string, origin: string): string {
   const playerUrl = track ? `${origin}/${track.album}/${trackId}` : `${origin}/`;
   const watchUrl = `${origin}/watch/${trackId}`;
   const desc = `${title} by bZ — cinematic music video. Watch the film.`;
+  // schema.org VideoObject — only for tracks that actually have a video, and only
+  // with fields we can ground in real data (no invented duration/interaction stats).
+  // uploadDate derives from the owning album's release date when known.
+  const videoJsonLd = track?.video
+    ? `<script type="application/ld+json">${JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'VideoObject',
+        name: `${title} — the film`,
+        description: desc,
+        thumbnailUrl: coverUrl,
+        contentUrl: videoUrl,
+        embedUrl: watchUrl,
+        ...(album?.releasedAt ? { uploadDate: album.releasedAt } : {}),
+        author: { '@type': 'MusicGroup', name: 'bZ' },
+        publisher: { '@type': 'Organization', name: 'bZ', url: origin }
+      })}</script>`
+    : '';
   return `<!doctype html><html lang="en"><head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
@@ -1022,6 +1039,7 @@ function renderWatchPage(trackId: string, origin: string): string {
 <meta name="twitter:player:stream" content="${escapeHtmlAttr(videoUrl)}" />
 <meta name="twitter:player:stream:content_type" content="video/mp4" />
 <meta name="theme-color" content="#060610" />
+${videoJsonLd}
 <style>
   *,*::before,*::after{box-sizing:border-box}
   html,body{margin:0;height:100%;background:#060610;color:#f4f4ff;font-family:'Sora',system-ui,-apple-system,sans-serif}
@@ -3497,9 +3515,27 @@ ${chatCatalog}`;
         'Timing-Allow-Origin': '*'
       };
       if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: mediaCors });
-      if (!env.MEDIA) return new Response('media store unavailable', { status: 503, headers: mediaCors });
       const key = decodeURIComponent(url.pathname.slice('/media/'.length));
       if (!key || key.includes('..')) return new Response('bad key', { status: 400, headers: mediaCors });
+      // Static-asset fallback: during the R2 outage (binding commented out so
+      // env.MEDIA is undefined) — OR whenever R2 simply lacks the object — serve
+      // a file shipped under public/media/<key> via the ASSETS binding. ASSETS
+      // honors HTTP Range (seeking) + content-type natively; we re-stamp CORS +
+      // a long immutable cache. Only 503/404 when BOTH R2 and the asset miss.
+      const assetFallback = async (): Promise<Response | null> => {
+        if (!env.ASSETS) return null;
+        const res = await env.ASSETS.fetch(new Request(new URL(`/media/${key}`, url.origin), request));
+        if (!res.ok && res.status !== 206) return null; // 404 etc. → let caller decide
+        const headers = new Headers(res.headers);
+        for (const [k, v] of Object.entries(mediaCors)) headers.set(k, v);
+        if (!headers.has('Accept-Ranges')) headers.set('Accept-Ranges', 'bytes');
+        headers.set('Cache-Control', 'public, max-age=2592000, immutable');
+        return new Response(res.body, { status: res.status, headers });
+      };
+      if (!env.MEDIA) {
+        const fb = await assetFallback();
+        return fb ?? new Response('media store unavailable', { status: 503, headers: mediaCors });
+      }
       const rangeMatch = request.headers.get('Range')?.match(/^bytes=(\d*)-(\d*)$/);
       let range: R2Range | undefined;
       if (rangeMatch) {
@@ -3513,7 +3549,10 @@ ${chatCatalog}`;
               : undefined;
       }
       const obj = range ? await env.MEDIA.get(key, { range }) : await env.MEDIA.get(key);
-      if (!obj) return new Response('not found', { status: 404, headers: mediaCors });
+      if (!obj) {
+        const fb = await assetFallback();
+        return fb ?? new Response('not found', { status: 404, headers: mediaCors });
+      }
       const headers = new Headers(mediaCors);
       obj.writeHttpMetadata(headers);
       headers.set('etag', obj.httpEtag);

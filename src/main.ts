@@ -6985,7 +6985,7 @@ function bindUi() {
   // Cinematic film — open the fullscreen music-video player synced to playback
   $('#npPanelWatch')?.addEventListener('click', () => {
     const t = currentTrackId ? TRACK_BY_ID.get(currentTrackId) : null;
-    if (t?.video) openVideoCinema(t);
+    if (t && trackHasVideo(t)) openVideoCinema(t);
   });
   $('#videoCinemaClose')?.addEventListener('click', () => closeVideoCinema());
   $('#videoCinemaBackdrop')?.addEventListener('click', () => closeVideoCinema());
@@ -8832,9 +8832,10 @@ function refreshNpPanel() {
   const dlEl = $('#npPanelDownloads') as HTMLElement | null;
   if (dlEl) dlEl.hidden = !activeLyrics || !activeLyrics.lines.length;
 
-  // Cinematic film button — only for tracks that carry a `video`
+  // Cinematic film button — only for tracks that carry a `video` (and only
+  // while the MUSIC_VIDEO_ENABLED feature flag is on).
   const watchBtn = $('#npPanelWatch') as HTMLButtonElement | null;
-  if (watchBtn) watchBtn.hidden = !track?.video;
+  if (watchBtn) watchBtn.hidden = !trackHasVideo(track);
 
   npRefreshProgress();
   npRefreshLyrics();
@@ -8916,12 +8917,55 @@ function closeNpPanel() {
 // Fullscreen music-video overlay. The video carries the song as its own audio,
 // so the site engine pauses while it plays and playback position is handed back
 // and forth for a seamless in/out.
+//
+// MUSIC_VIDEO_ENABLED — kill-switch for the whole cinematic-video surface (the
+// Watch button + the fullscreen film player). Flip to false to hide the feature
+// entirely (e.g. while the media rail is down); true ships it. Trivial by design
+// — this is a vanilla site, no D1/admin flag plane.
+const MUSIC_VIDEO_ENABLED = true;
+
+/** A track is film-playable only when the feature is on AND it carries a video. */
+function trackHasVideo(track: Track | null | undefined): boolean {
+  return MUSIC_VIDEO_ENABLED && !!track?.video;
+}
+
+/**
+ * Lyrics captions: point a <track kind="subtitles"> at the sidecar `.vtt`
+ * next to the film (`/media/<id>.mp4` → `/media/<id>.vtt`). We HEAD-probe the
+ * file first so a missing `.vtt` (most films, today) adds no broken cue track —
+ * absence is silent. Any prior film's track is always removed first.
+ */
+function attachVideoCaptions(player: HTMLVideoElement, track: Track): void {
+  player.querySelectorAll('track').forEach(t => t.remove());
+  const vtt = track.video?.replace(/\.mp4($|\?)/i, '.vtt$1');
+  if (!vtt) return;
+  void fetch(vtt, { method: 'HEAD' })
+    .then(res => {
+      // Only wire the cue track if the file is actually there AND this film is
+      // still the one on screen (guard against a fast open→switch).
+      if (!res.ok || player.src === '' || !player.src.includes('.mp4')) return;
+      const el = document.createElement('track');
+      el.kind = 'subtitles';
+      el.srclang = 'en';
+      el.label = 'Lyrics';
+      el.src = vtt;
+      el.default = true;
+      player.appendChild(el);
+    })
+    .catch(() => {
+      /* no captions — silent */
+    });
+}
+
 let videoCinemaOpen = false;
 let videoCinemaResume = false;
 let videoCinemaReturnFocus: HTMLElement | null = null;
 
 function openVideoCinema(track: Track) {
-  if (!track.video) return;
+  // trackHasVideo gates the flag; the explicit `track.video` check also NARROWS
+  // the optional field to `string` for the assignment below (TS can't infer
+  // narrowing through the helper call).
+  if (!trackHasVideo(track) || !track.video) return;
   const overlay = $('#videoCinema') as HTMLElement | null;
   const player = $('#videoCinemaPlayer') as HTMLVideoElement | null;
   const caption = $('#videoCinemaCaption');
@@ -8937,6 +8981,12 @@ function openVideoCinema(track: Track) {
   }
 
   if (caption) caption.textContent = `${track.title} — ${track.wisdom ?? track.vibe ?? ''}`.trim();
+  // Poster: show the cover art until the first frame paints.
+  if (track.cover) player.poster = track.cover;
+  // Lyrics captions: swap in a <track> pointing at the sidecar .vtt for this
+  // film. Loaded lazily; a 404 is swallowed so absence is silent (most films
+  // have no .vtt yet). Always clear any prior film's track first.
+  attachVideoCaptions(player, track);
   player.src = track.video;
   player.currentTime = 0;
   player.addEventListener(
@@ -8973,6 +9023,8 @@ function closeVideoCinema() {
       /* ignore */
     }
     player.removeAttribute('src');
+    player.removeAttribute('poster');
+    player.querySelectorAll('track').forEach(t => t.remove());
     try {
       player.load();
     } catch {
