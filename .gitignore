@@ -82,3 +82,7 @@ public/media/stems/
 # CINEMA MIND film outputs (heavy media — keep manifest source, ignore renders)
 scripts/films/*/preview.mp4
 scripts/films/*/ref/
+
+# rendered film masters/previews (large — masters live in .cache + ~/Desktop; web copy ships under public/media/pub/)
+scripts/films/*/preview.mp4
+scripts/films/*/*.mp4

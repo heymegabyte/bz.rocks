@@ -18,8 +18,15 @@ const TRACK_WITHOUT_VIDEO = { path: '/reckless-grace/reckless-grace', title: 'Re
 // Mobile blocks autoplay -> a "tap to play" prompt (#apClose) can intercept
 // clicks. Dismiss it before driving the transport. No-op on desktop.
 async function dismissAutoplayPrompt(page: Page) {
+  // The "tap to play" <dialog id="autoplayPrompt"> intercepts pointer events, so
+  // wait for it, dismiss via #apClose (or the dialog itself), and wait for it to
+  // leave the DOM before driving the transport.
+  const dialog = page.locator('#autoplayPrompt');
+  await dialog.waitFor({ state: 'visible', timeout: 4000 }).catch(() => {});
   const close = page.locator('#apClose');
-  if (await close.isVisible().catch(() => false)) await close.click();
+  if (await close.isVisible().catch(() => false)) await close.click({ force: true }).catch(() => {});
+  else if (await dialog.isVisible().catch(() => false)) await dialog.click({ force: true }).catch(() => {});
+  await dialog.waitFor({ state: 'hidden', timeout: 4000 }).catch(() => {});
 }
 
 // Open the now-playing panel. The transport cover pulses with the beat (never
@@ -108,5 +115,30 @@ test.describe('Music video feature', () => {
     await expect(cinema).toBeVisible({ timeout: 10000 });
     await page.keyboard.press('Escape');
     await expect(cinema).toBeHidden({ timeout: 10000 });
+  });
+
+  // Border Mercy ships as a STATIC asset (public/media/pub/border-mercy.mp4),
+  // bypassing the R2 outage — so unlike Bermuda Prophecy its bytes actually play.
+  test('Border Mercy film loads + plays from the static /media/pub lane', async ({ page }) => {
+    await page.goto(`${BASE}/mercy-drop/border-mercy`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#transportNpTitle')).toHaveText('Border Mercy', { timeout: 15000 });
+    await dismissAutoplayPrompt(page);
+    await openNowPlaying(page);
+    await page.locator('#npPanelWatch').evaluate((el: HTMLElement) => el.click());
+    await expect(page.locator('#videoCinema')).toBeVisible({ timeout: 10000 });
+
+    const player = page.locator('#videoCinemaPlayer');
+    const src = await player.evaluate((el: HTMLVideoElement) => el.currentSrc || el.src);
+    expect(src).toContain('/media/pub/border-mercy.mp4');
+
+    // The bytes are reachable: metadata loads (duration ~3:40) and playback advances.
+    await player.evaluate((el: HTMLVideoElement) => el.play().catch(() => {}));
+    await expect
+      .poll(() => player.evaluate((el: HTMLVideoElement) => el.readyState), { timeout: 15000 })
+      .toBeGreaterThanOrEqual(2);
+    expect(await player.evaluate((el: HTMLVideoElement) => el.duration)).toBeGreaterThan(200);
+    await expect
+      .poll(() => player.evaluate((el: HTMLVideoElement) => el.currentTime), { timeout: 10000 })
+      .toBeGreaterThan(0);
   });
 });
