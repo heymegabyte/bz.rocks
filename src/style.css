@@ -6218,6 +6218,24 @@ html.is-appeal-open {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* Lyric-moment search row — the matched line (italic, brand-tinted) with the query
+   highlighted; the "↳ jump" badge signals selecting it seeks to where it's sung. */
+.cmdk__item-lyric {
+  font-style: italic;
+  color: var(--ink-album-accent);
+  letter-spacing: 0.04em;
+}
+.cmdk__item-lyric .cmdk__hl {
+  background: color-mix(in srgb, var(--album-accent, var(--accent)) 30%, transparent);
+  color: #f4f4ff;
+  border-radius: 3px;
+  padding: 0 2px;
+  font-style: normal;
+}
+.cmdk__item-badge--jump {
+  color: color-mix(in srgb, var(--album-accent, var(--accent)) 82%, #f4f4ff);
+  border-color: color-mix(in srgb, var(--album-accent, var(--accent)) 45%, transparent);
+}
 .cmdk__item-badge {
   font-family: var(--font-mono);
   font-size: 0.55rem;

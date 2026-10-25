@@ -134,6 +134,10 @@ let karaokeOverlayWordIdx = -2;
 let queuePanelOpen = false;
 let shortcutsOpen = false;
 let pendingDeeplinkSeek: number | null = null;
+// Set from a Cmd+K LYRIC-content search selection → play() seeks to the moment
+// that lyric is sung. Captured + cleared atomically at the top of play() so a
+// concurrent play() can never consume this one's target.
+let pendingLyricSeekQuery: string | null = null;
 let installPromptEvent: Event | null = null;
 let crossfadeEnabled = false;
 
@@ -3372,6 +3376,10 @@ function capitalizeLyricLine(s: string): string {
 }
 
 async function play(track: Track) {
+  // Capture + clear the lyric-seek target atomically — play() is async with many
+  // awaits, so a concurrent play() must not consume this call's moment.
+  const lyricSeekQuery = pendingLyricSeekQuery;
+  pendingLyricSeekQuery = null;
   pushTrackUrl(track);
   recordPlayStart(track.id);
   currentTrackId = track.id;
@@ -3457,6 +3465,18 @@ async function play(track: Track) {
   }
   activeLyrics = null;
   activeLyrics = await loadLyrics(track);
+  // "Search a lyric → jump to that moment": if this play came from a lyric-content
+  // search selection, seek to where the matched line is actually sung (grounded in
+  // the Whisper-aligned timestamps — no guessing). Match by TEXT, robust to any
+  // line-index drift between the search source and the timed .json.
+  if (lyricSeekQuery && activeLyrics) {
+    const ql = lyricSeekQuery.toLowerCase();
+    const line = activeLyrics.lines.find(l => (l.text || '').toLowerCase().includes(ql));
+    if (line && typeof line.s === 'number' && line.s > 0.3) {
+      seekAudioWhenReady(line.s);
+      if (cast.active) cast.seek(line.s);
+    }
+  }
   setTimeout(preloadNextTrack, 1500);
 }
 
@@ -6879,6 +6899,7 @@ function bindUi() {
     const idx = Number(item.dataset.idx ?? -1);
     const t = searchRows[idx];
     if (t) {
+      armLyricSeekIfLyricMatch(t);
       closeSearch();
       play(t);
     }
@@ -7981,6 +8002,71 @@ function searchFields(t: Track): TrackSearchFields {
 // ('**[Chorus]**' etc.) are structure, not words — dropped (they polluted
 // "chorus"/"verse" to 33/56 hits); markdown emphasis stripped. Fail-soft.
 let lyricsEnriched = false;
+// Case-preserved cleaned lyric lines per track (populated by enrichSearchLyrics) —
+// powering "search a lyric → jump to that moment": the matched line is shown in the
+// result and selecting it seeks playback to where that line is sung.
+const searchLyricLines = new Map<string, string[]>();
+
+// The first cleaned lyric line containing the query — the moment a lyric-content
+// search hit. null when the query isn't inside a single line (e.g. it spanned a
+// line break in the joined blob) → the row falls back to a normal metadata sub.
+function matchedLyricLine(trackId: string, q: string): string | null {
+  const lines = searchLyricLines.get(trackId);
+  if (!lines) return null;
+  const ql = q.toLowerCase();
+  return lines.find(l => l.toLowerCase().includes(ql)) ?? null;
+}
+
+// Escape, then wrap the case-insensitive query hit in <mark> — each slice escaped
+// independently so the splice stays correct even with HTML-special chars present.
+function highlightQuery(text: string, q: string): string {
+  if (!q) return escapeHtml(text);
+  const i = text.toLowerCase().indexOf(q.toLowerCase());
+  if (i < 0) return escapeHtml(text);
+  return (
+    escapeHtml(text.slice(0, i)) +
+    '<mark class="cmdk__hl">' +
+    escapeHtml(text.slice(i, i + q.length)) +
+    '</mark>' +
+    escapeHtml(text.slice(i + q.length))
+  );
+}
+
+// A ~64-char window centered on the match so a long line never blows the row.
+function lyricSnippetWindow(line: string, q: string, max = 64): string {
+  if (line.length <= max) return line;
+  const i = line.toLowerCase().indexOf(q.toLowerCase());
+  if (i < 0) return line.slice(0, max).trim() + '…';
+  const pad = Math.max(0, Math.floor((max - q.length) / 2));
+  const end = Math.min(line.length, Math.max(0, i - pad) + max);
+  const start = Math.max(0, end - max);
+  return (start > 0 ? '…' : '') + line.slice(start, end).trim() + (end < line.length ? '…' : '');
+}
+
+// Arm the lyric-seek before a search selection plays: remember the query ONLY when
+// THIS track matched on a lyric line (not its title/album/vibe).
+function armLyricSeekIfLyricMatch(t: Track): void {
+  const q = ($('#cmdkInput') as HTMLInputElement | null)?.value.toLowerCase().trim() ?? '';
+  pendingLyricSeekQuery =
+    q && !searchFields(t).base.includes(q) && matchedLyricLine(t.id, q) ? q : null;
+}
+
+// Seek the audio to `time`, waiting for metadata if the element just started.
+function seekAudioWhenReady(time: number): void {
+  const a = engine.audio;
+  const doSeek = () => {
+    a.currentTime = Math.min(time, a.duration || time);
+  };
+  if (a.readyState >= 1 && (a.duration || 0) > 0) doSeek();
+  else {
+    const onMeta = () => {
+      a.removeEventListener('loadedmetadata', onMeta);
+      doSeek();
+    };
+    a.addEventListener('loadedmetadata', onMeta);
+  }
+}
+
 async function enrichSearchLyrics(): Promise<void> {
   if (lyricsEnriched) return;
   lyricsEnriched = true;
@@ -7988,12 +8074,15 @@ async function enrichSearchLyrics(): Promise<void> {
     const { STATIC_LYRICS } = await import('./lyrics-static');
     for (const t of TRACKS) {
       const f = searchFields(t);
-      const words = (STATIC_LYRICS[t.id] ?? [])
+      // Case-preserved cleaned lines (markers dropped, markdown stripped) power the
+      // "jump to the lyric moment" snippet + seek; the lowercased join feeds the
+      // search blob from the SAME source so display + search can never drift.
+      const lines = (STATIC_LYRICS[t.id] ?? [])
         .filter(l => !/^\s*\*{0,2}\[[^\]]*\]\*{0,2}\s*$/.test(l))
-        .join(' ')
-        .replace(/[*_`#]/g, '')
-        .toLowerCase();
-      f.blob = `${f.base} ${words}`;
+        .map(l => l.replace(/[*_`#]/g, '').trim())
+        .filter(Boolean);
+      searchLyricLines.set(t.id, lines);
+      f.blob = `${f.base} ${lines.join(' ').toLowerCase()}`;
     }
   } catch {
     lyricsEnriched = false; // allow retry on the next search-open
@@ -8109,10 +8198,20 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
         .join('') +
       (tracks.length ? `<div class="cmdk__group">tracks</div>` : '')
     : '';
+  const sq = (input?.value ?? '').toLowerCase().trim();
   const tracksHtml = shownTracks
     .map((t, i) => {
       const album = ALBUM_BY_ID.get(t.album);
-      return trackRowHtml(t, i, `${escapeHtml(album?.name ?? 'bZ')} · ${escapeHtml(t.vibe)}`, '');
+      // A lyric-ONLY match (query not in title/vibe/album) → surface the lyric
+      // line it hit + a "↳ jump" badge; selecting it seeks playback to that moment.
+      const line = sq && !searchFields(t).base.includes(sq) ? matchedLyricLine(t.id, sq) : null;
+      const sub = line
+        ? `<span class="cmdk__item-lyric">♪ ${highlightQuery(lyricSnippetWindow(line, sq), sq)}</span>`
+        : `${escapeHtml(album?.name ?? 'bZ')} · ${escapeHtml(t.vibe)}`;
+      const badge = line
+        ? '<span class="cmdk__item-badge cmdk__item-badge--inline cmdk__item-badge--jump">↳ jump</span>'
+        : '';
+      return trackRowHtml(t, i, sub, badge);
     })
     .join('');
   const aiHtml = ai.length
@@ -8174,6 +8273,7 @@ function searchMove(dir: 1 | -1) {
 function searchCommit() {
   const t = searchRows[Math.max(0, searchActiveIdx)];
   if (t) {
+    armLyricSeekIfLyricMatch(t);
     closeSearch();
     play(t);
   }
