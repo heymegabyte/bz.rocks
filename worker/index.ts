@@ -491,8 +491,18 @@ const SECURITY_HEADERS: Record<string, string> = {
   'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'geolocation=(), camera=(), microphone=()',
+  // microphone=(self): the AI DJ chat ships voice features (wake word +
+  // continuous dictation via SpeechRecognition) — a blanket microphone=() would
+  // disable the mic for our own origin and break them. camera/geolocation stay
+  // fully off (no feature uses them).
+  'Permissions-Policy': 'geolocation=(), camera=(), microphone=(self)',
   'X-Frame-Options': 'DENY',
+  // COOP isolates our browsing context from cross-origin openers (XS-Leak /
+  // tabnabbing hardening). -allow-popups so the share/platform popups we OPEN
+  // keep their window reference; cross-origin pages still can't reach into us.
+  // (COEP/CORP are deliberately omitted — they'd break the cross-origin embeds
+  // we load (Spotify/Cast) AND our own embeddable player on other sites.)
+  'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
   // ENFORCING structural CSP (promoted from report-only 2026-06 after 0
   // violations logged over the 7-day window). Covers the real XSS surface:
   // script/style/connect/frame/object/base/form-action. Tuned for the load
