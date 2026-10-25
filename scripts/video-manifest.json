@@ -55,6 +55,14 @@
       "duration": "4:53",
       "published": true,
       "note": "TITLE TRACK only on @bzbloom. The other 16 Reckless Grace songs are NOT published."
+    },
+    "the-last-soldier-refused": {
+      "status": "done",
+      "duration": "4:52",
+      "file": "~/Desktop/the-last-soldier-refused.mp4 (142.6 MB, 292.2s) — CINEMA MIND, MiniMax Hailuo-02, beat-cut 102 cuts",
+      "published": false,
+      "features_woman_lead": false,
+      "note": "Fully-plotted parallel-lives anti-war film (Eli refuses -> home alive; Marcus fights -> falls; the war machine's power vanishes). 10 scenes / 20 shots, manifest at scripts/films/the-last-soldier-refused/manifest.json. Rail = MiniMax (permissive battlefield + one-model consistency), NOT Fal. NOT yet on @bzbloom — ready to publish."
     }
   },
   "preexisting_unmapped": [
@@ -72,7 +80,6 @@
   "_preexisting_note": "These Desktop .mp4s predate this manifest and their filenames do NOT map cleanly to track ids. RECONCILE each to a song (or mark as album-trailer/other) BEFORE generating anything war/anti-war/Signals/cosmic-themed — several may already BE the video for a ranked song (e.g. an anti-war film could already cover The Last Soldier Refused / Peace in the Picture). Verify by watching before spending.",
   "next_up": [
     "i-killed-your-dragon",
-    "the-last-soldier-refused",
     "if-we-met-again",
     "algenib-crown-of-the-sky",
     "the-smell-was-so-sinful",

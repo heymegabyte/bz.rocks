@@ -1,0 +1,1543 @@
+{
+  "id": "the-last-soldier-refused",
+  "createdAtIso": "2026-10-25T00:00:00Z",
+  "brief": {
+    "concept": "Cinematic music FILM (not a shot-reel) for bZ's 'The Last Soldier Refused' (album Welcome to the Multiverse), working title ONE BRAVE NO. A fully-plotted parallel-lives anti-war requiem mined from the whole lyric: two young brothers-in-arms, born with futures, are sent by a crooked command chain to march into the smoke and kill. One obeys and is lost to the war; the other catches his own reflection — and the enemy's children — in the enemy's eyes, drops his rifle, and the refusal ripples east and west until the war machine's power simply vanishes because the soldiers withdrew. He walks home to the life he almost lost; the one who chose to fight does not. Plot architecture bookends it: the futures they leave ↔ the future reclaimed, and the machine set up ↔ the machine toppled. HBO-level, 100% photoreal, indistinguishable from real live-action; ARRI/35mm anamorphic 2.39 letterbox. Grade: WARM golden home/memory vs COLD desaturated blue-grey war; the cold warms as mercy spreads. People GROUNDED always (NEVER float). Violence OBLIQUE and dignified — no blood, no gore. NO superimposed HUD/holograms/floating type. Beat-synced: cuts land on beats but shots breathe (longer requiem holds, rapid only at the ripple).",
+    "durationSec": 292.2,
+    "aspectRatio": "2.39:1",
+    "mood": "haunting, tender, defiant, redemptive; the courage of refusal, the cost of obedience, and a war machine that loses its power when the boys stop believing",
+    "format": "music-video",
+    "song": { "title": "The Last Soldier Refused", "bpm": 82 }
+  },
+  "logline": "Two young soldiers, born with futures and sent by a crooked chain of command, are handed the same order to kill; one obeys and is lost, the other sees his own reflection in the enemy's eyes, lays down his rifle, and the refusal spreads until the war machine's power vanishes — and he walks home to the life he almost lost.",
+  "synopsis": "Warm dawn, before the war: Eli holds Miriam at a lit door, a duffel on his shoulder, and he and his brother-in-arms Marcus — two young men born with futures — leave home forced to choose. In a cold command bunker the brass move pieces across lit war-maps, and a crooked order crackles down the wire to a ruined front-line trench: march into the smoke, in the enemy's direction, and kill. Marcus obeys and marches into the haze. Eli hesitates. Advancing across no-man's-land he raises his rifle on a single enemy soldier and, through the ash, catches the kid's eyes and his own reflection — the same mother praying, the same father at a door, the same baby sister, and the enemy's own small children, who would inherit this war's debt. He lowers the barrel and lets the rifle fall; he would rather save souls than surrender his soul. The enemy raises empty hands to the sky. One gun down, then two, then ten and ten thousand — east and west, every enemy finally given a face — steel stacking in shimmering rows, no thunder, no sound. In the bunker the maps go dark and the commander's power grieves away in his hands: a war needs soldiers, and the soldiers withdrew. But obedience had a price — Marcus, who marched into the smoke, falls, and a folded letter reaches his mother's lit door. Eli walks home into Miriam's and his mother's arms, alive and whole, the future he almost lost reclaimed, as the rifle he left in the mud catches the fully risen sun. Nobody conquered. Everybody survived. Maybe winning is walking away.",
+  "characters": [
+    {
+      "id": "eli",
+      "name": "Eli",
+      "description": "A young multicultural infantryman, early 20s, gaunt and gentle under the grime — the one brave soldier who refused. Unmarked olive-drab, a wedding band under the glove. Human eyes always; grounded in every frame. His arc: a young man with a future, sent to kill, who keeps his soul and so keeps his life. The emotional through-line.",
+      "state": { "weapon": "none", "position": "home" },
+      "externalGoal": "Survive the war and make it home alive to Miriam and the future he was forced to leave",
+      "internalNeed": "To keep his soul intact — to come home still himself, not a man who turned somebody's child to dust",
+      "contradiction": "Refusing the order could cost him his life on the spot, yet obeying it would cost him the soul and the future he is trying to bring home",
+      "voice": "Nearly silent; speaks in action — a held goodbye, a hesitation, a lowered barrel, a rifle let fall",
+      "vulnerabilities": ["the order and the rifle in his own hands", "the fear that refusing means dying first"],
+      "blindSpots": ["that one refusal could topple the whole war machine", "that the enemy across the field is the same as him"],
+      "relationships": {
+        "marcus": "his brother-in-arms who marches the other way, into the war",
+        "enemy": "the soldier across the field whose eyes become his own reflection",
+        "miriam": "the love and the future he refuses the war to keep"
+      }
+    },
+    {
+      "id": "marcus",
+      "name": "Marcus",
+      "description": "Eli's brother-in-arms, the same age and the same future left behind, who chooses to obey and marches into the smoke. Never villainized — the mirror of what Eli could have been and the cost of the word yes. His fall rendered OBLIQUELY in smoke and silhouette, never gore.",
+      "state": { "weapon": "shouldered", "position": "home" },
+      "externalGoal": "Follow the order, do what he is told, be a good soldier",
+      "internalNeed": "To believe the obedience is worth the future he is giving up",
+      "contradiction": "Courage gets clearer when conscience gets dulled; marching into the smoke takes him from the home he meant to protect",
+      "voice": "A set jaw, a shouldered rifle, boots marching away into the haze",
+      "vulnerabilities": ["the order he will not question", "the smoke he marches into"],
+      "blindSpots": ["that the bravest order was the one to disobey", "that a folded letter is already bound for his mother"],
+      "relationships": {
+        "eli": "the brother who chose the other path and lived",
+        "commander": "the distant chain of command he obeys without question"
+      }
+    },
+    {
+      "id": "enemy",
+      "name": "The Soldier Across the Field",
+      "description": "A single enemy soldier in a different unmarked uniform, the same young age as Eli — the kid whose eyes Eli catches and in whom he catches his own reflection. Same shaking hands, same hammering heart, same small children at home. When Eli drops the rifle, he raises his own hands to the sky. Human eyes always, grounded, no flag — a mirror, not a nation.",
+      "state": { "weapon": "raised", "position": "across-the-field" },
+      "externalGoal": "Survive the man across the field who has a rifle on him",
+      "internalNeed": "To be seen as a person, not a target — to go home to his own children",
+      "contradiction": "He must keep his weapon up to live, yet raising it first makes him the thing he fears",
+      "voice": "Wordless — eyes meeting eyes across the field, then two empty hands lifted to the sky",
+      "vulnerabilities": ["the rifle Eli has raised on him", "the open ground between the lines"],
+      "blindSpots": ["that the man aiming at him is the same as him", "that mercy would come from the other side first"],
+      "relationships": {
+        "eli": "the enemy who refuses to fire and becomes his reflection"
+      }
+    },
+    {
+      "id": "miriam",
+      "name": "Miriam",
+      "description": "A beautiful, dignified multicultural woman, Eli's love and the future he refuses the war to keep. Grounded always: she holds him at the lit door as he leaves and takes him into her arms when he returns. Glamorous and tender, powerful, never exploitative (hard-but-holy). With Eli's mother and the praying mother and sister of the memory, she is the warm home the cold war is cut against.",
+      "state": { "position": "home", "status": "together" },
+      "externalGoal": "Bring Eli home alive from the war",
+      "internalNeed": "To hold the man she loves again, whole and still himself",
+      "contradiction": "She can only wait at the door while the choice that brings him home is made by his hands alone on a field she cannot reach",
+      "voice": "The warm, waiting stillness of home; a held goodbye at the door, then arms opening on his return",
+      "vulnerabilities": ["the distance of the war", "the dread of the midnight note at her own door"],
+      "blindSpots": ["how close the other ending came", "that his refusal, not his aim, is what returns him"],
+      "relationships": {
+        "eli": "the soldier she loves, who refuses the war to come home to her"
+      }
+    },
+    {
+      "id": "commander",
+      "name": "The Commander",
+      "description": "An older officer of the distant chain of command — the human face of the war machine in the cold bunker, moving pieces across lit war-maps. He issues the crooked order and later watches his power grieve away in his hands as the soldiers withdraw. Rendered with weight, not caricature: a man who learns his authority was only ever belief.",
+      "state": { "position": "bunker", "status": "in-command" },
+      "externalGoal": "Win the war and hold the power the chain of command gives him",
+      "internalNeed": "To matter — to believe his orders move the world",
+      "contradiction": "His power depends entirely on young men obeying, so it vanishes the instant they refuse",
+      "voice": "A gloved hand over a map, a barked order on a radio, and finally a bowed, powerless head",
+      "vulnerabilities": ["a chain of command that only works if it is obeyed", "the belief holding it up"],
+      "blindSpots": ["that a single refusal could empty his whole war", "that power stops being power when people stop believing"],
+      "relationships": {
+        "marcus": "one of the boys he sends into the smoke"
+      }
+    }
+  ],
+  "locations": [
+    {
+      "id": "eli-home",
+      "name": "Eli's Home",
+      "description": "A modest home at warm golden dawn — a front door with a lit window, a worn porch, a dirt road up to it. The warm counter-world the cold war is cut against; where Eli says goodbye to Miriam and where he finally returns."
+    },
+    {
+      "id": "the-command-bunker",
+      "name": "The Command Bunker",
+      "description": "A cold concrete command post — lit war-maps on a long table, officers in shadow, a single hard lamp. The face of the war machine, the crooked chain of command; where the order is issued and where its power later goes dark."
+    },
+    {
+      "id": "the-trench",
+      "name": "The Trench at Dawn",
+      "description": "A ruined front-line trench in cold blue-grey dawn — mud walls, duckboards, barbed wire, thin smoke. Where the order lands and the two brothers stand at the fork."
+    },
+    {
+      "id": "no-mans-land",
+      "name": "No-Man's-Land",
+      "description": "The cratered open ground between the lines — mud, wire, drifting ash and smoke; the field of the mirror and the refusal, cold grade warming when the rifle falls."
+    },
+    {
+      "id": "the-field-of-refusal",
+      "name": "The Field of Refusal",
+      "description": "The widening battlefield as weapons come down — rifles laid resting in shimmering rows, soldiers of both sides standing with empty hands, east and west; the cold grade warming to gold, no thunder, no sound."
+    },
+    {
+      "id": "marcus-home",
+      "name": "Marcus's Door",
+      "description": "A second lit doorway at the cold-blue hour, where a mother's hands receive the folded letter — the midnight note — warm lamp against cold dark, grief with dignity, never exploited."
+    }
+  ],
+  "props": [
+    {
+      "id": "the-rifle",
+      "name": "Eli's Rifle",
+      "description": "Eli's service rifle — raised on the enemy, lowered, then dropped into the mud. The central motif; by the end it lies in the mud catching the risen sun as he walks away.",
+      "state": { "status": "shouldered" }
+    },
+    {
+      "id": "the-maps",
+      "name": "The War-Maps",
+      "description": "The lit war-maps on the bunker table where the commander moves pieces toward the smoke — the machine's plan, which goes dark when the soldiers withdraw.",
+      "state": { "status": "lit" }
+    },
+    {
+      "id": "the-photo",
+      "name": "The Family Photo",
+      "description": "A creased photograph — a mother praying, a father at a front door, a baby sister, and small children — the same family on both sides of the field. Seen in Eli's memory as he recognizes the enemy as himself.",
+      "state": { "status": "pocketed" }
+    },
+    {
+      "id": "laid-down-rifles",
+      "name": "The Laid-Down Rifles",
+      "description": "Rows of rifles laid resting in the mud across the field — steel stacking in shimmering rows where red rivers flowed — the physical proof of ten thousand refusals, east and west.",
+      "state": { "status": "absent" }
+    },
+    {
+      "id": "the-letter",
+      "name": "The Folded Letter",
+      "description": "A folded letter — the midnight note — placed into a mother's hands at Marcus's door. The cost of choosing to fight, rendered with grief, never gore.",
+      "state": { "status": "undelivered" }
+    }
+  ],
+  "wardrobe": [
+    {
+      "id": "elis-uniform",
+      "name": "Eli's Uniform",
+      "description": "Unmarked olive-drab infantry uniform, a wedding band under the glove — no flags, no nation. Clean at the goodbye, mud-caked at the front, catching warm dawn light at the homecoming.",
+      "state": { "condition": "clean" }
+    }
+  ],
+  "setupPayoffs": [
+    {
+      "id": "sp-future",
+      "detail": "The futures the boys leave behind",
+      "setupSceneId": "s0",
+      "payoffSceneId": "s9",
+      "initialMeaning": "Born with a future then forced to choose — the love and the life left at the door",
+      "finalMeaning": "Eli reclaims his future, walking home alive into Miriam's arms; Marcus never does",
+      "isMotif": true
+    },
+    {
+      "id": "sp-machine",
+      "detail": "The crooked war machine that issues the order",
+      "setupSceneId": "s1",
+      "payoffSceneId": "s7",
+      "initialMeaning": "Commands crack through a crooked connection — the brass move boys like pieces on a map",
+      "finalMeaning": "The maps go dark and power grieves away — a war needs soldiers, and the soldiers withdrew",
+      "isMotif": true
+    },
+    {
+      "id": "sp-rifle",
+      "detail": "Eli's rifle raised to kill",
+      "setupSceneId": "s2",
+      "payoffSceneId": "s5",
+      "initialMeaning": "The weapon and the order that would make him a killer",
+      "finalMeaning": "Dropped in the mud — then ten thousand rifles laid down; the bravest order disobeyed",
+      "isMotif": true
+    },
+    {
+      "id": "sp-mirror",
+      "detail": "The enemy's eyes across the field",
+      "setupSceneId": "s4",
+      "payoffSceneId": "s5",
+      "initialMeaning": "A target through the smoke in the enemy's direction",
+      "finalMeaning": "His own reflection — same family, same children — who raises empty hands when Eli does",
+      "isMotif": true
+    },
+    {
+      "id": "sp-choice",
+      "detail": "The order that forces the two to choose",
+      "setupSceneId": "s2",
+      "payoffSceneId": "s8",
+      "initialMeaning": "Young men forced to choose: obey and march, or refuse",
+      "finalMeaning": "Marcus's yes costs a folded letter home; Eli's no brings him home — peace began when somebody chose",
+      "isMotif": true
+    }
+  ],
+  "emotionalTrajectory": [
+    "tender farewell to a future",
+    "the cold machinery of a crooked order",
+    "the fork — one marches, one hesitates",
+    "recognition and the terror of the choice",
+    "the courage of refusal",
+    "awe as the refusal ripples east and west",
+    "the quiet collapse of a power that was only belief",
+    "grief for the one who chose to fight",
+    "earned, hard-won homecoming peace"
+  ],
+  "scenes": [
+    {
+      "id": "s0",
+      "index": 0,
+      "title": "Born With a Future",
+      "narrativePurpose": "Establish who the boys are and the future they are forced to leave — the warm home and love the cold war will be cut against, and the stakes the refusal will later reclaim.",
+      "protagonist": "eli",
+      "objective": "Eli must say goodbye to Miriam and the future he is leaving as he and Marcus ship out to a war they were forced to choose.",
+      "opposition": "The war that takes two young men from the lives they were building.",
+      "visibleActions": [
+        {
+          "subject": "eli",
+          "action": "holds Miriam close at a warm lit doorway, a duffel on his shoulder, then lets her go",
+          "objectInteraction": "shoulders the duffel and takes her hand one last time",
+          "subtext": "born with a future, now forced to leave it"
+        },
+        {
+          "subject": "marcus",
+          "action": "walks with Eli away from home in a fresh uniform, both young men looking back once at the lives they are leaving",
+          "subtext": "young boys boxed in the battles, forced to choose"
+        }
+      ],
+      "decision": "The two young men leave their futures and go to the war.",
+      "change": "Eli and Marcus, and everything they are leaving, are established; the warm home that the war threatens is set.",
+      "consequence": "Two boys with futures are on their way to a front and a choice.",
+      "audienceLearns": "Eli and Marcus are young men with futures and loves, forced to leave them for a war.",
+      "emotionalStateStart": "tender farewell to a future",
+      "emotionalStateEnd": "tender farewell to a future",
+      "startState": { "order": "pending", "eli": "home", "marcus": "home", "enemy": "unseen", "battlefield": "untouched", "machine": "holding", "eliHome": "together", "marcusHome": "together" },
+      "endState": { "order": "pending", "eli": "departed", "marcus": "departed", "enemy": "unseen", "battlefield": "untouched", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "justifiedStateChanges": ["eli", "marcus", "eliHome", "marcusHome"],
+      "causedByPreviousVia": null,
+      "setupPayoffRefs": ["sp-future"],
+      "durationSec": 30
+    },
+    {
+      "id": "s1",
+      "index": 1,
+      "title": "The Crooked Connection",
+      "narrativePurpose": "Reveal the war machine that sends them — the brass moving boys like pieces across lit maps, the crooked order crackling down the wire.",
+      "protagonist": "commander",
+      "objective": "The commander must issue the order that sends the boys to march into the smoke.",
+      "opposition": "The humanity of the boys the order will reach, distant and unseen from the bunker.",
+      "visibleActions": [
+        {
+          "subject": "commander",
+          "action": "stands over lit war-maps in a cold bunker and moves a piece toward the smoke with a gloved hand",
+          "objectInteraction": "slides a marker across the war-map toward the front",
+          "subtext": "the brass move boys like pieces — power that only works if it is obeyed"
+        },
+        {
+          "subject": "commander",
+          "action": "speaks an order into a field radio that crackles out down the wire toward the front",
+          "subtext": "commands crack through a crooked connection"
+        }
+      ],
+      "decision": "The commander issues the order to march into the smoke and kill.",
+      "change": "The war machine and its crooked order are established, now racing down the wire to the trench.",
+      "consequence": "The order reaches the front, where two brothers stand at the fork.",
+      "audienceLearns": "A distant, crooked chain of command sends the boys to kill — power that only works while it is obeyed.",
+      "emotionalStateStart": "tender farewell to a future",
+      "emotionalStateEnd": "the cold machinery of a crooked order",
+      "startState": { "order": "pending", "eli": "departed", "marcus": "departed", "enemy": "unseen", "battlefield": "untouched", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "endState": { "order": "given", "eli": "at-the-front", "marcus": "at-the-front", "enemy": "unseen", "battlefield": "dawn-tense", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "justifiedStateChanges": ["order", "eli", "marcus", "battlefield"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-machine"],
+      "durationSec": 24
+    },
+    {
+      "id": "s2",
+      "index": 2,
+      "title": "The Order Lands",
+      "narrativePurpose": "The order reaches the two brothers in the mud of the trench — the fork the whole film turns on.",
+      "protagonist": "eli",
+      "objective": "Eli and Marcus must answer the order crackling down the line to advance in the enemy's direction.",
+      "opposition": "The order itself and the war that forces young men to choose.",
+      "visibleActions": [
+        {
+          "subject": "eli",
+          "action": "stands in the mud of the trench at cold dawn beside Marcus as the order lands, his jaw tightening",
+          "subtext": "the crooked order reaches the boys"
+        },
+        {
+          "subject": "marcus",
+          "action": "grips his rifle and sets his jaw, already turning toward the smoke",
+          "objectInteraction": "tightens his grip on the shouldered rifle",
+          "subtext": "courage gets clearer when conscience gets dulled"
+        }
+      ],
+      "decision": "The order is on the two brothers and each must answer it.",
+      "change": "The ruined front, the two soldiers, and the order to march toward the smoke are established; the fork is set.",
+      "consequence": "Both men are forced to the same choice — obey and kill, or refuse.",
+      "audienceLearns": "The order to march into the smoke lands on the two brothers, and each must choose.",
+      "emotionalStateStart": "the cold machinery of a crooked order",
+      "emotionalStateEnd": "the fork — one marches, one hesitates",
+      "startState": { "order": "given", "eli": "at-the-front", "marcus": "at-the-front", "enemy": "unseen", "battlefield": "dawn-tense", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "endState": { "order": "given", "eli": "at-the-line", "marcus": "at-the-line", "enemy": "unseen", "battlefield": "dawn-tense", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "justifiedStateChanges": ["eli", "marcus"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-rifle", "sp-choice"],
+      "durationSec": 28
+    },
+    {
+      "id": "s3",
+      "index": 3,
+      "title": "The March",
+      "narrativePurpose": "The fork splits — Marcus obeys and marches into the smoke while Eli hesitates, the two paths diverging on the same dawn.",
+      "protagonist": "marcus",
+      "objective": "Marcus must carry out the order and march toward the enemy; Eli must decide whether to follow.",
+      "opposition": "Eli's hesitation against the pull of the order and the brother marching away.",
+      "visibleActions": [
+        {
+          "subject": "marcus",
+          "action": "climbs the trench wall and marches toward the smoke in the enemy's direction, resolute, not looking back",
+          "objectInteraction": "shoulders the rifle and strides into the haze",
+          "subtext": "march towards the smoke, do what you're told"
+        },
+        {
+          "subject": "eli",
+          "action": "rises to follow but halts, boots in the mud, watching his brother disappear into the smoke",
+          "subtext": "boots in the mud, blood on the boots — one soul not yet decided"
+        }
+      ],
+      "decision": "Marcus chooses to obey and march; Eli chooses to hesitate.",
+      "change": "The two paths diverge — Marcus into the war, Eli left at the fork.",
+      "consequence": "Eli is alone with the choice, advancing a step behind into no-man's-land.",
+      "audienceLearns": "Marcus obeys and marches into the smoke while Eli, unable to, hesitates — their fates begin to split.",
+      "emotionalStateStart": "the fork — one marches, one hesitates",
+      "emotionalStateEnd": "the fork — one marches, one hesitates",
+      "startState": { "order": "given", "eli": "at-the-line", "marcus": "at-the-line", "enemy": "unseen", "battlefield": "dawn-tense", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "endState": { "order": "given", "eli": "hesitating", "marcus": "marching", "enemy": "unseen", "battlefield": "battle-imminent", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "justifiedStateChanges": ["eli", "marcus", "battlefield"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-choice"],
+      "durationSec": 28
+    },
+    {
+      "id": "s4",
+      "index": 4,
+      "title": "The Mirror",
+      "narrativePurpose": "Eli raises his rifle on a single enemy and, through the ash, catches the kid's eyes and his own reflection — the same family, and the enemy's own children who would inherit the war's debt.",
+      "protagonist": "eli",
+      "objective": "Eli must aim and fire on the enemy soldier across the field as the order demands.",
+      "opposition": "The recognition breaking through — that the target is the same as him, with children of his own.",
+      "visibleActions": [
+        {
+          "subject": "eli",
+          "action": "advances across no-man's-land through ash and smoke and raises his rifle on a single enemy soldier across the field",
+          "objectInteraction": "sights down the raised rifle",
+          "subtext": "across that field, through the ash and aggression"
+        },
+        {
+          "subject": "enemy",
+          "action": "across the field, rifle half-raised, catches Eli's eyes through the smoke, the same fear on his face",
+          "subtext": "he caught one kid's eyes and caught his reflection"
+        },
+        {
+          "subject": "eli",
+          "action": "sees in a breath of warm memory the same mother praying, the same father at a door, the same baby sister, and the enemy's own small children",
+          "objectInteraction": "the creased family photo surfaces in his mind's eye",
+          "subtext": "same mama praying, same father waiting — can't make his children inherit our debt"
+        }
+      ],
+      "decision": "Eli holds his aim one breath longer as the recognition lands.",
+      "change": "The enemy stops being a target and becomes a mirror — same hands, same heart, same children.",
+      "consequence": "With the enemy seen as himself, Eli cannot fire — the choice narrows to refuse or surrender his soul.",
+      "audienceLearns": "Across the field Eli catches the enemy's eyes, his own reflection, and the enemy's children — the target becomes a mirror.",
+      "emotionalStateStart": "the fork — one marches, one hesitates",
+      "emotionalStateEnd": "recognition and the terror of the choice",
+      "startState": { "order": "given", "eli": "hesitating", "marcus": "marching", "enemy": "unseen", "battlefield": "battle-imminent", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "endState": { "order": "given", "eli": "recognizing", "marcus": "marching", "enemy": "eyes-met", "battlefield": "battle-imminent", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "justifiedStateChanges": ["eli", "enemy"],
+      "causedByPreviousVia": "but",
+      "setupPayoffRefs": ["sp-mirror"],
+      "durationSec": 40
+    },
+    {
+      "id": "s5",
+      "index": 5,
+      "title": "The Refusal",
+      "narrativePurpose": "The heart of the film — Eli lowers the barrel and drops the rifle; the enemy, seeing it, raises his hands to the sky. One brave no.",
+      "protagonist": "eli",
+      "objective": "Eli must decide between the order and his soul — and he lowers the barrel and lets the rifle fall.",
+      "opposition": "The order, the instinct to survive by firing first, and the fear that refusing means dying.",
+      "visibleActions": [
+        {
+          "subject": "eli",
+          "action": "lowers the barrel, lets bravery bloom, and opens his hand so the rifle falls into the mud",
+          "objectInteraction": "the dropped rifle falls to the ground",
+          "subtext": "I won't turn somebody's baby to dust — I'd rather save souls than surrender my soul"
+        },
+        {
+          "subject": "enemy",
+          "action": "across the field, seeing the rifle fall, slowly lifts both empty hands to the sky",
+          "subtext": "one soldier still, with his hands to the skies"
+        }
+      ],
+      "decision": "Eli refuses the order and drops his rifle rather than kill the man who is himself.",
+      "change": "The weapon is on the ground and the enemy's hands are raised — two men choose each other over the war.",
+      "consequence": "A single visible refusal stands in the open field for everyone on both sides to see.",
+      "audienceLearns": "Eli drops his rifle rather than fire, and the enemy raises empty hands — the bravest order is the one disobeyed.",
+      "emotionalStateStart": "recognition and the terror of the choice",
+      "emotionalStateEnd": "the courage of refusal",
+      "startState": { "order": "given", "eli": "recognizing", "marcus": "marching", "enemy": "eyes-met", "battlefield": "battle-imminent", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "endState": { "order": "refused", "eli": "rifle-dropped", "marcus": "marching", "enemy": "hands-raised", "battlefield": "first-refusal", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "justifiedStateChanges": ["order", "eli", "enemy", "battlefield"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-rifle", "sp-mirror"],
+      "durationSec": 32
+    },
+    {
+      "id": "s6",
+      "index": 6,
+      "title": "The Ripple",
+      "narrativePurpose": "One refusal multiplies east and west — one gun down, then ten thousand; steel stacks in shimmering rows and the battle stops with no thunder, no sound.",
+      "protagonist": "eli",
+      "objective": "The field, east and west, must answer Eli's refusal — soldiers on both sides deciding whether to lay their weapons down too.",
+      "opposition": "The momentum of the war and the fear of being the next to lower a weapon.",
+      "visibleActions": [
+        {
+          "subject": "enemy",
+          "action": "lays his rifle down in the mud, and the soldier beside him does the same, then the next",
+          "objectInteraction": "sets the rifle onto the ground",
+          "subtext": "one gun down, then two touched ground"
+        },
+        {
+          "subject": "eli",
+          "action": "stands unarmed as weapons come down in shimmering rows across the whole field, both sides lowering, no thunder, no sound",
+          "subtext": "ten and ten thousand — east and west, every enemy finally given a face; steel stacking in shimmering rows"
+        }
+      ],
+      "decision": "Soldiers on both sides, east and west, choose to lay their weapons down rather than fire.",
+      "change": "The battlefield becomes a field of laid-down rifles — the fighting simply stops.",
+      "consequence": "The war on the field ends and the machine that ran on soldiers begins to lose its grip; the cold ground warms.",
+      "audienceLearns": "One refusal ripples into ten thousand, east and west, and the battle stops without a shot.",
+      "emotionalStateStart": "the courage of refusal",
+      "emotionalStateEnd": "awe as the refusal ripples east and west",
+      "startState": { "order": "refused", "eli": "rifle-dropped", "marcus": "marching", "enemy": "hands-raised", "battlefield": "first-refusal", "machine": "holding", "eliHome": "waiting", "marcusHome": "waiting" },
+      "endState": { "order": "refused", "eli": "rifle-dropped", "marcus": "marching", "enemy": "hands-raised", "battlefield": "mass-refusal-silent", "machine": "cracking", "eliHome": "waiting", "marcusHome": "waiting" },
+      "justifiedStateChanges": ["battlefield", "machine"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-rifle"],
+      "durationSec": 36
+    },
+    {
+      "id": "s7",
+      "index": 7,
+      "title": "Power Vanishes",
+      "narrativePurpose": "The machine topples — the commander watches his power grieve away in his hands as the war-maps go dark, because a war needs soldiers and the soldiers withdrew.",
+      "protagonist": "commander",
+      "objective": "The commander must keep his war running as the reports of refusal come in.",
+      "opposition": "The soldiers who have withdrawn — the belief his power rested on, now gone.",
+      "visibleActions": [
+        {
+          "subject": "commander",
+          "action": "stands over the war-maps as the lit markers go dark one by one, his gloved hands falling still, his head bowing",
+          "objectInteraction": "the lit war-maps dim to dark under his hands",
+          "subtext": "presidents pleading, generals grieving — power that vanished when people stopped believing"
+        }
+      ],
+      "decision": "The commander's war ends not by defeat but by withdrawal — there is no one left to obey.",
+      "change": "The machine's power collapses; the maps go dark and the command falls silent.",
+      "consequence": "The war is over because its soldiers refused — power was only ever belief.",
+      "audienceLearns": "The war machine's power vanishes when the soldiers withdraw — a war needs soldiers, and they withdrew.",
+      "emotionalStateStart": "awe as the refusal ripples east and west",
+      "emotionalStateEnd": "the quiet collapse of a power that was only belief",
+      "startState": { "order": "refused", "eli": "rifle-dropped", "marcus": "marching", "enemy": "hands-raised", "battlefield": "mass-refusal-silent", "machine": "cracking", "eliHome": "waiting", "marcusHome": "waiting" },
+      "endState": { "order": "refused", "eli": "rifle-dropped", "marcus": "marching", "enemy": "hands-raised", "battlefield": "mass-refusal-silent", "machine": "vanished", "eliHome": "waiting", "marcusHome": "waiting" },
+      "justifiedStateChanges": ["machine"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-machine"],
+      "durationSec": 24
+    },
+    {
+      "id": "s8",
+      "index": 8,
+      "title": "The Cost",
+      "narrativePurpose": "The price of the other choice — Marcus, who marched into the smoke, falls; at a lit door a mother's hands close around the folded letter the refusal was meant to prevent.",
+      "protagonist": "marcus",
+      "objective": "Marcus's path must resolve — the soldier who chose to fight meets the war he marched into.",
+      "opposition": "The smoke and fire he walked toward, and the finality of the choice already made.",
+      "visibleActions": [
+        {
+          "subject": "marcus",
+          "action": "a lone silhouette deep in the smoke slows, sinks, and is lost to the haze — oblique, no gore, only the shape of a young man going down",
+          "subtext": "young boys forced to choose — and this was the cost of yes"
+        },
+        {
+          "subject": "miriam",
+          "action": "at a lit doorway in the cold-blue hour a mother's hands close around a folded letter, pressed to her chest",
+          "objectInteraction": "receives the folded letter",
+          "subtext": "no more mothers with midnight notes — this is the note refusing was meant to stop"
+        }
+      ],
+      "decision": "The war claims the one who obeyed, and the note goes home.",
+      "change": "Marcus is lost to the smoke and his door receives the midnight letter — the cost of choosing to fight.",
+      "consequence": "The contrast is set: the one who chose the war is gone, the one who refused is still alive to walk home.",
+      "audienceLearns": "Marcus, who chose to fight, falls in the smoke and a folded letter reaches his mother's door — the price of obedience.",
+      "emotionalStateStart": "the quiet collapse of a power that was only belief",
+      "emotionalStateEnd": "grief for the one who chose to fight",
+      "startState": { "order": "refused", "eli": "rifle-dropped", "marcus": "marching", "enemy": "hands-raised", "battlefield": "mass-refusal-silent", "machine": "vanished", "eliHome": "waiting", "marcusHome": "waiting" },
+      "endState": { "order": "refused", "eli": "rifle-dropped", "marcus": "fallen", "enemy": "hands-raised", "battlefield": "mass-refusal-silent", "machine": "vanished", "eliHome": "waiting", "marcusHome": "letter-received" },
+      "justifiedStateChanges": ["marcus", "marcusHome"],
+      "causedByPreviousVia": "but",
+      "setupPayoffRefs": ["sp-choice"],
+      "durationSec": 28
+    },
+    {
+      "id": "s9",
+      "index": 9,
+      "title": "The Homecoming",
+      "narrativePurpose": "Earned peace — Eli walks home alive into Miriam's and his mother's arms, the future from the prologue reclaimed, as the rifle he left in the mud catches the risen sun.",
+      "protagonist": "eli",
+      "objective": "Eli must make it home and be received — alive, whole, still himself.",
+      "opposition": "The long road and the weight of what the war almost made him.",
+      "visibleActions": [
+        {
+          "subject": "miriam",
+          "action": "opens the lit front door at warm dawn and steps onto the porch, and she and Eli's mother take him into their arms, grounded, holding him whole",
+          "objectInteraction": "pulls Eli into an embrace at the threshold",
+          "subtext": "the life that you save — nobody conquered, but everybody survived"
+        },
+        {
+          "subject": "eli",
+          "action": "the dropped rifle lies in the mud of the empty field behind him, catching the fully risen sun",
+          "subtext": "one rifle dropped, one brave no, and the battle stopped — maybe winning is walking away"
+        }
+      ],
+      "decision": "Eli walks away from the war and into the arms of the future he refused to lose.",
+      "change": "Eli is home, alive and held; the cold war is behind him and the warm dawn is fully risen.",
+      "consequence": "The soldier who refused reclaims his future, while the one who fought did not — peace began when somebody chose.",
+      "audienceLearns": "Eli walks home alive into love, the refusal having kept his soul, his life, and his future — the bravest choice was to lay the weapon down.",
+      "emotionalStateStart": "grief for the one who chose to fight",
+      "emotionalStateEnd": "earned, hard-won homecoming peace",
+      "startState": { "order": "refused", "eli": "rifle-dropped", "marcus": "fallen", "enemy": "hands-raised", "battlefield": "mass-refusal-silent", "machine": "vanished", "eliHome": "waiting", "marcusHome": "letter-received" },
+      "endState": { "order": "refused", "eli": "home", "marcus": "fallen", "enemy": "hands-raised", "battlefield": "silent-dawn", "machine": "vanished", "eliHome": "reunited", "marcusHome": "letter-received" },
+      "justifiedStateChanges": ["eli", "battlefield", "eliHome"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-future", "sp-rifle"],
+      "durationSec": 32
+    }
+  ],
+  "shots": [
+    {
+      "id": "p1",
+      "sceneId": "s0",
+      "index": 0,
+      "durationSec": 6,
+      "subject": "Eli holds Miriam at a warm lit doorway, a duffel on his shoulder — the goodbye",
+      "environment": "The porch and lit doorway of a modest home at warm golden dawn, soft interior light spilling out, a duffel bag on his shoulder",
+      "action": "Eli holds Miriam close at the threshold, foreheads together, then slowly lets her hand go",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "warm golden-hour light + soft warm interior spill, tender",
+      "emotionalIntention": "tender farewell; the future he is leaving",
+      "temporalProgression": "they hold close, then his hand slips from hers as the camera pushes gently in",
+      "continuityConstraints": [
+        "Eli: young multicultural man, human eyes, olive-drab uniform clean, duffel on shoulder; Miriam beautiful, dignified, grounded",
+        "WARM golden homecoming grade (the home world), 2.39 letterbox, fine grain, no text",
+        "grounded embrace, never floating, never exploitative"
+      ],
+      "referenceAssets": ["eli", "miriam", "eli-home", "elis-uniform"],
+      "startStateRef": "eliHome=together",
+      "endStateRef": "eliHome=waiting",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["soft morning birdsong", "a held breath", "a screen door"],
+        "silence": false,
+        "note": "intro / 'born with a future then forced to choose'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the whole film (one model = character consistency); permissive, 1080p, cap-compliant $0.25/s; locks Eli + Miriam via consistent description.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal warm skin + true tender micro-expression, human eyes",
+        "grounded at the threshold, never floating",
+        "no warping, dignified"
+      ],
+      "keyframePrompt": "A young soldier in a clean olive-drab uniform with a duffel on his shoulder holds a beautiful dignified woman close at a warm lit doorway at golden dawn, foreheads together, a tender goodbye, warm golden light, human eyes, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "A young soldier with a duffel on his shoulder holds a beautiful dignified woman close at a warm lit doorway at golden dawn, foreheads together, then slowly lets her hand go; the camera pushes gently in. Hyper-real warm skin, true micro-expression, 35mm anamorphic, grounded, human eyes, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia, glowing eyes, exploitation"
+    },
+    {
+      "id": "p2",
+      "sceneId": "s0",
+      "index": 1,
+      "durationSec": 6,
+      "subject": "Eli and Marcus leave home in fresh uniforms, a last look back",
+      "environment": "A dirt road leading away from a modest home at warm dawn, fields on either side, the home glowing behind them",
+      "action": "Eli and Marcus walk away from home in fresh uniforms, duffels on their shoulders, and glance back once at the lives they are leaving",
+      "cameraFraming": "wide",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, wide, grounded tracking",
+      "lighting": "warm golden dawn softening toward a cooler horizon ahead",
+      "emotionalIntention": "the futures being left; two boys forced to choose",
+      "temporalProgression": "the camera tracks with them down the road as they glance back once, then on toward a cooler horizon",
+      "continuityConstraints": [
+        "the same Eli + Marcus, young, fresh clean uniforms, grounded walking; home warm behind, horizon cooler ahead",
+        "WARM grade cooling toward the horizon, 2.39 letterbox, fine grain, no text",
+        "no floating, no flags"
+      ],
+      "referenceAssets": ["eli", "marcus", "eli-home", "elis-uniform"],
+      "startStateRef": "eli=home",
+      "endStateRef": "eli=departed",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["boots on a dirt road", "distant wind", "a fading screen door"],
+        "silence": false,
+        "note": "'young boys boxed in the battles, born with a future then forced to choose'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02; one-model consistency keeps the two leads; grounded walk, warm-to-cool transition.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "grounded walking, feet on the road, never floating",
+        "photoreal two consistent young faces + warm landscape",
+        "no warping, human proportions"
+      ],
+      "keyframePrompt": "Two young soldiers in fresh clean uniforms with duffels walk away down a dirt road from a glowing home at warm golden dawn, glancing back once, fields on either side, a cooler horizon ahead, grounded, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "Two young soldiers in fresh uniforms with duffels walk away from a glowing home down a dirt road at warm golden dawn and glance back once at what they are leaving; the camera tracks with them toward a cooler horizon. Hyper-real, 35mm anamorphic, grounded, feet on the road, no text, no flags.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia"
+    },
+    {
+      "id": "p3",
+      "sceneId": "s1",
+      "index": 2,
+      "durationSec": 6,
+      "subject": "The commander over lit war-maps in a cold bunker moves a piece toward the smoke",
+      "environment": "A cold concrete command bunker, a long table of lit war-maps, officers in shadow, one hard lamp",
+      "action": "The commander moves a marker across the war-map toward the front with a gloved hand",
+      "cameraFraming": "wide",
+      "cameraMovement": "dolly",
+      "lensIntention": "anamorphic 35mm, wide, deep",
+      "lighting": "cold hard lamp over the maps, deep shadow around, clinical and bleak",
+      "emotionalIntention": "the cold machinery of power; boys moved like pieces",
+      "temporalProgression": "the camera dollies slowly across the map table as the gloved hand slides a marker toward the smoke",
+      "continuityConstraints": [
+        "an older commander, grounded, dignified not caricature; lit war-maps on the table; cold clinical grade",
+        "cold bunker grade, 2.39 letterbox, fine grain, no text, no flags",
+        "no floating, no HUD/holograms"
+      ],
+      "referenceAssets": ["commander", "the-command-bunker", "the-maps"],
+      "startStateRef": "order=pending",
+      "endStateRef": "order=given",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a marker sliding on a map", "a low generator hum", "distant teletype"],
+        "silence": false,
+        "note": "the war machine; 'power that only works if it is obeyed'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02; one-model consistency; a grounded photoreal war-room, permissive rail.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal maps + hands + cold light, dignified commander",
+        "grounded, no warping",
+        "no floating type on the maps"
+      ],
+      "keyframePrompt": "An older military commander in a cold concrete bunker leans over a long table of lit war-maps and slides a marker toward the front with a gloved hand, officers in shadow behind, one hard lamp, clinical cold grade, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "An older commander leans over a long table of lit war-maps in a cold concrete bunker and slides a marker toward the smoke with a gloved hand, officers in shadow; the camera dollies slowly across the table. Hyper-real, 35mm anamorphic, cold clinical grade, grounded, no text, no flags.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia"
+    },
+    {
+      "id": "p4",
+      "sceneId": "s1",
+      "index": 3,
+      "durationSec": 6,
+      "subject": "Insert — the order crackles out through a field radio down the wire",
+      "environment": "Close on a field radio and a telephone wire running out of the bunker toward the grey front, cold light",
+      "action": "A gloved hand keys a field radio and the order crackles out down the wire toward the front",
+      "cameraFraming": "insert",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, tight, shallow",
+      "lighting": "cold hard light on the radio, the wire running off into grey",
+      "emotionalIntention": "the crooked connection; a distant order racing to the boys",
+      "temporalProgression": "the hand keys the radio and the camera tracks out along the wire toward the grey front",
+      "continuityConstraints": [
+        "photoreal period field radio + wire, cold grade, no text",
+        "2.39 letterbox, fine grain, grounded",
+        "no floating, no flags"
+      ],
+      "referenceAssets": ["the-command-bunker", "the-trench"],
+      "startStateRef": "order=given",
+      "endStateRef": "order=given",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a field radio keying", "static crackle", "a barked order"],
+        "silence": false,
+        "note": "'commands crack through a crooked connection'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 insert; one-model consistency; grounded prop beat, permissive rail.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal radio + wire + hand, no extra fingers",
+        "real cold light, no warping",
+        "no text"
+      ],
+      "keyframePrompt": "A gloved hand keys an old military field radio in a cold bunker, a telephone wire running out of frame toward a grey front, cold hard light, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "A gloved hand keys an old field radio in a cold bunker and the order crackles out; the camera tracks out along the telephone wire toward the grey front. Hyper-real, 35mm anamorphic, cold grade, grounded, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia"
+    },
+    {
+      "id": "p5",
+      "sceneId": "s2",
+      "index": 4,
+      "durationSec": 6,
+      "subject": "Wide establishing — a ruined front-line trench of soldiers at cold blue-grey dawn",
+      "environment": "A muddy front-line trench, duckboards and barbed wire, thin smoke over a cratered grey field, cold desaturated dawn",
+      "action": "A slow aerial drift along the trench reveals a line of weary young soldiers waiting in the mud",
+      "cameraFraming": "establishing",
+      "cameraMovement": "drone",
+      "lensIntention": "anamorphic 35mm, wide, deep",
+      "lighting": "cold blue-grey dawn, overcast, thin smoke diffusing the light",
+      "emotionalIntention": "cold dread; the hush before the order lands",
+      "temporalProgression": "the camera drifts slowly along the trench line as smoke rolls across the frame",
+      "continuityConstraints": [
+        "cold desaturated blue-grey battlefield grade, 2.39 letterbox, fine grain, no text",
+        "grounded real soldiers in the mud, never floating",
+        "no HUD/holograms, unmarked uniforms, no flags"
+      ],
+      "referenceAssets": ["the-trench"],
+      "startStateRef": "battlefield=dawn-tense",
+      "endStateRef": "battlefield=dawn-tense",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["low wind", "distant artillery rumble", "creak of duckboards"],
+        "silence": false,
+        "note": "the front; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02; one-model consistency; landscape establishing wide, permissive rail.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal mud, smoke, barbed wire; no CGI-plastic look",
+        "grounded soldiers, real body weight",
+        "no warping, cold grade"
+      ],
+      "keyframePrompt": "A ruined World-War front-line trench at cold blue-grey dawn, a line of weary young soldiers waiting in deep mud, duckboards and barbed wire, thin smoke over a cratered grey field, desaturated cold grade, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "A slow aerial drift along a ruined front-line trench at cold blue-grey dawn; weary young soldiers wait in deep mud below, barbed wire on the lip, thin smoke rolling across a cratered grey field. Hyper-real, 35mm anamorphic, cold desaturated grade, grounded, no flags, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia"
+    },
+    {
+      "id": "p6",
+      "sceneId": "s2",
+      "index": 5,
+      "durationSec": 6,
+      "subject": "Eli and Marcus close in the trench as the order lands — the two brothers at the fork",
+      "environment": "Down in the trench, mud walls close behind them, cold dawn, thin smoke, a field radio crackling off-frame",
+      "action": "Eli and Marcus stand shoulder to shoulder as the order crackles down the line; Eli's jaw tightens, Marcus sets his",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "cold blue-grey key, soft overcast, grime and sweat catching the thin light",
+      "emotionalIntention": "cold dread; two young men bracing for the same order",
+      "temporalProgression": "the camera pushes slowly in on the two faces as the order lands and their expressions set",
+      "continuityConstraints": [
+        "Eli: young multicultural soldier, gaunt-gentle, human eyes, mud-caked olive-drab; Marcus beside him, same age and grime",
+        "cold battlefield grade, 2.39 letterbox, fine grain",
+        "grounded, no floating, no text, no flags"
+      ],
+      "referenceAssets": ["eli", "marcus", "the-trench", "elis-uniform"],
+      "startStateRef": "order=given",
+      "endStateRef": "eli=at-the-line",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["crackle of a field radio", "low wind", "a held breath"],
+        "silence": false,
+        "note": "Verse 1 'commands crack through a crooked connection'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for photoreal human micro-expression; one-model consistency locks Eli's identity across the film; permissive rail.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal skin + true micro-expression, human eyes",
+        "two distinct faces held consistent",
+        "no warping, grounded"
+      ],
+      "keyframePrompt": "Two young soldiers shoulder to shoulder in a muddy trench at cold dawn, a gaunt gentle multicultural man and his brother-in-arms, grime and sweat on their faces, jaws tightening as an order lands, cold blue-grey grade, human eyes, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A slow push-in on two young soldiers standing shoulder to shoulder in a muddy trench at cold dawn; an order crackles down the line and the gaunt gentle man's jaw tightens while his brother-in-arms sets his own; grime, sweat, thin smoke. Hyper-real skin, true micro-expression, 35mm anamorphic, cold grade, human eyes, grounded.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia, glowing eyes"
+    },
+    {
+      "id": "p7",
+      "sceneId": "s3",
+      "index": 6,
+      "durationSec": 6,
+      "subject": "Marcus climbs out and marches into the smoke, resolute",
+      "environment": "Over the top of the trench into no-man's-land, a wall of smoke ahead, mud and wire underfoot, cold dawn",
+      "action": "Marcus climbs the trench wall and marches toward the smoke, rifle shouldered, not looking back",
+      "cameraFraming": "wide",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, wide, grounded tracking",
+      "lighting": "cold grey dawn, the smoke pale and swallowing ahead",
+      "emotionalIntention": "the resolve of obedience; a man walking into the war",
+      "temporalProgression": "the camera tracks behind Marcus as he strides away into the thickening smoke",
+      "continuityConstraints": [
+        "Marcus: same young soldier, mud-caked uniform, rifle shouldered, grounded, feet in the mud",
+        "cold battlefield grade, 2.39 letterbox, fine grain",
+        "no floating, no text, no flags"
+      ],
+      "referenceAssets": ["marcus", "no-mans-land"],
+      "startStateRef": "marcus=at-the-line",
+      "endStateRef": "marcus=marching",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["boots in mud", "rising wind", "distant fire"],
+        "silence": false,
+        "note": "Verse 1 'march towards the smoke'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02; one-model consistency keeps Marcus; grounded march, permissive rail.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "grounded marching, real weight, feet in the mud, never floating",
+        "photoreal smoke swallowing the figure",
+        "no warping"
+      ],
+      "keyframePrompt": "A young soldier climbs out of a muddy trench and marches into a wall of drifting smoke across no-man's-land at cold dawn, rifle shouldered, resolute, seen from behind, cold desaturated grade, grounded, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A young soldier climbs over the top of a trench and marches steadily toward a wall of smoke across no-man's-land, rifle shouldered, not looking back; the camera tracks behind him as the smoke swallows him. Hyper-real, 35mm anamorphic, cold grade, grounded, feet in the mud, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia"
+    },
+    {
+      "id": "p8",
+      "sceneId": "s3",
+      "index": 7,
+      "durationSec": 6,
+      "subject": "Eli halts at the fork, boots in the mud, watching his brother vanish",
+      "environment": "Just over the trench lip, mud and wire, the smoke ahead where Marcus went, cold dawn",
+      "action": "Eli rises to follow, then halts, boots planted in the mud, watching the smoke that swallowed his brother",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "cold grey dawn key, soft on Eli's grimed face",
+      "emotionalIntention": "the fork; a soul not yet decided",
+      "temporalProgression": "Eli takes one step, stops, and the camera pushes in as his resolve wavers",
+      "continuityConstraints": [
+        "the same Eli, human eyes, mud-caked olive-drab, grounded",
+        "cold battlefield grade, 2.39 letterbox, fine grain",
+        "no floating, no text, no flags"
+      ],
+      "referenceAssets": ["eli", "no-mans-land", "elis-uniform"],
+      "startStateRef": "eli=at-the-line",
+      "endStateRef": "eli=hesitating",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a single boot in mud", "a shaken breath", "far-off fire"],
+        "silence": false,
+        "note": "Verse 1 'boots in the mud, blood on the boots'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for photoreal hesitation; one-model consistency locks Eli's face.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal skin + true micro-expression, human eyes",
+        "grounded, boots planted, never floating",
+        "no warping"
+      ],
+      "keyframePrompt": "A young gaunt gentle soldier halted at the edge of no-man's-land, boots planted in deep mud, watching a wall of smoke where his brother vanished, grime and doubt on his face, cold blue-grey grade, human eyes, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A young soldier takes one step out of the trench, then halts, boots planted in the mud, watching the wall of smoke that swallowed his brother; the camera pushes slowly in as his resolve wavers. Hyper-real skin, true micro-expression, 35mm anamorphic, cold grade, grounded, human eyes, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia, glowing eyes"
+    },
+    {
+      "id": "p9",
+      "sceneId": "s4",
+      "index": 8,
+      "durationSec": 6,
+      "subject": "Eli advances through ash and raises his rifle on a single enemy across the field",
+      "environment": "Deep in no-man's-land, ash and smoke drifting, a cratered field, a single figure across it, cold dawn",
+      "action": "Eli advances through the ash, shoulders his rifle, and sights down it at a single enemy soldier across the field",
+      "cameraFraming": "wide",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, wide, shallow",
+      "lighting": "cold grey dawn, ash falling, pale smoke separating the two figures",
+      "emotionalIntention": "the aim; the order about to be obeyed",
+      "temporalProgression": "the camera tracks with Eli as he raises the rifle and steadies the sight on the far figure",
+      "continuityConstraints": [
+        "the same Eli, human eyes, grounded; the enemy a distant separate figure across the field",
+        "cold battlefield grade, 2.39 letterbox, fine grain",
+        "no floating, no text, no flags, no visible blood"
+      ],
+      "referenceAssets": ["eli", "enemy", "no-mans-land", "the-rifle"],
+      "startStateRef": "enemy=unseen",
+      "endStateRef": "enemy=eyes-met",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["ash falling", "a rifle shouldered", "a tense breath"],
+        "silence": false,
+        "note": "Verse 1 'across that field through the ash and aggression'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02; one-model consistency; grounded aim, permissive rail (rifle, no blood).",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "grounded advance + real aim mechanics, never floating",
+        "photoreal ash + smoke, two separated figures",
+        "no warping, human eyes"
+      ],
+      "keyframePrompt": "A young soldier advances through drifting ash and smoke across a cratered grey field and raises his rifle, sighting down it at a single distant enemy soldier across the field at cold dawn, cold desaturated grade, grounded, human eyes, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A young soldier advances through drifting ash across a cratered field, shoulders his rifle and steadies the sight on a single distant enemy across the open ground; the camera tracks with him through the smoke. Hyper-real, 35mm anamorphic, cold grade, grounded, human eyes, no blood, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia, glowing eyes"
+    },
+    {
+      "id": "p10",
+      "sceneId": "s4",
+      "index": 9,
+      "durationSec": 6,
+      "subject": "The mirror — a tight push on the enemy's eyes meeting Eli's across the field",
+      "environment": "Across the field through thinning smoke, the enemy soldier's face lit by cold dawn, rifle half-raised",
+      "action": "The enemy soldier catches Eli's eyes through the smoke, the same fear and the same humanity on his face",
+      "cameraFraming": "close-up",
+      "cameraMovement": "push-in",
+      "lensIntention": "long lens, anamorphic, very shallow",
+      "lighting": "cold grey dawn key, thin smoke softening the light on a young frightened face",
+      "emotionalIntention": "recognition; the target becomes a mirror",
+      "temporalProgression": "the camera pushes in on the enemy's eyes as they lock onto Eli's and hold",
+      "continuityConstraints": [
+        "the enemy: young, same age as Eli, human eyes, different unmarked uniform, grounded, the same fear",
+        "cold battlefield grade, 2.39 letterbox, fine grain",
+        "no floating, no text, no flags, no blood"
+      ],
+      "referenceAssets": ["enemy", "no-mans-land"],
+      "startStateRef": "enemy=eyes-met",
+      "endStateRef": "enemy=eyes-met",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a trembling breath", "soft wind", "muffled distant fire"],
+        "silence": false,
+        "note": "Verse 1 'he caught one kid's eyes and caught his reflection'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for photoreal micro-expression; one-model consistency; the mirror beat needs a true human face.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal skin + true micro-expression, human eyes, real fear",
+        "no warping",
+        "grounded, cold grade"
+      ],
+      "keyframePrompt": "Close-up of a young enemy soldier's frightened face through thinning smoke across a battlefield at cold dawn, rifle half-raised, his eyes locking onto someone across the field, the same fear and humanity as the man aiming at him, cold grade, human eyes, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A slow push-in across a battlefield onto a young enemy soldier's frightened face through thinning smoke; his eyes lock onto the man aiming at him and hold, the same fear and humanity in them. Hyper-real skin, true micro-expression, 35mm anamorphic, cold grade, human eyes, grounded, no blood, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia, glowing eyes"
+    },
+    {
+      "id": "p11",
+      "sceneId": "s4",
+      "index": 10,
+      "durationSec": 6,
+      "subject": "Memory intercut — a praying mother, a father at a door, a baby sister, and the enemy's small children, in warm light",
+      "environment": "A warm golden memory-world: a mother kneeling in prayer, a father in a doorway, a small sister reaching, and two small children at a table — soft amber domestic light",
+      "action": "A breath of warm memory washes over the cold field: the same family on both sides, and the enemy's own small children",
+      "cameraFraming": "insert",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, soft, shallow",
+      "lighting": "warm golden-hour domestic light, tender, in deliberate contrast to the cold field",
+      "emotionalIntention": "the human reason the hand lowers; the children who would inherit the debt",
+      "temporalProgression": "warm images dissolve gently one into the next — prayer, the doorway, the reaching child, the enemy's children",
+      "continuityConstraints": [
+        "WARM golden memory grade in deliberate contrast to the cold battlefield; grounded, dignified people, real children",
+        "2.39 letterbox, fine grain, no text",
+        "no floating, no exploitation; tender and human"
+      ],
+      "referenceAssets": ["miriam", "the-photo", "eli-home"],
+      "startStateRef": "eli=recognizing",
+      "endStateRef": "eli=recognizing",
+      "transition": "dissolve",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a soft hush", "a distant child's voice", "warmth under the mix"],
+        "silence": false,
+        "note": "Verse 1 'same mama praying, same father waiting, same baby sister' + 'can't make his children inherit our debt'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for warm photoreal domestic humans; one-model consistency; the gorgeous-women brief honored dignified + grounded.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal warm skin + tender real faces, dignified, real children",
+        "grounded, never floating",
+        "warm grade clearly distinct from the cold field"
+      ],
+      "keyframePrompt": "A warm golden-hour memory: a mother kneeling in prayer, a father in a lit doorway, a small sister reaching up, and two small children at a table, soft amber domestic light, tender and dignified, in deliberate contrast to a cold battlefield, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "Warm golden-hour memory images dissolving gently one into the next: a mother kneeling in prayer, a father in a lit doorway, a small sister reaching up, and two small children at a table; soft amber domestic light, tender, dignified. Hyper-real warm skin, 35mm anamorphic, grounded, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, cold grade, exploitation"
+    },
+    {
+      "id": "p12",
+      "sceneId": "s5",
+      "index": 11,
+      "durationSec": 6,
+      "subject": "The refusal — Eli lowers the barrel and lets the rifle fall into the mud",
+      "environment": "In the open field, cold dawn beginning to warm, ash settling, the enemy small across the ground",
+      "action": "Eli lowers the barrel, opens his hand, and the rifle falls from his grip into the mud",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "cold dawn warming at the edges, a first hint of gold as the weapon drops",
+      "emotionalIntention": "the courage of refusal; the single bravest act",
+      "temporalProgression": "the barrel sinks, the fingers open, and the rifle drops to the mud as the camera pushes in",
+      "continuityConstraints": [
+        "the same Eli, human eyes, grounded, feet planted; the rifle falls realistically to the mud",
+        "grade begins cold and warms a touch as the rifle drops, 2.39 letterbox, fine grain",
+        "no floating, no text, no blood, no flags"
+      ],
+      "referenceAssets": ["eli", "the-rifle", "no-mans-land", "elis-uniform"],
+      "startStateRef": "eli=recognizing",
+      "endStateRef": "eli=rifle-dropped",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a rifle thudding into mud", "a long exhale", "wind easing"],
+        "silence": false,
+        "note": "Verse 2 'he dropped that rifle, let mercy take hold — I'd rather save souls than surrender my soul'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the hero refusal beat — photoreal hand + weapon + micro-expression; one-model consistency locks Eli; the emotional center.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal hand opening + rifle falling to mud with real weight",
+        "human eyes, true micro-expression, grounded",
+        "no warping, no extra fingers"
+      ],
+      "keyframePrompt": "A young soldier lowers his rifle barrel and opens his hand, the rifle falling from his grip into the mud of a battlefield at cold dawn just beginning to warm, resolve and release on his face, cold grade warming slightly, human eyes, grounded, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A young soldier lowers his raised rifle, his fingers open, and the weapon drops from his grip into the mud; the camera pushes slowly in as his face releases into resolve, the cold light just beginning to warm. Hyper-real, 35mm anamorphic, human eyes, grounded, feet planted, no blood, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia, glowing eyes"
+    },
+    {
+      "id": "p13",
+      "sceneId": "s5",
+      "index": 12,
+      "durationSec": 6,
+      "subject": "The enemy raises empty hands to the sky",
+      "environment": "Across the field, the enemy soldier standing in cold-warming dawn, his rifle lowering, hands rising",
+      "action": "Seeing the rifle fall, the enemy slowly lifts both empty hands to the sky",
+      "cameraFraming": "wide",
+      "cameraMovement": "crane",
+      "lensIntention": "anamorphic 35mm, wide, slight heroic low angle",
+      "lighting": "cold dawn warming, the pale sky opening above the lifted hands",
+      "emotionalIntention": "mercy answered; surrender that is really survival",
+      "temporalProgression": "the enemy's hands rise toward the sky as the camera cranes up with them",
+      "continuityConstraints": [
+        "the same enemy, grounded, feet on the ground, hands empty and raised — never floating",
+        "grade warming, 2.39 letterbox, fine grain",
+        "no text, no flags, no blood"
+      ],
+      "referenceAssets": ["enemy", "no-mans-land"],
+      "startStateRef": "enemy=eyes-met",
+      "endStateRef": "enemy=hands-raised",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["wind opening", "a shaky exhale", "a held silence"],
+        "silence": false,
+        "note": "Verse 2 'one soldier still, with his hands to the skies'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02; one-model consistency; grounded hands-raised beat, permissive rail.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "grounded, feet planted, hands raised naturally — never floating",
+        "photoreal sky + figure, human eyes",
+        "no warping"
+      ],
+      "keyframePrompt": "A young enemy soldier standing on a battlefield at cold dawn warming to gold, his rifle lowered, slowly lifting both empty hands to the open pale sky, relief and disbelief on his face, grounded, human eyes, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A young enemy soldier, seeing the rifle across the field fall, slowly lifts both empty hands to the sky; the camera cranes up with his rising hands as the cold light warms toward gold. Hyper-real, 35mm anamorphic, grounded, feet on the ground, human eyes, no blood, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia, glowing eyes"
+    },
+    {
+      "id": "p14",
+      "sceneId": "s6",
+      "index": 13,
+      "durationSec": 6,
+      "subject": "Insert — one rifle set down in the mud, then the hands of the next soldier doing the same",
+      "environment": "Along the line in no-man's-land, hands and rifles in cold-warming dawn light",
+      "action": "A rifle is laid down in the mud; beside it another pair of hands lowers a second rifle, then a third",
+      "cameraFraming": "insert",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, tight, shallow",
+      "lighting": "cold dawn warming, specular on wet metal",
+      "emotionalIntention": "the ripple beginning; one choice spreading hand to hand",
+      "temporalProgression": "the camera tracks along the line as rifle after rifle is set down in the mud",
+      "continuityConstraints": [
+        "grounded hands + real rifles laid in mud; no faces needed",
+        "grade warming, 2.39 letterbox, fine grain, no text",
+        "no floating, no blood, no flags"
+      ],
+      "referenceAssets": ["laid-down-rifles", "the-field-of-refusal"],
+      "startStateRef": "battlefield=first-refusal",
+      "endStateRef": "battlefield=first-refusal",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["rifles set in mud", "a growing hush", "wind"],
+        "silence": false,
+        "note": "Chorus 'one gun down, then two touched ground'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 insert; one-model consistency; grounded hands + metal, permissive rail.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal hands + rifles + mud, no extra fingers",
+        "real weight of metal set down",
+        "no warping"
+      ],
+      "keyframePrompt": "Close on a rifle being laid down into battlefield mud at cold dawn warming to gold, and beside it another soldier's hands lowering a second rifle, wet metal catching the light, grounded, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "A rifle is laid down into the mud; the camera tracks along the line as another pair of hands lowers a second rifle, then a third, wet metal catching the warming light. Hyper-real, 35mm anamorphic, grounded, no faces needed, no blood, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia"
+    },
+    {
+      "id": "p15",
+      "sceneId": "s6",
+      "index": 14,
+      "durationSec": 6,
+      "subject": "Epic wide — ten thousand rifles laid in shimmering rows, both sides standing with empty hands, east and west",
+      "environment": "A vast battlefield at dawn warming to gold, rifles laid resting in shimmering rows across the mud, soldiers standing unarmed on both sides",
+      "action": "An aerial reveal cranes up over a vast field of laid-down rifles and standing, unarmed soldiers on both sides",
+      "cameraFraming": "wide",
+      "cameraMovement": "drone",
+      "lensIntention": "anamorphic 35mm, very wide, deep",
+      "lighting": "cold dawn fully warming to gold, light raking across shimmering rows of metal",
+      "emotionalIntention": "awe; the scale of ten thousand refusals, no thunder, no sound",
+      "temporalProgression": "the drone cranes up and back to reveal the full field of laid-down rifles and standing men",
+      "continuityConstraints": [
+        "grounded soldiers standing on both sides, rifles laid in shimmering rows — never floating",
+        "grade warmed to gold, 2.39 letterbox, fine grain, no text",
+        "no blood, no flags, HBO scale and crowd"
+      ],
+      "referenceAssets": ["laid-down-rifles", "the-field-of-refusal"],
+      "startStateRef": "battlefield=first-refusal",
+      "endStateRef": "battlefield=mass-refusal-silent",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a vast hush", "wind over metal", "no gunfire"],
+        "silence": false,
+        "note": "Chorus 'then ten and ten thousand, no thunder, no sound — steel stacking in shimmering rows'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the epic-scale crowd + field; one-model consistency; permissive, 1080p spectacle payoff.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal vast crowd + field, grounded standing men, never floating",
+        "rows of real rifles catching gold light",
+        "no warping, no CGI-plastic crowd"
+      ],
+      "keyframePrompt": "An epic aerial wide of a vast battlefield at dawn warming to gold, ten thousand rifles laid resting in shimmering rows across the mud, soldiers standing unarmed with empty hands on both sides, warm raking light, grounded, HBO-grade scale, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "A vast aerial crane up and back over a battlefield at dawn warming to gold, revealing ten thousand rifles laid resting in shimmering rows across the mud and soldiers standing unarmed on both sides; warm light rakes across the metal. Hyper-real, 35mm anamorphic, grounded crowd, epic scale, no blood, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia"
+    },
+    {
+      "id": "p16",
+      "sceneId": "s7",
+      "index": 15,
+      "durationSec": 6,
+      "subject": "Power vanishes — the commander watches the war-maps go dark, his head bowing",
+      "environment": "The cold command bunker, the lit war-maps dimming to dark under the commander's still hands",
+      "action": "The commander stands over the maps as the lit markers go dark one by one, his hands falling still, his head bowing",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "cold hard lamp dimming as the maps go dark, shadow swallowing the room",
+      "emotionalIntention": "the quiet collapse of a power that was only belief",
+      "temporalProgression": "the markers go dark, the commander's hands still, and his head bows as the camera pushes in",
+      "continuityConstraints": [
+        "the same commander, dignified, grounded; the war-maps dimming to dark; cold grade going darker",
+        "2.39 letterbox, fine grain, no text, no flags",
+        "no floating, no HUD/holograms"
+      ],
+      "referenceAssets": ["commander", "the-command-bunker", "the-maps"],
+      "startStateRef": "machine=cracking",
+      "endStateRef": "machine=vanished",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a generator winding down", "silence falling", "a slow exhale"],
+        "silence": false,
+        "note": "Outro 'presidents pleading, generals grieving for power that vanished when people stopped believing'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the photoreal collapse-of-power beat; one-model consistency keeps the commander; permissive rail.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal commander + dimming maps + real falling light",
+        "dignified, grounded, true restrained emotion",
+        "no warping, no floating type"
+      ],
+      "keyframePrompt": "An older military commander stands over a long table of war-maps in a cold bunker as the lit markers go dark one by one, his gloved hands falling still and his head bowing, the hard lamp dimming and shadow swallowing the room, cold grade, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "An older commander stands over the war-maps as the lit markers go dark one by one, his hands falling still and his head slowly bowing; the lamp dims and shadow swallows the bunker as the camera pushes in. Hyper-real, 35mm anamorphic, cold grade going dark, dignified, grounded, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia"
+    },
+    {
+      "id": "p17",
+      "sceneId": "s8",
+      "index": 16,
+      "durationSec": 6,
+      "subject": "The cost — Marcus, a lone silhouette deep in the smoke, slows and sinks (oblique, no gore)",
+      "environment": "Deep in the wall of smoke Marcus marched into, cold and grey, a single faltering silhouette",
+      "action": "A lone silhouette deep in the smoke falters, sinks to its knees, and is lost to the haze",
+      "cameraFraming": "wide",
+      "cameraMovement": "locked-off",
+      "lensIntention": "anamorphic 35mm, wide, deep",
+      "lighting": "cold grey smoke, the figure a dark silhouette, light flat and dying",
+      "emotionalIntention": "grief; the cost of the choice to fight, held with dignity",
+      "temporalProgression": "the silhouette slows, sinks to its knees, and the smoke closes over it",
+      "continuityConstraints": [
+        "Marcus shown OBLIQUELY — a distant silhouette only, NO blood, NO gore, no wound shown, dignified",
+        "cold grade for the cost, 2.39 letterbox, fine grain, no text",
+        "grounded, no floating, no flags"
+      ],
+      "referenceAssets": ["marcus", "no-mans-land"],
+      "startStateRef": "marcus=marching",
+      "endStateRef": "marcus=fallen",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a single distant concussion", "smoke", "silence closing"],
+        "silence": false,
+        "note": "the cost of 'march, do what you're told'; rendered oblique; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the oblique fall (silhouette, no gore); one-model consistency; kept tasteful.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "oblique silhouette only, NO blood, NO gore, dignified",
+        "photoreal smoke swallowing the figure",
+        "no warping"
+      ],
+      "keyframePrompt": "A lone soldier's dark silhouette deep inside a wall of cold grey smoke, faltering and sinking to his knees as the haze closes over him, no blood, no gore, dignified and distant, cold grade, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "Deep inside a wall of cold grey smoke a lone soldier's silhouette falters, slows, and sinks to its knees, and the smoke closes over him; a still wide shot, oblique and distant. Hyper-real, 35mm anamorphic, cold grade, no blood, no gore, dignified, grounded, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, wound, graphic violence, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia"
+    },
+    {
+      "id": "p18",
+      "sceneId": "s8",
+      "index": 17,
+      "durationSec": 6,
+      "subject": "Marcus's mother receives the folded letter at a lit door — the midnight note",
+      "environment": "A lit doorway at the cold-blue hour, warm lamp against cold dark, a mother on the threshold",
+      "action": "A mother's hands close around a folded letter and press it to her chest at the lit door",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "warm lamp spilling from the door against the cold blue night, grief-soft",
+      "emotionalIntention": "the midnight note; grief with dignity, never exploited",
+      "temporalProgression": "the letter is placed into her hands and she presses it to her chest as the camera pushes in",
+      "continuityConstraints": [
+        "a dignified mother, grounded on the threshold, holding a folded letter — no graphic grief, no exploitation",
+        "warm lamp vs cold-blue night, 2.39 letterbox, fine grain, no text on the letter",
+        "no floating, no flags"
+      ],
+      "referenceAssets": ["marcus-home", "the-letter"],
+      "startStateRef": "marcusHome=waiting",
+      "endStateRef": "marcusHome=letter-received",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a door opening", "a caught breath", "night wind"],
+        "silence": false,
+        "note": "Chorus 'no more mothers with midnight notes'; the note this film wants to stop; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for a photoreal, dignified grief beat; one-model consistency; dignified mother, never exploited.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal dignified mother + real hands + letter, true restrained emotion",
+        "grounded on the threshold, never floating",
+        "no warping, no text on the letter"
+      ],
+      "keyframePrompt": "A mother on a lit doorstep at the cold-blue hour, warm lamp spilling from the door against the night, her hands closing around a folded letter and pressing it to her chest, restrained grief, dignified, grounded, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "At a lit doorway in the cold-blue hour a mother's hands close around a folded letter and press it to her chest; warm lamp light spills against the cold night as the camera pushes slowly in on her restrained grief. Hyper-real, 35mm anamorphic, dignified, grounded, no text on the letter.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia, exploitation"
+    },
+    {
+      "id": "p19",
+      "sceneId": "s9",
+      "index": 18,
+      "durationSec": 6,
+      "subject": "The homecoming embrace — Miriam and Eli's mother take him in at the door",
+      "environment": "The front porch and lit doorway of Eli's home at warm dawn, the threshold between road and home",
+      "action": "Miriam opens the door and steps onto the porch, and she and Eli's mother pull him into their arms at the threshold",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "warm golden dawn + warm interior light from the door, tender",
+      "emotionalIntention": "earned reunion; the future the refusal kept",
+      "temporalProgression": "the door opens, Miriam steps out, and the embrace closes as the camera pushes gently in",
+      "continuityConstraints": [
+        "Miriam: beautiful, dignified, grounded — the same woman from the goodbye; the same Eli, human eyes",
+        "warm homecoming grade (bookending the prologue), 2.39 letterbox, fine grain, no text",
+        "grounded embrace, never floating, never exploitative"
+      ],
+      "referenceAssets": ["miriam", "eli", "eli-home"],
+      "startStateRef": "eliHome=waiting",
+      "endStateRef": "eliHome=reunited",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a door opening", "a sob of relief", "warm morning"],
+        "silence": false,
+        "note": "Outro 'nobody conquered, but everybody survived'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the photoreal reunion + micro-expression; one-model consistency locks Eli + Miriam; bookends the prologue goodbye.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal warm skin + true tender micro-expression, human eyes",
+        "grounded embrace at the threshold, never floating",
+        "no warping, dignified"
+      ],
+      "keyframePrompt": "A beautiful dignified woman opens a lit front door at warm dawn and steps onto the porch, and she and an older mother pull a returning young soldier into their arms at the threshold, tears and relief, warm golden light, grounded, human eyes, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "A lit front door opens at warm golden dawn and a beautiful dignified woman steps onto the porch; she and an older mother pull a returning young soldier into their arms at the threshold, tears of relief on their faces; the camera pushes gently in on the embrace. Hyper-real warm skin, true micro-expression, 35mm anamorphic, grounded, human eyes, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia, glowing eyes, exploitation"
+    },
+    {
+      "id": "p20",
+      "sceneId": "s9",
+      "index": 19,
+      "durationSec": 6,
+      "subject": "Final — the dropped rifle in the mud catches the risen sun on the empty field",
+      "environment": "The empty battlefield at full warm dawn, the single dropped rifle lying in the mud, the field quiet and green returning at the edges",
+      "action": "The camera settles on the lone dropped rifle in the mud as the fully risen sun catches it, then pulls slowly back over the still field",
+      "cameraFraming": "wide",
+      "cameraMovement": "pullback",
+      "lensIntention": "anamorphic 35mm, wide, shallow-to-deep",
+      "lighting": "full warm risen sun, gold raking across the mud and the metal",
+      "emotionalIntention": "earned peace; one brave no, and the battle stopped",
+      "temporalProgression": "the camera holds then pulls slowly back from the dropped rifle as the sun fully rises over the still field",
+      "continuityConstraints": [
+        "the same dropped rifle in the mud (sp-rifle payoff), the field empty and still, green returning at the edges",
+        "warm risen-sun grade, 2.39 letterbox, fine grain, no text",
+        "no people floating, no blood, no flags"
+      ],
+      "referenceAssets": ["the-rifle", "the-field-of-refusal"],
+      "startStateRef": "battlefield=mass-refusal-silent",
+      "endStateRef": "battlefield=silent-dawn",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["soft wind over the field", "distant birdsong", "a final hush"],
+        "silence": false,
+        "note": "Outro 'one rifle dropped, one brave no, and the battle stopped'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the final motif payoff; one-model consistency; landscape + prop, permissive rail.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal rifle + mud + gold light, real metal",
+        "still empty field, green returning, no CGI look",
+        "no warping, no text"
+      ],
+      "keyframePrompt": "A single dropped rifle lying in the mud of an empty battlefield at full warm risen dawn, gold light raking across the metal, the field quiet and still with green returning at the edges, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "The camera settles on a lone dropped rifle lying in the mud of an empty battlefield as the fully risen sun catches the metal in gold, then pulls slowly back over the still, quiet field with green returning at the edges. Hyper-real, 35mm anamorphic, warm grade, no people, no blood, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "blood, gore, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark, flags, insignia"
+    }
+  ],
+  "budget": { "maxUsd": 40, "spentUsd": 0, "requireApproval": true },
+  "qualityAcceptance": [
+    "Hyper-real: convincing on a paused frame AND in motion — ARRI/35mm anamorphic look",
+    "HBO 2.39 letterbox; WARM golden home/memory grade vs COLD desaturated blue-grey war, the cold warming as mercy spreads, fine grain",
+    "ONE model (MiniMax Hailuo-02) across the whole film for character consistency — Eli + Miriam + Marcus + the commander stable shot-to-shot",
+    "A DEVELOPED PLOT tracking the lyric's meaning: futures left (prologue) → crooked order → fork → mirror (+ the enemy's children) → refusal → ripple east/west → the war machine's power vanishes → the cost (Marcus) → homecoming (future reclaimed)",
+    "People GROUNDED always (march/kneel/reach/embrace, NEVER floating)",
+    "Violence OBLIQUE and dignified — no blood, no gore: a lowered barrel, a dropped rifle, a fallen silhouette, a folded letter",
+    "Beautiful women dignified + grounded (Miriam, the praying mother), never exploitative",
+    "NO superimposed HUD / holograms / floating type; unmarked uniforms, no flags",
+    "Theme reads: the bravest order is the one disobeyed — the soldier who refused ended up better off than the one who chose to fight, and refusal topples the war machine itself",
+    "Beat-synced: cuts land on beats but shots breathe; dense only at the ripple/climax",
+    "Score to the original 4:52 (292.2s) 'The Last Soldier Refused' master; MiniMax native audio discarded"
+  ]
+}
