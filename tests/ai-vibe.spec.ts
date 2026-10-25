@@ -23,8 +23,24 @@ test.describe('AI vibe matcher (/api/vibe + Cmd+K)', () => {
   }) => {
     // Queries that previously produced circular/leaky/templated whys on the 8B
     // ("X matches the <query> mood", "reason:" leak, id-as-title, off-intent padding).
+    // A reason whose every content word is ALREADY in the query just re-labels it
+    // ("late night prayer" → "Late night prayer") — a non-reason. Post-#v4 the worker
+    // catches this + backfills from the track's vibe, so every why must ADD at least
+    // one concrete word the query doesn't contain.
+    const STOP = new Set(
+      'the a an of to in on at for and or with through my your this that is are be it his her their from into over as by not no you we they i me off up out'.split(
+        ' '
+      )
+    );
+    const toks = (s: string) =>
+      s
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w && !STOP.has(w));
     const QUERIES = [MOOD, 'mercy at the border', 'scripture about forgiveness'];
     for (const q of QUERIES) {
+      const qTok = new Set(toks(q));
       const ok = await request.get(`${BASE}/api/vibe?q=${encodeURIComponent(q)}`);
       expect(ok.status(), q).toBe(200);
       const body = (await ok.json()) as { picks?: Array<{ id: string; why: string }> };
@@ -43,6 +59,12 @@ test.describe('AI vibe matcher (/api/vibe + Cmd+K)', () => {
         );
         // Refer to the track by TITLE, never its id-slug.
         expect(why, `${q} id-as-title`).not.toContain(p.id);
+        // Not a pure query-echo — the why must add a word beyond the query.
+        const wTok = toks(p.why);
+        expect(
+          wTok.some(w => !qTok.has(w)),
+          `${q} → ${p.id} query-echo (adds nothing): "${p.why}"`
+        ).toBe(true);
       }
     }
 

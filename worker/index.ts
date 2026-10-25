@@ -2906,7 +2906,7 @@ export default {
         const q = (url.searchParams.get('q') || '').trim().slice(0, 80);
         if (q.length < 2) return jsonResponse({ picks: [] }, 200, {}, request);
         const norm = q.toLowerCase().replace(/\s+/g, ' ');
-        const cacheK = `vibe:${norm}#v3`;
+        const cacheK = `vibe:${norm}#v4`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2929,7 +2929,7 @@ export default {
         // off-intent tracks. 70B + forbid-genre/circular/template + concrete-tie +
         // GOOD/BAD examples + "fewer beats padding", backstopped in the parser.
         const system =
-          "You are bZ's music search. From the CATALOG (each line `id | title | album | vibe | wisdom`), choose the tracks whose THEME, STORY, PLACE, SCRIPTURE, CHARACTER, or EMOTION genuinely fits the listener's QUERY. Output ONLY lines `id | reason` — the id copied EXACTLY from the catalog; the reason a SPECIFIC phrase (max ~10 words) naming the CONCRETE thing that ties THAT track to the query. Refer to the track by its TITLE, NEVER its id-slug. Every track is gospel-rap, so the GENRE is NEVER a reason. NEVER restate the query as the reason — BAD: 'matches the <query> mood', 'fits the vibe', 'is a song about X', '\"some-id\" matches'. GOOD: 'Mother waiting at the checkpoint line', 'Surrender at the bruised-hands table', 'Noah-ready launch for the hungry'. Return ONLY genuine fits — FEWER is better than padding; return NOTHING rather than a track that does not truly fit. Max 6, best first. No preamble, no markdown, no numbering; NEVER a track absent from the catalog. Christian-gangster ethic; zero drug references.";
+          "You are bZ's music search. From the CATALOG (each line `id | title | album | vibe | wisdom`), choose the tracks whose THEME, STORY, PLACE, SCRIPTURE, CHARACTER, or EMOTION genuinely fits the listener's QUERY. Output ONLY lines `id | reason` — the id copied EXACTLY from the catalog; the reason a VIVID 5-10 word phrase naming the CONCRETE image, action, place, character, or line IN THAT track that ties it to the query. Refer to the track by its TITLE, NEVER its id-slug. Every track is gospel-rap, so the GENRE is NEVER a reason. The reason MUST add a concrete detail the query does NOT already contain — NEVER a terse 2-3 word label that just re-labels the query's own words. BAD (echoes the query, says nothing): 'Late night prayer', 'City driving', 'Fast escape', 'matches the mood', 'fits the vibe', 'is a song about X'. GOOD (concrete, adds an image): 'Mother waiting at the checkpoint line', 'Surrender at the bruised-hands table', 'Sweat-soaked confession on the midnight climb'. Return ONLY genuine fits — FEWER is better than padding; return NOTHING rather than a track that does not truly fit. Max 6, best first. No preamble, no markdown, no numbering; NEVER a track absent from the catalog. Christian-gangster ethic; zero drug references.";
         const user = `QUERY: ${q}\n\nCATALOG:\n${catalog}`;
         let picks: Array<{ id: string; why: string }> = [];
         try {
@@ -2948,6 +2948,27 @@ export default {
             /\bmatches the .*(?:mood|vibe|query)\b|\bfits the .*(?:mood|vibe|query)\b|\bis a song about\b|^["']?[a-z0-9-]+["']?\s+matches\b/i;
           const genreOnly =
             /^(?:(?:epic|latin|hard|holy|dark|raw)\s+)?gospel[\s-]?trap(?:\s+(?:vibe|sound|energy))?$|^(?:same|similar)\s+(?:vibe|sound|genre|energy)$/i;
+          // Query-echo detection: a reason whose every content word is already in
+          // the query ADDS nothing — it just re-labels the query (e.g. query "late
+          // night prayer" -> reason "Late night prayer"). That's a non-reason; the
+          // regex above misses it, so catch it by token-overlap and backfill from
+          // the track's own vibe (concrete + grounded) rather than drop a real match.
+          const STOP = new Set(
+            'the a an of to in on at for and or with through my your this that is are be it his her their from into over as by not no you we they i me on off up out'.split(
+              ' '
+            )
+          );
+          const toks = (s: string) =>
+            s
+              .toLowerCase()
+              .replace(/[^a-z0-9\s]/g, ' ')
+              .split(/\s+/)
+              .filter(w => w && !STOP.has(w));
+          const qTok = new Set(toks(q));
+          const isEcho = (s: string) => {
+            const t = toks(s);
+            return t.length > 0 && t.every(w => qTok.has(w));
+          };
           const seen = new Set<string>();
           for (const line of (out.response || '').split(/\r?\n+/)) {
             const parts = line.split('|');
@@ -2964,6 +2985,11 @@ export default {
             if (!TRACK_BY_ID.has(id) || seen.has(id) || why.length < 4) continue;
             // Drop circular / genre-only / id-as-title non-reasons.
             if (circular.test(why) || genreOnly.test(why) || why.toLowerCase().includes(id)) continue;
+            // Terse query-echo -> backfill from the track's own vibe (keep the match).
+            if (isEcho(why)) {
+              const vibe = (TRACK_BY_ID.get(id)?.vibe || '').trim();
+              if (vibe && !isEcho(vibe)) why = vibe.length > 52 ? vibe.slice(0, 50).trimEnd() + '…' : vibe;
+            }
             seen.add(id);
             picks.push({ id, why });
             if (picks.length >= 6) break;
