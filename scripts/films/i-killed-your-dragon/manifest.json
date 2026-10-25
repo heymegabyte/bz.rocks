@@ -712,7 +712,7 @@
         "real weight + impact",
         "minimal, motivated fire only — no fire for no reason"
       ],
-      "veoPrompt": "A battle-hardened warrior in battered bronze scale armor sprints through the chaos of a muddy battlefield at dusk, rain and grit in the air; he parries a spear and cuts down an armored enemy with one brutal diagonal swing of his sword, never breaking stride; grounded, visceral, handheld camera tracking alongside him; overcast steel-grey sky, distant smoke, almost no fire.",
+      "veoPrompt": "A battle-hardened warrior in battered bronze scale armor charges through the chaos of a muddy battlefield at dusk, rain and grit in the air; he deflects a spear with his forearm and surges forward through the clash of soldiers, relentless and unstoppable; grounded, visceral, handheld camera tracking alongside him; overcast steel-grey sky, distant smoke, almost no fire.",
       "useHeroAsFirstFrame": false
     },
     {
@@ -757,7 +757,7 @@
         "real impact + weight",
         "minimal motivated fire — NO floating people, NO fire for no reason"
       ],
-      "veoPrompt": "A warrior scales the neck of a colossal fallen dragon and, with a roar, drives his sword two-handed down through the beast's skull; the dragon shudders and goes still beneath him; real weight and impact, blood and grime, grounded and visceral; cold grey dawn light, thin smoke rising, minimal fire; a slow push-in on the exhausted, victorious warrior atop the slain beast.",
+      "veoPrompt": "A battle-worn warrior stands atop a colossal fallen dragon on scorched rock, chest heaving, and slowly raises his sword overhead in triumph as cold grey dawn light breaks; the vast beast lies still beneath him, one great wing draped across the ground; grounded and epic, real scale and weight; thin smoke rising, minimal fire; a slow heroic push-in.",
       "useHeroAsFirstFrame": false
     }
   ],

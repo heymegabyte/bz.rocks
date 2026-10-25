@@ -46,6 +46,8 @@ const T2V = process.env.T2V === '1'; // T2V=1 → pure Veo text-to-video (max re
 const MINIMAX = process.env.MINIMAX === '1'; // MINIMAX=1 → native MiniMax Hailuo-02 via Brian's subscription key (cap-compliant $0.25/s)
 const MINIMAX_MODEL = 'MiniMax-Hailuo-02';
 const MINIMAX_BASE = 'https://api.minimax.io/v1';
+const SEEDANCE = process.env.SEEDANCE === '1'; // SEEDANCE=1 → ByteDance Seedance 2.5 via Fal (top-tier model, 4-30s, 720p native)
+const SEEDANCE_MODEL = 'bytedance/seedance-2.5/text-to-video';
 const CONCURRENCY = 3;
 const AUDIO_REL = `public/audio/${FILM_ID}.mp3`;
 
@@ -133,9 +135,12 @@ async function veoClip(tok, shot, heroFrame) {
   }
   const prompt = shot.veoPrompt + PHOTOREAL;
   const negative_prompt = [NEG, shot.negativePrompt].filter(Boolean).join(', ');
-  // T2V (max realism, no keyframe) OR image-to-video from a photoreal keyframe.
+  // Seedance 2.5 (top-tier, no keyframe) · Veo T2V · or Veo image-to-video from a photoreal keyframe.
   let model, input;
-  if (T2V) {
+  if (SEEDANCE) {
+    model = SEEDANCE_MODEL;
+    input = { prompt, resolution: '720p', duration: 8, aspect_ratio: '16:9', generate_audio: false };
+  } else if (T2V) {
     model = T2V_MODEL;
     input = {
       prompt,
@@ -358,7 +363,7 @@ async function run() {
     : m.shots.slice(0, limit);
   const isFull = process.env.FULL === '1'; // default = preview; set FULL=1 for the full-length film
   log(
-    `${m.id}: ${shots.length}/${m.shots.length} shots ${isFull ? '(FULL)' : '(PREVIEW)'} · ${MINIMAX ? 'MiniMax Hailuo-02 (subscription)' : T2V ? 'Veo 3.1 t2v via Fal' : 'Veo 3.1 i2v via Fal'}`
+    `${m.id}: ${shots.length}/${m.shots.length} shots ${isFull ? '(FULL)' : '(PREVIEW)'} · ${MINIMAX ? 'MiniMax Hailuo-02 (subscription)' : SEEDANCE ? 'Seedance 2.5 via Fal' : T2V ? 'Veo 3.1 t2v via Fal' : 'Veo 3.1 i2v via Fal'}`
   );
 
   let clips;
@@ -376,7 +381,7 @@ async function run() {
     // Hero reference still — i2v identity continuity only; skipped in T2V (no keyframe).
     const lead = m.characters?.[0];
     const heroFrame =
-      !T2V && lead
+      !T2V && !SEEDANCE && lead
         ? await flux(
             tok,
             `${lead.description} Full-body hero portrait, standing resolute, bronze scale-mail, one notched sword, rain and distant firelight, cinematic key light`,
@@ -385,7 +390,7 @@ async function run() {
           )
         : null;
     log(
-      `generating ${shots.length} Veo 3.1 ${T2V ? 'text-to-video' : 'image-to-video'} clips (8s, 1080p, audio off), concurrency ${CONCURRENCY}…`
+      `generating ${shots.length} ${SEEDANCE ? 'Seedance 2.5 (8s, 720p)' : `Veo 3.1 ${T2V ? 'text-to-video' : 'image-to-video'} (8s, 1080p)`} clips, audio off, concurrency ${CONCURRENCY}…`
     );
     clips = await pool(shots, CONCURRENCY, shot => veoClip(tok, shot, heroFrame));
   }
