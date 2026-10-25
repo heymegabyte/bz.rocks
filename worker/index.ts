@@ -2660,6 +2660,75 @@ export default {
         return jsonResponse({ why }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
       }
 
+      // AI share caption — a catchy, GROUNDED one-liner for sharing a track or
+      // album to social. Replaces the bland "Title — bZ" default (the same copy
+      // on every network) with a real hook drawn ONLY from the track/album's
+      // title, vibe, wisdom (+ one lyric line). Same Workers-AI + KV-cache(30d)
+      // + fail-soft pattern; the client falls back to the generic text when this
+      // returns null. Capped ≤180 chars so it fits X and every other field.
+      if (url.pathname === '/api/sharecopy' && request.method === 'GET') {
+        const trackId = (url.searchParams.get('track') || '').trim();
+        const albumId = (url.searchParams.get('album') || '').trim();
+        const isTrack = trackId.length > 0;
+        const id = isTrack ? trackId : albumId;
+        if (isTrack ? !TRACK_BY_ID.has(trackId) : !ALBUM_BY_ID.has(albumId))
+          return jsonResponse({ error: 'unknown_target' }, 404, {}, request);
+        const cacheK = `sharecopy:${isTrack ? 't' : 'a'}:${id}#v1`;
+        const cached = await env.COUNTERS.get(cacheK);
+        if (cached)
+          return jsonResponse(
+            { caption: cached, cached: true },
+            200,
+            { 'Cache-Control': 'public, max-age=86400' },
+            request
+          );
+        if (!env.AI) return jsonResponse({ caption: null }, 200, {}, request);
+        if (await rateLimitedCount(env.COUNTERS, ip, 'sharecopy', 'minute', 20, 60))
+          return jsonResponse({ caption: null, throttled: true }, 200, {}, request);
+        let facts = '';
+        if (isTrack) {
+          const t = TRACK_BY_ID.get(trackId)!;
+          const album = ALBUM_BY_ID.get(t.album);
+          const lyric = (t.lyrics || [])
+            .map(l => l.trim())
+            .find(l => l.length > 8 && l.length < 70 && !/^[\[(]/.test(l));
+          facts = `SONG: "${t.title}" from the album ${album?.name ?? 'bZ'}\nvibe: ${t.vibe}\nwisdom: ${t.wisdom ?? ''}${lyric ? `\na line from it: ${lyric}` : ''}`;
+        } else {
+          const a = ALBUM_BY_ID.get(albumId)!;
+          facts = `ALBUM: "${a.name}" by bZ\ntagline: ${a.tagline ?? ''}\nabout: ${a.description ?? ''}`;
+        }
+        const system =
+          "You write ONE irresistible social share caption for bZ's gospel-rap music, drawing ONLY on the details given. Make a stranger want to press play. Voice: Newark hustle-gospel — hard, holy, vivid. STRICT: one line, max ~22 words AND under 170 characters, no hashtags, at most one tasteful emoji, no quotation marks, no markdown, no preamble, zero drug references. NEVER invent facts, numbers, features, or collaborators — interpret only what is given. Output ONLY the caption text.";
+        let caption = '';
+        try {
+          const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: facts }
+            ],
+            max_tokens: 90,
+            temperature: 0.85
+          })) as { response?: string };
+          caption = (out.response || '')
+            .split(/\r?\n/)[0]!
+            .trim()
+            .replace(/^["'`*]+|["'`*]+$/g, '')
+            .trim();
+        } catch {
+          caption = '';
+        }
+        // Suppress-on-leak: drop ONLY unambiguous instruction phrasing (fail-soft
+        // to the client's generic text). Kept tight on purpose — the artist's own
+        // vocabulary ("gospel-rap", "Newark hustle-gospel") is legit caption copy,
+        // not a prompt leak, so it must NOT be suppressed.
+        if (/\b(drawing only on|output only the|interpret only what|never invent)\b/i.test(caption))
+          caption = '';
+        if (caption.length > 180) caption = caption.slice(0, 177).trimEnd() + '…';
+        if (caption.length < 12) return jsonResponse({ caption: null }, 200, {}, request);
+        ctx.waitUntil(env.COUNTERS.put(cacheK, caption, { expirationTtl: 2592000 }));
+        return jsonResponse({ caption }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
+      }
+
       // AI "about this drop" album essay — a grounded 2-3 sentence read on the
       // album's arc + what ties it together, from its name/tagline + track
       // titles & vibes. Same Workers-AI + KV-cache + fail-soft pattern as

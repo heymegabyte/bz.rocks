@@ -877,6 +877,11 @@ const EMBED_DIMS: Record<EmbedSize, { w: string; h: number }> = {
   wide: { w: '100%', h: 220 }
 };
 let shareCurrent: ShareTarget | null = null;
+// Per-target memo + in-flight guard for the grounded AI share caption
+// (/api/sharecopy). Memoized so re-opening the dialog is instant; aborted when
+// the target changes so a stale caption never lands on the wrong share.
+const shareCopyCache = new Map<string, string>();
+let shareCaptionController: AbortController | null = null;
 // Embed surfaces always render at 'medium' (480×220) — single canonical
 // size per Brian's preference. Variable kept for legacy embedSnippet
 // signature compatibility but no UI surface flips it.
@@ -1071,72 +1076,129 @@ function refreshShareDialog() {
     const sep = baseUrl.includes('?') ? '&' : '?';
     return `${baseUrl}${sep}ref=share-${network}`;
   };
-  const text = `${t.title} — bZ`;
-  const longTextFor = (network: string) => `${t.title} — bZ. Listen: ${refUrl(network)}`;
+  const text0 = `${t.title} — bZ`;
+  const titleEnc = encodeURIComponent(text0); // stable short title (HN/Tumblr)
   const coverUrl = t.cover.startsWith('http') ? t.cover : `${SITE_ORIGIN}${t.cover}`;
-  const textEnc = encodeURIComponent(text);
 
-  // Wire each network's share-intent URL with per-network referral tag.
   const setHref = (id: string, href: string) => {
     const el = $('#' + id) as HTMLAnchorElement | null;
     if (el) el.href = href;
   };
-  setHref(
-    'shareXTwitter',
-    `https://twitter.com/intent/tweet?text=${textEnc}&url=${encodeURIComponent(refUrl('x'))}`
-  );
-  setHref(
-    'shareThreads',
-    `https://www.threads.net/intent/post?text=${encodeURIComponent(longTextFor('threads'))}`
-  );
-  setHref(
-    'shareBluesky',
-    `https://bsky.app/intent/compose?text=${encodeURIComponent(longTextFor('bluesky'))}`
-  );
-  // Mastodon "share via toot" routes to the user's home instance via toot.kytta.dev
-  // (canonical share-router that prompts for the user's instance, then forwards).
-  setHref('shareMastodon', `https://toot.kytta.dev/?text=${encodeURIComponent(longTextFor('mastodon'))}`);
-  setHref(
-    'shareFacebook',
-    `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(refUrl('facebook'))}`
-  );
-  setHref(
-    'shareLinkedIn',
-    `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(refUrl('linkedin'))}`
-  );
-  setHref(
-    'shareReddit',
-    `https://www.reddit.com/submit?url=${encodeURIComponent(refUrl('reddit'))}&title=${textEnc}`
-  );
-  setHref(
-    'shareHN',
-    `https://news.ycombinator.com/submitlink?u=${encodeURIComponent(refUrl('hn'))}&t=${textEnc}`
-  );
-  setHref(
-    'shareTelegram',
-    `https://t.me/share/url?url=${encodeURIComponent(refUrl('telegram'))}&text=${textEnc}`
-  );
-  setHref('shareWhatsApp', `https://wa.me/?text=${encodeURIComponent(longTextFor('whatsapp'))}`);
-  setHref('shareSignal', `https://signal.me/#${encodeURIComponent(refUrl('signal'))}`);
-  setHref('shareSMS', `sms:?&body=${encodeURIComponent(longTextFor('sms'))}`);
-  setHref(
-    'shareEmail',
-    `mailto:?subject=${encodeURIComponent(`bZ — ${t.title}`)}&body=${encodeURIComponent(`${t.title} — listen here:\n${refUrl('email')}`)}`
-  );
-  // 3 new networks (best recs): Pinterest (highly visual, music-friendly),
-  // Tumblr (cult-followings + reblogs), Pocket (read-later that converts).
-  setHref(
-    'sharePinterest',
-    `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(refUrl('pinterest'))}&media=${encodeURIComponent(coverUrl)}&description=${textEnc}`
-  );
-  setHref(
-    'shareTumblr',
-    `https://www.tumblr.com/widgets/share/tool?canonicalUrl=${encodeURIComponent(refUrl('tumblr'))}&title=${textEnc}&caption=${encodeURIComponent(longTextFor('tumblr'))}`
-  );
-  setHref(
-    'sharePocket',
-    `https://getpocket.com/edit?url=${encodeURIComponent(refUrl('pocket'))}&title=${textEnc}`
-  );
+  // Wire every network's share-intent URL from one POST BODY — the catchy AI
+  // caption once it lands, the generic line until then — so every platform
+  // shares the same hook + the per-network referral tag. Re-runs whenever the
+  // caption changes (AI arrives, or the user edits the field). HN/Tumblr keep a
+  // clean, un-editorialized title; the caption rides their body field.
+  const applyShareText = (rawBody: string): void => {
+    const body = rawBody.trim() || text0;
+    const textEnc = encodeURIComponent(body);
+    const longTextFor = (network: string) => `${body} ${refUrl(network)}`;
+    setHref(
+      'shareXTwitter',
+      `https://twitter.com/intent/tweet?text=${textEnc}&url=${encodeURIComponent(refUrl('x'))}`
+    );
+    setHref(
+      'shareThreads',
+      `https://www.threads.net/intent/post?text=${encodeURIComponent(longTextFor('threads'))}`
+    );
+    setHref(
+      'shareBluesky',
+      `https://bsky.app/intent/compose?text=${encodeURIComponent(longTextFor('bluesky'))}`
+    );
+    // Mastodon "share via toot" routes to the user's home instance via toot.kytta.dev.
+    setHref('shareMastodon', `https://toot.kytta.dev/?text=${encodeURIComponent(longTextFor('mastodon'))}`);
+    setHref(
+      'shareFacebook',
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(refUrl('facebook'))}`
+    );
+    setHref(
+      'shareLinkedIn',
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(refUrl('linkedin'))}`
+    );
+    setHref(
+      'shareReddit',
+      `https://www.reddit.com/submit?url=${encodeURIComponent(refUrl('reddit'))}&title=${textEnc}`
+    );
+    setHref(
+      'shareHN',
+      `https://news.ycombinator.com/submitlink?u=${encodeURIComponent(refUrl('hn'))}&t=${titleEnc}`
+    );
+    setHref(
+      'shareTelegram',
+      `https://t.me/share/url?url=${encodeURIComponent(refUrl('telegram'))}&text=${textEnc}`
+    );
+    setHref('shareWhatsApp', `https://wa.me/?text=${encodeURIComponent(longTextFor('whatsapp'))}`);
+    setHref('shareSignal', `https://signal.me/#${encodeURIComponent(refUrl('signal'))}`);
+    setHref('shareSMS', `sms:?&body=${encodeURIComponent(longTextFor('sms'))}`);
+    setHref(
+      'shareEmail',
+      `mailto:?subject=${encodeURIComponent(`bZ — ${t.title}`)}&body=${encodeURIComponent(`${body}\n${refUrl('email')}`)}`
+    );
+    // Pinterest (visual, music-friendly), Tumblr (reblogs), Pocket (read-later).
+    setHref(
+      'sharePinterest',
+      `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(refUrl('pinterest'))}&media=${encodeURIComponent(coverUrl)}&description=${textEnc}`
+    );
+    setHref(
+      'shareTumblr',
+      `https://www.tumblr.com/widgets/share/tool?canonicalUrl=${encodeURIComponent(refUrl('tumblr'))}&title=${titleEnc}&caption=${encodeURIComponent(longTextFor('tumblr'))}`
+    );
+    setHref(
+      'sharePocket',
+      `https://getpocket.com/edit?url=${encodeURIComponent(refUrl('pocket'))}&title=${textEnc}`
+    );
+  };
+
+  // Caption field: generic line immediately (so sharing always works), then the
+  // grounded AI caption layered on when it lands (/api/sharecopy — Workers AI,
+  // KV-cached, fail-soft). Editing the field re-wires every network's copy.
+  const captionEl = $('#shareCaption') as HTMLTextAreaElement | null;
+  const captionTag = $('#shareCaptionTag') as HTMLElement | null;
+  if (captionEl) captionEl.value = text0;
+  if (captionTag) captionTag.hidden = true;
+  applyShareText(text0);
+  if (captionEl && captionEl.dataset.wired !== '1') {
+    captionEl.dataset.wired = '1';
+    captionEl.addEventListener('input', () => applyShareText(captionEl.value));
+  }
+
+  // Apply the AI caption only if the dialog still shows THIS target and the user
+  // hasn't typed their own — never clobber an edit, never land on the wrong song.
+  const memoKey = `${t.kind}:${t.id}`;
+  const applyAiCaption = (cap: string): void => {
+    if (!cap) return;
+    if (!(shareCurrent && shareCurrent.id === t.id && shareCurrent.kind === t.kind)) return;
+    if (captionEl) {
+      const cur = captionEl.value.trim();
+      if (cur && cur !== text0) return; // user edited — leave it
+      captionEl.value = cap;
+    }
+    if (captionTag) captionTag.hidden = false;
+    applyShareText(cap);
+  };
+  const memoed = shareCopyCache.get(memoKey);
+  if (memoed) {
+    applyAiCaption(memoed);
+  } else {
+    if (shareCaptionController) shareCaptionController.abort();
+    const controller = new AbortController();
+    shareCaptionController = controller;
+    void (async () => {
+      try {
+        const r = await fetch(`/api/sharecopy?${t.kind}=${encodeURIComponent(t.id)}`, {
+          signal: controller.signal
+        });
+        const d = (await r.json()) as { caption?: string | null };
+        const cap = (d.caption || '').trim();
+        if (cap) {
+          shareCopyCache.set(memoKey, cap);
+          applyAiCaption(cap);
+        }
+      } catch {
+        /* fail-soft — the generic caption stands */
+      }
+    })();
+  }
 
   // Link preview = the actual og:image for this track/album. What the
   // recipient sees in their feed when the link unfurls.
@@ -1529,6 +1591,21 @@ function setupShell(root: HTMLElement) {
           </div>
           <div class="share__preview-frame" id="sharePreviewFrame">
             <img class="share__preview-img" id="sharePreviewImg" alt="" loading="lazy" />
+          </div>
+        </section>
+
+        <section class="share__section">
+          <label class="share__label" for="shareCaption"
+            >Caption <span class="share__ai-tag" id="shareCaptionTag" hidden>✦ AI</span></label
+          >
+          <div class="share__row share__row--caption">
+            <textarea
+              class="share__input share__caption"
+              id="shareCaption"
+              rows="2"
+              aria-label="Share caption — editable; used across every network"
+            ></textarea>
+            <button class="share__act" id="shareCopyCaption" type="button">Copy</button>
           </div>
         </section>
 
@@ -6162,6 +6239,13 @@ function bindUi() {
   $('#shareCopyLink')?.addEventListener('click', e => {
     if (!shareCurrent) return;
     copyText(shareCurrent.shareUrl, e.currentTarget as HTMLElement);
+  });
+  // Copy the (AI-grounded, user-editable) caption + the link — ready to paste.
+  $('#shareCopyCaption')?.addEventListener('click', e => {
+    if (!shareCurrent) return;
+    const cap = ($('#shareCaption') as HTMLTextAreaElement | null)?.value.trim();
+    const body = cap ? `${cap}\n${shareCurrent.shareUrl}` : shareCurrent.shareUrl;
+    copyText(body, e.currentTarget as HTMLElement);
   });
   // Embed code textarea — click anywhere to copy. Visual feedback via
   // the .share__embed-hint sibling ("Click code to copy" → "Copied!").

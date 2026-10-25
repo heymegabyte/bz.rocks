@@ -4467,6 +4467,45 @@ html:not(.is-playing) .trackrow.is-current .trackrow__bars {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
+.share__row--caption {
+  align-items: stretch;
+}
+.share__caption {
+  resize: vertical;
+  min-height: 2.6em;
+  line-height: 1.45;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  white-space: pre-wrap;
+}
+.share__ai-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--ink-accent);
+  font-size: 0.52rem;
+  letter-spacing: 0.16em;
+  vertical-align: middle;
+  animation: shareAiPop 0.3s ease;
+}
+@keyframes shareAiPop {
+  from {
+    opacity: 0;
+    transform: translateY(-2px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .share__ai-tag {
+    animation: none;
+  }
+}
 .share__act {
   border: 1px solid var(--line-strong);
   background: linear-gradient(180deg, rgba(0, 229, 255, 0.18), rgba(0, 229, 255, 0.08));
