@@ -3080,7 +3080,7 @@ export default {
       if (url.pathname === '/api/album-essay' && request.method === 'GET') {
         const albumId = (url.searchParams.get('album') || '').trim();
         if (!ALBUM_BY_ID.has(albumId)) return jsonResponse({ error: 'unknown_album' }, 404, {}, request);
-        const cacheK = `album-essay:${albumId}#v4`;
+        const cacheK = `album-essay:${albumId}#v6`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -3100,27 +3100,43 @@ export default {
           .map(t => `${t.title} — ${t.vibe}`)
           .join('\n');
         const system =
-          "Write a short 'about this drop' essay for one of bZ's albums, drawing ONLY on the album name, tagline, and its track titles + vibes — capture the album's arc, mood, and what ties it together. Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. STRICT: 2-3 sentences, ~55 words max, zero drug references. NEVER invent people, names, dates, or facts — interpret the music, never a made-up backstory. Output ONLY the essay prose — never restate or echo these instructions. No preamble, no quotation marks, no markdown.";
+          "Write a short 'about this drop' essay for one of bZ's albums, drawing ONLY on the album name, tagline, and its track titles + vibes. Capture what makes THIS album distinct — lead with its SPECIFIC images, characters, places, or the real track progression (name actual tracks/images from the list). Voice: Newark hustle-gospel, Christian-gangster ethic — hard but holy, reverent. Do NOT fall back on generic music-essay scaffolding that fits any album — BANNED phrasings: 'weaves/weaving a narrative of …', 'is a testament to …', 'a narrative of struggle and redemption', 'Tracks unfold like a testament'. Abstract words (redemption, struggle, journey, testament) are backdrop, never the main content. Vary your opening — do NOT begin with 'X sets the tone'; open straight on the album's distinct hook. STRICT: 2-3 sentences, ~55 words max, zero drug references. NEVER invent people, names, dates, or facts — interpret the music, never a made-up backstory. Output ONLY the essay prose — never restate or echo these instructions. No preamble, no quotation marks, no markdown.";
         const user = `Album: "${album.name}".\nTagline: ${album.tagline}.\nTracks:\n${trackLines}`;
-        let essay = '';
-        try {
-          const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
-            messages: [
-              { role: 'system', content: system },
-              { role: 'user', content: user }
-            ],
-            max_tokens: 200,
-            temperature: 0.7
-          })) as { response?: string };
-          // The prompt forbids quotation marks, but the model still quotes the
-          // album title mid-sentence — strip ALL double-quotes so no stray " leaks.
-          essay = (out.response || '')
+        // Generic essay scaffolding ("weaves a narrative of …", "is a testament
+        // to …") fit any album and dominated ~40-47% of drafts. Forbidden above +
+        // detected here; a frame-y draft is regenerated ONCE with a corrective.
+        const BANNED_FRAME = /\bweav(?:e|es|ing)\b[^.]{0,20}\bnarrative\b|\ba testament to\b/i;
+        // The prompt forbids quotes, but the model still quotes the album title
+        // mid-sentence — strip ALL double-quotes so no stray " leaks.
+        const cleanEssay = (r?: string) =>
+          (r || '')
             .replace(/"/g, '')
             .trim()
             .replace(/^'+|'+$/g, '')
             .trim();
-        } catch {
-          essay = '';
+        const genEssay = async (sys: string, temp: number): Promise<string> => {
+          try {
+            const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
+              messages: [
+                { role: 'system', content: sys },
+                { role: 'user', content: user }
+              ],
+              max_tokens: 200,
+              temperature: temp
+            })) as { response?: string };
+            return cleanEssay(out.response);
+          } catch {
+            return '';
+          }
+        };
+        let essay = await genEssay(system, 0.7);
+        if (essay && BANNED_FRAME.test(essay)) {
+          const retry = await genEssay(
+            system +
+              " Your previous draft used BANNED generic scaffolding — rewrite leading with the album's SPECIFIC images, characters, or named tracks; no abstract summary frames.",
+            0.85
+          );
+          if (retry.length >= 20 && !BANNED_FRAME.test(retry)) essay = retry;
         }
         // Safety net: if the model echoed the grounding instruction into the prose
         // (70B occasionally does), suppress rather than serve the leak — the rephrased
