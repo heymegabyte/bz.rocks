@@ -1,7 +1,7 @@
-// LRC synced-lyrics engine. Parses [mm:ss.xx] timestamps, exposes a tick(currentTime)
-// method that returns the active line index. Falls back to static Track.lyrics[].
-
-import type { Track } from './types';
+// LRC parsing utilities — parse [mm:ss.xx] timestamps into synced lines + find the
+// active line for a given time. The runtime lyrics loader lives in `main.ts`, which
+// fetches the Whisper-aligned `/lyrics/<id>.json`; these pure helpers are exercised
+// by `lyrics.test.ts` and kept for LRC-format support.
 
 export interface SyncedLine {
   /** Start time in seconds from the audio origin. */
@@ -20,41 +20,6 @@ export interface LyricsBundle {
   source: 'lrc' | 'static' | 'empty';
 }
 
-const cache = new Map<string, LyricsBundle>();
-
-/**
- * Fetch + parse the synced lyrics file for a track, falling back to the static
- * `Track.lyrics[]` array when the LRC is missing or unparseable. Result is
- * memoized per-track so repeated calls within a session are free.
- */
-export async function loadLyrics(track: Track): Promise<LyricsBundle> {
-  const cached = cache.get(track.id);
-  if (cached) return cached;
-  const bundle = await fetchLrc(track).catch(() => null);
-  const final = bundle ?? staticBundle(track);
-  cache.set(track.id, final);
-  return final;
-}
-
-async function fetchLrc(track: Track): Promise<LyricsBundle | null> {
-  const url = `/lyrics/${track.id}.lrc`;
-  const res = await fetch(url, { cache: 'force-cache' });
-  if (!res.ok) return null;
-  const text = await res.text();
-  const lines = parseLrc(text);
-  if (!lines.length) return null;
-  return { trackId: track.id, lines, source: 'lrc' };
-}
-
-function staticBundle(track: Track): LyricsBundle {
-  if (!track.lyrics?.length) return { trackId: track.id, lines: [], source: 'empty' };
-  // No timestamps available — distribute evenly so the karaoke effect still flows.
-  const lines = track.lyrics.map((text, i, arr) => ({
-    t: (i / Math.max(1, arr.length)) * 200, // fake spread; tickWith() rescales by duration
-    text
-  }));
-  return { trackId: track.id, lines, source: 'static' };
-}
 
 const LRC_RE = /^\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?\](.*)$/;
 
