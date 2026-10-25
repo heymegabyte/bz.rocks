@@ -2244,10 +2244,25 @@ export default {
           .map(([type, n]) => ({ type, n }))
           .sort((a, b) => b.n - a.n)
           .slice(0, 6);
+        // Freshness — so a consumer can SEE whether this reflects CURRENT reality or a
+        // STALE window. A low-traffic site goes hours with no new beacon, and the KV
+        // aggregate then describes OLD sessions; without this signal that stale data
+        // reads as "now" and misleads CWV decisions (newest/oldest from each beacon ts).
+        const tss = rows
+          .map(r => (typeof r.ts === 'number' ? (r.ts as number) : null))
+          .filter((x): x is number => x != null && x > 0);
+        const nowMs = Date.now();
+        const newestAgeMin = tss.length ? Math.round((nowMs - Math.max(...tss)) / 60000) : null;
+        const oldestAgeMin = tss.length ? Math.round((nowMs - Math.min(...tss)) / 60000) : null;
+        const fresh = newestAgeMin != null && newestAgeMin <= 120; // a beacon within 2h
         const payload = {
           window: '24h',
           samples: rows.length,
-          note: 'p75 per metric; lcp/inp/ttfb in ms, cls unitless. CWV targets: LCP<=2500, INP<=200, CLS<=0.1.',
+          fresh,
+          freshness: { newestAgeMin, oldestAgeMin, samples: tss.length },
+          note:
+            'p75 per metric; lcp/inp/ttfb in ms, cls unitless. CWV targets: LCP<=2500, INP<=200, CLS<=0.1.' +
+            (fresh ? '' : ' STALE: newest sample >2h old (low traffic) — do NOT read as current.'),
           overall: agg(rows),
           byRoute,
           slowInteractions,
