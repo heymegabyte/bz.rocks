@@ -2017,6 +2017,71 @@ export default {
         return new Response(null, { status: 204 });
       }
 
+      // GET /api/vitals — aggregate the collected RUM (write-only until now) into
+      // p75 Core Web Vitals by route group. The field-data answer to "is LCP/INP
+      // actually bad for real users?" — headless probes are unreliable for
+      // audio/modal/deeplink pages (a track-page LCP read 0 in headless while the
+      // page paints fine). Aggregated only (no UA/IP/raw rows) → safe to expose;
+      // edge-cached 5m to bound the KV reads.
+      if (url.pathname === '/api/vitals' && request.method === 'GET') {
+        const cache = (caches as unknown as { default: Cache }).default;
+        const cacheKey = new Request(`${url.origin}/api/vitals`, { method: 'GET' });
+        const hit = await cache.match(cacheKey);
+        if (hit) return hit;
+        const listed = await env.COUNTERS.list({ prefix: 'vitals:', limit: 1000 });
+        const keys = listed.keys
+          .map(k => k.name)
+          .sort()
+          .reverse()
+          .slice(0, 300); // most-recent first; cap reads for cost
+        const rows: Array<Record<string, unknown>> = [];
+        await Promise.all(
+          keys.map(async k => {
+            const v = await env.COUNTERS.get(k);
+            if (!v) return;
+            try {
+              rows.push(JSON.parse(v) as Record<string, unknown>);
+            } catch {
+              /* skip malformed */
+            }
+          })
+        );
+        const routeGroup = (p: string): string => {
+          if (!p || p === '/') return 'home';
+          const segs = p.split('/').filter(Boolean);
+          return segs.length >= 2 ? 'track' : 'album-or-page';
+        };
+        const METRICS = ['lcp', 'inp', 'cls', 'ttfb'] as const;
+        const p75 = (arr: number[]): number | null => {
+          if (!arr.length) return null;
+          const s = [...arr].sort((a, b) => a - b);
+          const idx = Math.max(0, Math.min(s.length - 1, Math.ceil(0.75 * s.length) - 1));
+          return Math.round(s[idx]! * 1000) / 1000;
+        };
+        const agg = (subset: typeof rows): Record<string, { p75: number | null; n: number }> => {
+          const out: Record<string, { p75: number | null; n: number }> = {};
+          for (const m of METRICS) {
+            const vals = subset.map(r => r[m]).filter((x): x is number => typeof x === 'number');
+            out[m] = { p75: p75(vals), n: vals.length };
+          }
+          return out;
+        };
+        const byRoute: Record<string, unknown> = {};
+        for (const g of ['home', 'album-or-page', 'track']) {
+          byRoute[g] = agg(rows.filter(r => routeGroup(String(r.url ?? '')) === g));
+        }
+        const payload = {
+          window: '24h',
+          samples: rows.length,
+          note: 'p75 per metric; lcp/inp/ttfb in ms, cls unitless. CWV targets: LCP<=2500, INP<=200, CLS<=0.1.',
+          overall: agg(rows),
+          byRoute
+        };
+        const resp = jsonResponse(payload, 200, { 'Cache-Control': 'public, max-age=300' }, request);
+        ctx.waitUntil(cache.put(cacheKey, resp.clone()));
+        return resp;
+      }
+
       // Public CSP-report sink. CSP-RO + future enforcing CSP can POST here.
       // Logged via Workers Tracing (auto-spans every fetch), retained 7 days
       // by KV with a per-violation key (hashed). Cheap, non-blocking.
