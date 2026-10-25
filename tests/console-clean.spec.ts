@@ -40,7 +40,10 @@ const IGNORE_TEXTS = [
   /TrustedTypePolicy named 'goog#html'/,
   // Suno's `display_tags` field is the source of truth; some clips ship
   // `cast_sender.js?loadCastFramework=1` which fires `goog#html` too.
-  /cast_sender.*goog#html/i
+  /cast_sender.*goog#html/i,
+  // Playwright-ENVIRONMENT artifact (not our code): Playwright blocks SW registration
+  // in some contexts and Chrome logs this warning. The SW works for real users.
+  /Service Worker registration blocked by Playwright/i
 ];
 
 function shouldIgnore(text: string, location?: string) {
@@ -88,6 +91,12 @@ async function attachCollectors(page: import('@playwright/test').Page) {
     if (shouldIgnore(url)) return;
     // Ignore the well-known DNT/abort-on-leave races for analytics beacons.
     if (/google-analytics|posthog/.test(url)) return;
+    // net::ERR_ABORTED is a benign CANCELLATION, not a load failure: streaming <audio>
+    // aborts its initial full request to switch to range requests, lazy-load/img decode
+    // can be cancelled, and fetches abort on navigation. A real failure is ERR_FAILED /
+    // ERR_CONNECTION_* / a 4xx-5xx — those still fail the gate. (This benign-abort noise
+    // kept the whole console gate RED, which is how the font-CSP error slipped through.)
+    if (/ERR_ABORTED/.test(req.failure()?.errorText || '')) return;
     captured.push({ kind: 'requestfailed', text: req.failure()?.errorText || '', location: url });
   });
   return captured;
@@ -161,15 +170,29 @@ test.describe('console hygiene — production sweep', () => {
     assertClean(captured, '/appeal');
   });
 
-  test('CSP headers — no font-src or style-src violations on Google Fonts load', async ({ page }) => {
+  test('CSP — no Google Fonts violations (style-src/font-src/connect-src), SW active', async ({
+    page
+  }) => {
+    // Visit once so the service worker installs, THEN reload — with the SW active it
+    // INTERCEPTS the Google Fonts requests and re-fetches them (connect-src!), which is
+    // exactly how the font CSS/woff2 fetch surfaces a missing connect-src allowance. The
+    // original test only matched style-src|font-src, so this connect-src class slipped
+    // through (fixed by adding fonts.googleapis.com/gstatic to connect-src, 2026-10-25).
+    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.waitForTimeout(1500);
     const cspViolations: string[] = [];
     page.on('console', msg => {
       const t = msg.text();
-      if (/Content Security Policy/i.test(t) && /style-src|font-src/i.test(t)) {
+      if (
+        /Content Security Policy/i.test(t) &&
+        /style-src|font-src|connect-src/i.test(t) &&
+        /fonts\.(googleapis|gstatic)/i.test(t)
+      ) {
         cspViolations.push(t);
       }
     });
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForTimeout(2000);
     expect(cspViolations, `Google Fonts CSP violations: ${cspViolations.join('\n')}`).toEqual([]);
   });
 

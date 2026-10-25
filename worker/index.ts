@@ -531,7 +531,9 @@ const SECURITY_HEADERS: Record<string, string> = {
     "media-src 'self' blob: data: https:",
     // Google Fonts woff2 files are served from fonts.gstatic.com.
     "font-src 'self' data: https://fonts.gstatic.com",
-    "connect-src 'self' https://*.cloudflareinsights.com https://*.posthog.com https://www.google-analytics.com https://region1.google-analytics.com",
+    // fonts.googleapis.com/gstatic: the service worker FETCHES the Google Fonts CSS +
+    // woff2 (to cache them — fonts render offline too); that SW fetch needs connect-src.
+    "connect-src 'self' https://*.cloudflareinsights.com https://*.posthog.com https://www.google-analytics.com https://region1.google-analytics.com https://fonts.googleapis.com https://fonts.gstatic.com",
     "worker-src 'self' blob:",
     "frame-src 'self' https://*.gstatic.com https://open.spotify.com https://challenges.cloudflare.com",
     "object-src 'none'",
@@ -595,12 +597,15 @@ class MetaRewriter {
       // On a deep-linked TRACK route the visitor's intent is almost certainly
       // "play this track", so warm its audio early. `fetchpriority="low"` keeps
       // it behind the LCP hero image; the browser still fetches the metadata +
-      // first range so tap-to-sound feels instant on mobile. Album/content
-      // routes have no audioUrl → no preload. Save-Data users: the browser
-      // honors the header and skips low-priority preloads.
+      // first bytes so tap-to-sound feels instant. Use rel=prefetch — NOT
+      // `preload as=audio`, which browsers don't support (they warn + ignore it, so
+      // the old hint never actually warmed anything). prefetch warms the HTTP cache
+      // destination-agnostically at lowest priority, so the <audio> element (same URL
+      // + crossorigin) reuses it. Album/content routes have no audioUrl → no prefetch.
+      // Save-Data users: the browser honors the header and skips it.
       if (this.seo.audioUrl) {
         el.after(
-          `<link rel="preload" as="audio" href="${escapeHtmlAttr(this.seo.audioUrl)}" fetchpriority="low" crossorigin="anonymous">`,
+          `<link rel="prefetch" href="${escapeHtmlAttr(this.seo.audioUrl)}" crossorigin="anonymous">`,
           { html: true }
         );
       }
