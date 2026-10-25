@@ -2884,6 +2884,29 @@ export function mountAIChat(opts: MountOpts = {}) {
 
     messages.addEventListener('click', e => {
       const t = e.target as HTMLElement;
+      // Track / audio card → PLAY it in the persistent player instead of
+      // navigating away, so the DJ's pick starts playing while the user stays in
+      // the conversation (chat-as-UI: the DJ recommends, you tap, it plays).
+      // Modifier/middle-click still follows the <a href> to open the track page.
+      const trackWidget = t.closest<HTMLElement>(
+        '.aichat__widget--track, .aichat__widget--audio'
+      );
+      const me = e as MouseEvent;
+      if (
+        trackWidget?.dataset.trackId &&
+        opts.onCommand &&
+        me.button === 0 &&
+        !me.metaKey &&
+        !me.ctrlKey &&
+        !me.shiftKey &&
+        !me.altKey
+      ) {
+        e.preventDefault();
+        const played = opts.onCommand('play-track', [trackWidget.dataset.trackId]) === true;
+        const title = trackWidget.querySelector('.aichat__w-title')?.textContent?.trim();
+        setStatus(played ? (title ? `▶ Playing “${title}”` : '▶ Playing') : 'Could not play that track');
+        return;
+      }
       // Suggested follow-up chip — fills the composer with the chip's
       // prompt and immediately submits, so the user goes from "I have a
       // question idea" to "I have an answer" in one tap.

@@ -50,6 +50,36 @@ test.describe('AI chat — widget renderer', () => {
     expect(await buttons.count()).toBeGreaterThan(5);
   });
 
+  test('tapping a chat track-card PLAYS it in-place (chat stays open)', async ({ page }) => {
+    await gotoHome(page);
+    await page
+      .locator('#apClose')
+      .click({ timeout: 2000 })
+      .catch(() => {}); // clear autoplay prompt so play() isn't blocked
+    await openChat(page);
+    await sendSlash(page, '/track bermuda-prophecy');
+    const card = page.locator('.aichat__widget--track, .aichat__widget--audio').first();
+    await expect(card).toBeVisible({ timeout: 8000 });
+    await expect(card).toHaveAttribute('data-track-id', 'bermuda-prophecy');
+    await card.click();
+    // The DJ's pick starts playing in the persistent player...
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() => {
+            const a = document.querySelector('audio[data-engine="bz"]') as HTMLAudioElement | null;
+            return !!a && !a.paused && (a.currentSrc || '').includes('bermuda-prophecy');
+          }),
+        { timeout: 8000 }
+      )
+      .toBe(true);
+    // ...and the chat panel stays open (no navigation away from the conversation).
+    await expect(page.locator('[data-aichat="panel"]').first()).toHaveAttribute(
+      'aria-hidden',
+      'false'
+    );
+  });
+
   test('/stats emits chart + comparison-table widgets or graceful empty state', async ({ page }) => {
     await gotoHome(page);
     await openChat(page);

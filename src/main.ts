@@ -9054,6 +9054,17 @@ window.addEventListener('DOMContentLoaded', () => {
       if (n > 0 && n < 1) return (engine.audio.duration || 0) * n;
       return n;
     };
+    if (lc === 'play-track') {
+      // Play a specific catalog track in the persistent player — fired when the
+      // user taps a track/audio card in the DJ chat, so the DJ's pick starts
+      // playing in-place while they keep chatting (grounded: id must be real).
+      const tr = args[0] ? TRACK_BY_ID.get(args[0]) : undefined;
+      if (tr) {
+        void play(tr);
+        return true;
+      }
+      return false;
+    }
     if (lc === 'play') {
       void engine.audio.play();
       return true;
