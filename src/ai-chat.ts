@@ -1286,12 +1286,61 @@ export function mountAIChat(opts: MountOpts = {}) {
     return `\nThe user is currently reading the content page /${slug}. Feel free to reference what's on that page when relevant.`;
   }
 
+  // Recently-played (newest first) — personalization the DJ can lean on whether a
+  // track is playing OR the user is just browsing. Reads the SAME localStorage key
+  // main.ts persists the recents list to (`bz:recents` — a prior typo read the
+  // non-existent `bz:recent`, so this context was silently always empty).
+  function recentContext(): string {
+    try {
+      const raw = localStorage.getItem('bz:recents');
+      if (!raw) return '';
+      const ids = JSON.parse(raw) as string[];
+      const titles = ids
+        .slice(0, 4)
+        .map(id => TRACK_BY_ID.get(id)?.title)
+        .filter(Boolean) as string[];
+      return titles.length ? `\nRecently played (newest first): ${titles.join(' → ')}` : '';
+    } catch {
+      return '';
+    }
+  }
+  // Listener's ACCUMULATED favorites across all sessions (from `bz:listenStats`) —
+  // what they keep coming back to (most plays, ties broken by replays), so the DJ
+  // personalizes to LONG-TERM taste, not just this session's recents. Only when
+  // there's real history (>=2 played tracks) so a new visitor gets no noise.
+  function tasteContext(): string {
+    try {
+      const raw = localStorage.getItem('bz:listenStats');
+      if (!raw) return '';
+      const stats = JSON.parse(raw) as Record<string, { starts?: number; replays?: number }>;
+      const top = Object.entries(stats)
+        .filter(([, v]) => (v?.starts ?? 0) > 0)
+        .sort(
+          (a, b) => (b[1].starts ?? 0) - (a[1].starts ?? 0) || (b[1].replays ?? 0) - (a[1].replays ?? 0)
+        )
+        .slice(0, 3)
+        .map(([id, v]) => {
+          const t = TRACK_BY_ID.get(id);
+          return t ? `${t.title} (${v.starts ?? 0}×)` : null;
+        })
+        .filter(Boolean) as string[];
+      return top.length >= 2
+        ? `\nListener's most-played all-time: ${top.join(', ')}. Personalize recommendations to this taste when it's relevant.`
+        : '';
+    } catch {
+      return '';
+    }
+  }
   function trackContext(): string {
+    const recentLine = recentContext();
+    const tasteLine = tasteContext();
     const eng = opts.engine;
     const st = eng?.state();
     if (!st?.track)
       return (
         'No track is currently playing. The user is browsing the catalog — feel free to recommend.' +
+        recentLine +
+        tasteLine +
         openContentPageContext()
       );
     const cur = st.track;
@@ -1309,23 +1358,7 @@ export function mountAIChat(opts: MountOpts = {}) {
     const albumLine = album
       ? `\nAlbum: "${album.name}" — ${album.tagline}. Track ${album.trackIds.indexOf(cur.id) + 1} of ${album.trackIds.length}.`
       : '';
-    // Last-3 recently-played from localStorage if visible. Lets the model
-    // notice "you've been on a Mercy Drop streak" without re-asking.
-    let recentLine = '';
-    try {
-      const raw = localStorage.getItem('bz:recent');
-      if (raw) {
-        const ids = JSON.parse(raw) as string[];
-        const titles = ids
-          .slice(0, 4)
-          .map(id => TRACK_BY_ID.get(id)?.title)
-          .filter(Boolean) as string[];
-        if (titles.length) recentLine = `\nRecently played (newest first): ${titles.join(' → ')}`;
-      }
-    } catch {
-      /* noop */
-    }
-    return `Now playing: "${cur.title}" by ${cur.artist || 'bZ'}${cur.album ? ` (${cur.album})` : ''} at ${min}:${sec}${bpm}. Status: ${st.playing ? 'playing' : 'paused'}.${albumLine}${recentLine}${lyricLine}${wisdom}${openContentPageContext()}`;
+    return `Now playing: "${cur.title}" by ${cur.artist || 'bZ'}${cur.album ? ` (${cur.album})` : ''} at ${min}:${sec}${bpm}. Status: ${st.playing ? 'playing' : 'paused'}.${albumLine}${recentLine}${tasteLine}${lyricLine}${wisdom}${openContentPageContext()}`;
   }
 
   function currentLyric(): string {

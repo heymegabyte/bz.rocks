@@ -3467,10 +3467,16 @@ export default {
             return `• ${a.name} — ${a.tagline}: ${titles}`;
           })
           .join('\n');
-        const systemText =
+        // GROUNDING is ALWAYS appended. The client ALWAYS sends `body.system`
+        // (persona + live context — NO catalog), so putting the catalog only in the
+        // no-system fallback left the DJ UNGROUNDED in practice: it hallucinated a
+        // non-existent "Spiritual Warfare". Append the real catalog to WHATEVER base
+        // system we use so the model can only recommend/discuss real bZ tracks.
+        const baseSystem =
           typeof body.system === 'string'
             ? body.system.slice(0, 4000)
-            : `You are bZ's in-app DJ — concise, warm, brand-aware. Speak in the voice of bz.rocks: sharp, punchy, Christian-gangster ethic, hustle-gospel, hard but holy. Use markdown sparingly. Default to 2-3 sentences unless the user asks for more. Never recommend or mention drugs. Stay reverent around family names.
+            : "You are bZ's in-app DJ — concise, warm, brand-aware. Speak in the voice of bz.rocks: sharp, punchy, Christian-gangster ethic, hustle-gospel, hard but holy. Use markdown sparingly. Default to 2-3 sentences unless the user asks for more. Never recommend or mention drugs. Stay reverent around family names.";
+        const systemText = `${baseSystem}
 
 GROUNDING — below is bZ's COMPLETE real catalog (every album + its songs). Recommend and discuss ONLY albums and songs in this list; NEVER invent a title, album, lyric, or fact that is not here. When the user asks about a specific album or song, answer about THAT one using its real name + details.
 

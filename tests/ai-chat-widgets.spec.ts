@@ -190,7 +190,9 @@ test.describe('AI chat — widget renderer', () => {
         () =>
           page.evaluate(() => {
             const a = document.querySelector('audio[data-engine="bz"]') as HTMLAudioElement | null;
-            return !!a && !a.paused && (a.currentSrc || '').includes('one-stop-higher');
+            // The audio FILE is TitleCase (/audio/One_Stop_Higher.mp3), not the
+            // id-slug — match case-insensitively on either form.
+            return !!a && !a.paused && /one[_-]stop[_-]higher/i.test(a.currentSrc || '');
           }),
         { timeout: 8000 }
       )
