@@ -7566,6 +7566,12 @@ function refreshLyricsFs() {
 
 let currentQueueTab = 'up-next';
 let currentQueueFilter: { kind: string; value: string } | null = null;
+// Queue "AI" tab: genuinely-semantic grounded picks for the CURRENT track (from the
+// cached /api/similar engine), so the tab is real context-aware AI — not the global
+// popularity chart it used to duplicate. Client-cached per track; seq guards stale
+// async re-renders when the track/tab changes mid-flight.
+const queueSimilarCache = new Map<string, Array<{ id: string; why: string }>>();
+let queueSimilarSeq = 0;
 let queueIdleTimer: ReturnType<typeof setTimeout> | null = null;
 let queueIdleDeadline = 0;
 let queueIdleTicker: ReturnType<typeof setInterval> | null = null;
@@ -7647,10 +7653,8 @@ function renderQueueTab(tab: string, filter: { kind: string; value: string } | n
     else list = TRACKS.slice(0, 12);
     emptyMsg = 'No tracks queued.';
   } else if (tab === 'ai') {
-    list = aiPicks(10)
-      .map(p => TRACK_BY_ID.get(p.trackId))
-      .filter(Boolean) as Track[];
-    emptyMsg = 'AI picks warming up — play a few tracks and they appear here.';
+    renderAiQueueTab(body);
+    return;
   } else if (tab === 'recent') {
     list = recentTracks.map(id => TRACK_BY_ID.get(id)).filter(Boolean) as Track[];
     emptyMsg = 'Tracks you played will appear here.';
@@ -7714,17 +7718,86 @@ function renderQueueGroupedView(
     <ul class="queue-list" role="list">${rows}</ul>`;
 }
 
-function renderQueueRow(t: Track, showRank: boolean): string {
+// The Queue "AI" tab, made genuinely context-aware: lead with grounded semantic picks
+// for the CURRENT track (the cached /api/similar engine, each with its "why"), then
+// honest popularity fill. Paints popularity INSTANTLY (never blocks/empties), fetches
+// the grounded picks, and upgrades in place — fail-soft (a failed fetch = popularity
+// only). Client-cached per track; a seq guard drops a stale async re-render.
+function renderAiQueueTab(body: HTMLElement): void {
+  const pop = aiPicks(10)
+    .map(p => TRACK_BY_ID.get(p.trackId))
+    .filter(Boolean) as Track[];
+  const cur = currentTrackId ? TRACK_BY_ID.get(currentTrackId) : null;
+
+  const paint = (similar: Array<{ id: string; why: string }>): void => {
+    const sim = similar
+      .map(s => ({ t: TRACK_BY_ID.get(s.id), why: s.why }))
+      .filter(x => x.t && x.t.id !== currentTrackId) as Array<{ t: Track; why: string }>;
+    const simIds = new Set(sim.map(x => x.t.id));
+    const rest = pop.filter(t => !simIds.has(t.id) && t.id !== currentTrackId);
+    const parts: string[] = [];
+    if (cur && sim.length) {
+      parts.push(
+        `<p class="queue-sect queue-sect--ai">✦ Because you're playing <b>${escapeHtml(cur.title)}</b></p>`,
+        `<ul class="queue-list" role="list">${sim.map(x => renderQueueRow(x.t, false, x.why)).join('')}</ul>`
+      );
+    }
+    if (rest.length) {
+      parts.push(
+        `<p class="queue-sect">${cur && sim.length ? 'Popular now' : 'Most played'}</p>`,
+        `<ul class="queue-list" role="list">${rest
+          .slice(0, cur && sim.length ? 8 : 10)
+          .map(t => renderQueueRow(t, true))
+          .join('')}</ul>`
+      );
+    }
+    body.innerHTML =
+      parts.join('') ||
+      `<p class="queue-panel__empty">AI picks warming up — play a track and they appear here.</p>`;
+  };
+
+  if (!cur) {
+    paint([]);
+    return;
+  }
+  const cached = queueSimilarCache.get(cur.id);
+  if (cached) {
+    paint(cached);
+    return;
+  }
+  paint([]); // instant popularity paint; grounded picks layer in when they land
+  const seq = ++queueSimilarSeq;
+  fetch(`/api/similar?track=${encodeURIComponent(cur.id)}`)
+    .then(r => (r.ok ? r.json() : null))
+    .then((d: unknown) => {
+      const arr = (d as { similar?: Array<{ id?: string; why?: string }> } | null)?.similar;
+      const sim = Array.isArray(arr)
+        ? arr.filter((s): s is { id: string; why: string } => !!s?.id && !!s?.why)
+        : [];
+      if (!sim.length) return;
+      queueSimilarCache.set(cur.id, sim);
+      // Only upgrade if the user is still on the AI tab + the same track is playing.
+      if (seq === queueSimilarSeq && currentQueueTab === 'ai' && currentTrackId === cur.id) paint(sim);
+    })
+    .catch(() => {});
+}
+
+function renderQueueRow(t: Track, showRank: boolean, why?: string): string {
   const album = ALBUM_BY_ID.get(t.album);
   const plays = playCounts.get(t.id) ?? 0;
   const isCurrent = t.id === currentTrackId;
   const cover = album?.cover ?? '/art/cover-panda-desiiignare.jpg';
   const rankAttr = showRank ? `data-q-rank="1"` : '';
+  // A grounded "why" (from /api/similar) replaces the album·vibe sub — it's the
+  // semantic reason this track was picked, the whole point of a real AI tab.
+  const sub = why
+    ? `<span class="queue-row__sub queue-row__why">${escapeHtml(why)}</span>`
+    : `<span class="queue-row__sub">${escapeHtml(album?.name ?? 'bZ')} · ${escapeHtml(t.vibe)}</span>`;
   return `<li><button class="queue-row${isCurrent ? ' is-current' : ''}" data-q-track="${escapeHtml(t.id)}" type="button" ${rankAttr}>
     <img src="${cover}" alt="" width="44" height="44" loading="lazy" />
     <span class="queue-row__body">
       <span class="queue-row__title">${escapeHtml(t.title)}</span>
-      <span class="queue-row__sub">${escapeHtml(album?.name ?? 'bZ')} · ${escapeHtml(t.vibe)}</span>
+      ${sub}
     </span>
     ${isCurrent ? '<span class="queue-row__now" aria-label="Now playing">▶</span>' : ''}
     ${plays > 0 && !isCurrent ? `<span class="queue-row__plays" aria-label="${plays} plays">${plays}×</span>` : ''}

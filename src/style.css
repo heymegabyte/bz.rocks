@@ -8111,6 +8111,32 @@ button:not(:disabled):active {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* AI-tab section header + the grounded "why" sub (semantic reason a track was picked). */
+.queue-sect {
+  margin: 10px 8px 6px;
+  color: var(--ink-mute);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.queue-sect:first-child {
+  margin-top: 2px;
+}
+.queue-sect--ai {
+  color: var(--ink-album-accent);
+  text-transform: none;
+  letter-spacing: 0.04em;
+  font-size: 11px;
+}
+.queue-sect--ai b {
+  color: var(--ink-album-accent-neon, var(--ink-album-accent));
+  font-weight: 700;
+}
+.queue-row__why {
+  color: var(--ink-album-accent);
+  font-style: italic;
+}
 .queue-row__plays {
   font-family: var(--font-mono);
   font-size: 10px;
