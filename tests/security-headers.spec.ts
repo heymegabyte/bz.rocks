@@ -11,18 +11,23 @@ for (const [name, path] of [
   ['stats', '/stats'],
   ['clip', '/clip/border-mercy'],
   ['press', '/press/border-mercy'],
-  ['watch', '/watch/border-mercy']
+  ['watch', '/watch/border-mercy'],
+  ['feed', '/feed.xml']
 ] as const) {
-  test(`${name} page ships the full security-header set`, async ({ request }) => {
+  test(`${name} ships the full security-header set`, async ({ request }) => {
     const r = await request.get(BASE + path);
     expect(r.status(), path).toBe(200);
     const h = r.headers();
-    expect(h['x-frame-options'], `${path} x-frame-options`).toBeTruthy();
     expect(h['x-content-type-options'], `${path} x-content-type-options`).toBe('nosniff');
     expect(h['content-security-policy'], `${path} CSP`).toBeTruthy();
-    expect(h['content-security-policy']).toContain("object-src 'none'");
     expect(h['strict-transport-security'], `${path} HSTS`).toContain('max-age=');
     expect(h['referrer-policy'], `${path} referrer-policy`).toBeTruthy();
-    expect(h['permissions-policy'], `${path} permissions-policy`).toBeTruthy();
+    // feed.xml is XML (no frame/permissions threat model); the HTML pages must
+    // also carry X-Frame-Options + Permissions-Policy + object-src 'none'.
+    if (path !== '/feed.xml') {
+      expect(h['x-frame-options'], `${path} x-frame-options`).toBeTruthy();
+      expect(h['permissions-policy'], `${path} permissions-policy`).toBeTruthy();
+      expect(h['content-security-policy']).toContain("object-src 'none'");
+    }
   });
 }

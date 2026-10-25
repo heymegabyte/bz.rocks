@@ -1163,7 +1163,11 @@ async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext):
           // ("Newark hustle-gospel"/"Christian-gangster"), which belong in the output.
           if (/\b(grounded only|most-played list|no preamble|no markdown)\b/i.test(text)) text = '';
           // Cache 1h — refreshes with the catalog's momentum, cheap to regen.
-          if (text.length >= 20) await env.COUNTERS.put('stats-insight#v3', text, { expirationTtl: 3600 });
+          // 6h TTL outlives the stats HTML edge-cache (≤4h) so the client fetch
+          // of /api/stats-insight always finds a populated insight across a full
+          // cache window (the insight is served client-side, not baked into the
+          // cached HTML — see the /api/stats-insight endpoint + the fetch script).
+          if (text.length >= 20) await env.COUNTERS.put('stats-insight#v3', text, { expirationTtl: 21600 });
         } catch {
           /* fail-soft — no insight this round; the page renders without it */
         }
@@ -1258,7 +1262,7 @@ async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext):
       <div class="eyebrow">By the numbers</div>
       <h1>The catalog, live.</h1>
       <p>Every play and share below is counted at the edge in real time. Newark hustle-gospel — written, produced, and engineered by bZ.</p>
-      ${insight ? `<p class="ai-read">${escapeHtmlAttr(insight)} <em>· AI read</em></p>` : ''}
+      <p class="ai-read" data-stats-insight${insight ? '' : ' hidden'}><span class="ai-read-text">${escapeHtmlAttr(insight)}</span> <em>· AI read</em></p>
     </header>
     <section class="grid" aria-label="Catalog totals">
       <div class="card"><div class="n">${fmt(totalPlays)}</div><div class="l">Plays</div></div>
@@ -1273,6 +1277,27 @@ async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext):
     </table>
     <p class="foot">Counts refresh every few minutes. <a href="${origin}/">Open the player &rarr;</a></p>
   </div>
+  <script>
+    /* Always-fresh AI read: the stats HTML edge-caches for up to 4h, so the
+       baked-in insight can lag or be absent on the first cache-miss render.
+       Fetch the live value from KV (via /api/stats-insight) and fill it in —
+       bypasses the HTML cache, fail-soft (keyword page stands if it errors). */
+    (function () {
+      try {
+        fetch('/api/stats-insight')
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            if (!d || !d.insight) return;
+            var p = document.querySelector('[data-stats-insight]');
+            if (!p) return;
+            var t = p.querySelector('.ai-read-text');
+            if (t) t.textContent = d.insight;
+            p.hidden = false;
+          })
+          .catch(function () {});
+      } catch (e) {}
+    })();
+  </script>
 </body></html>`;
 }
 
@@ -1789,9 +1814,9 @@ export default {
     if (url.pathname === '/feed.xml' || url.pathname === '/rss.xml') {
       return new Response(buildRssFeed(url.origin), {
         headers: {
+          ...SECURITY_HEADERS,
           'Content-Type': 'application/rss+xml; charset=utf-8',
-          'Cache-Control': 'public, max-age=3600',
-          'X-Content-Type-Options': 'nosniff'
+          'Cache-Control': 'public, max-age=3600'
         }
       });
     }
@@ -2176,6 +2201,20 @@ export default {
           /* swallow — never fail the CSP report channel */
         }
         return new Response(null, { status: 204 });
+      }
+
+      // Always-fresh AI "state of the catalog" read — thin KV reader so the
+      // /stats page can fill it client-side (bypassing the HTML edge cache). The
+      // generation lives in renderStatsPage's waitUntil (70B, grounded); this
+      // just serves the cached value. Fail-soft {insight:''}. Edge-cache 5m.
+      if (url.pathname === '/api/stats-insight' && request.method === 'GET') {
+        const insight = (await env.COUNTERS.get('stats-insight#v3')) || '';
+        return jsonResponse(
+          { insight },
+          200,
+          { 'Cache-Control': 'public, max-age=300' },
+          request
+        );
       }
 
       if (url.pathname === '/api/stats' && request.method === 'GET') {
