@@ -551,6 +551,28 @@ const SECURITY_HEADERS: Record<string, string> = {
   ].join('; ')
 };
 
+/**
+ * Build an HTML Response that ALWAYS carries the full SECURITY_HEADERS set
+ * (HSTS + CSP + X-Frame-Options + nosniff + Referrer/Permissions-Policy + COOP).
+ * Every worker-rendered HTML page routes through here so a NEW route can't ship
+ * bare — the drift that once left /stats /clip /press /watch unprotected.
+ * `extraHeaders` override the defaults when a route needs a bespoke value.
+ */
+function htmlResponse(
+  html: string,
+  cacheControl: string,
+  extraHeaders: Record<string, string> = {}
+): Response {
+  return new Response(html, {
+    headers: {
+      ...SECURITY_HEADERS,
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': cacheControl,
+      ...extraHeaders
+    }
+  });
+}
+
 class MetaRewriter {
   constructor(private seo: RouteSeo) {}
 
@@ -3691,13 +3713,7 @@ ${chatCatalog}`;
       const hit = await edge.match(cacheKey);
       if (hit) return hit;
       const html = await renderStatsPage(env, url.origin, ctx);
-      const resp = new Response(html, {
-        headers: {
-          ...SECURITY_HEADERS,
-          'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'public, max-age=300, must-revalidate'
-        }
-      });
+      const resp = htmlResponse(html, 'public, max-age=300, must-revalidate');
       ctx.waitUntil(edge.put(cacheKey, resp.clone()));
       return resp;
     }
@@ -3707,9 +3723,7 @@ ${chatCatalog}`;
       const trackId = url.pathname.slice('/clip/'.length).replace(/\/$/, '');
       if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
         return new Response('Not found', { status: 404 });
-      return new Response(renderClipPage(trackId, url.origin), {
-        headers: { ...SECURITY_HEADERS, 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=3600' }
-      });
+      return htmlResponse(renderClipPage(trackId, url.origin), 'public, max-age=3600');
     }
 
     // ── Per-track press one-pager (outside /api guard) ───────────
@@ -3720,9 +3734,7 @@ ${chatCatalog}`;
       // tracks get a kit.
       if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
         return new Response('Not found', { status: 404 });
-      return new Response(renderPressPage(trackId, url.origin), {
-        headers: { ...SECURITY_HEADERS, 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=600' }
-      });
+      return htmlResponse(renderPressPage(trackId, url.origin), 'public, max-age=600');
     }
 
     // ── Cinematic music-video watch page (outside /api guard) ────
@@ -3731,9 +3743,7 @@ ${chatCatalog}`;
       const track = VALID_TRACK_ID.test(trackId) ? TRACK_BY_ID.get(trackId) : undefined;
       // Only tracks that actually have a film get a watch page — everything else 404s.
       if (!track || !track.video) return new Response('Not found', { status: 404 });
-      return new Response(renderWatchPage(trackId, url.origin), {
-        headers: { ...SECURITY_HEADERS, 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=600' }
-      });
+      return htmlResponse(renderWatchPage(trackId, url.origin), 'public, max-age=600');
     }
 
     // Full-fidelity Suno media (WAV / stems-MIDI zip / lyric video) served from
