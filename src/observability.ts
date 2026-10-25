@@ -140,17 +140,31 @@ if ('PerformanceObserver' in window) {
         // Record the element that drove the worst interaction (prefer id, then a
         // data-aichat hook, then the first class, then the tag) — low-cardinality
         // so /api/vitals can rank the slow interactions.
-        const el = (e as PerformanceEntry & { target?: Element | null }).target;
-        if (el) {
+        const raw = (e as PerformanceEntry & { target?: Element | null }).target;
+        if (raw) {
+          // The raw target is often a bare <span>/<svg> inside the real control,
+          // which labels as "span" (useless). Walk up to a MEANINGFUL element —
+          // an id, a data-aichat hook, a button/link/[role], or a known
+          // container — so the field attribution names the actual interaction.
+          const el =
+            (raw.closest?.(
+              '[id], [data-aichat], [data-act], button, a[href], [role="button"], [role="slider"], [role="option"], [role="tab"]'
+            ) as Element | null) || raw;
           const aichat = el.getAttribute?.('data-aichat');
+          const act = el.getAttribute?.('data-act');
+          const role = el.getAttribute?.('role');
           inpTarget = (
             el.id
               ? '#' + el.id
               : aichat
                 ? 'aichat:' + aichat
-                : typeof el.className === 'string' && el.className
-                  ? '.' + el.className.split(/\s+/)[0]
-                  : (el.tagName || '?').toLowerCase()
+                : act
+                  ? 'act:' + act
+                  : role
+                    ? (el.tagName || '?').toLowerCase() + '[' + role + ']'
+                    : typeof el.className === 'string' && el.className
+                      ? '.' + el.className.split(/\s+/)[0]
+                      : (el.tagName || '?').toLowerCase()
           ).slice(0, 40);
         }
       }
