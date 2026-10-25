@@ -1586,6 +1586,11 @@ function renderPressPage(trackId: string, origin: string): string {
   </div>
   <div class="spotify-embed" id="embed"></div>
 
+  <section id="pressStory" hidden>
+    <h2>The story behind &ldquo;${title}&rdquo;</h2>
+    <p class="bio press-liner" id="pressLiner"></p>
+  </section>
+
   <h2>About bZ</h2>
   <p class="bio">bZ is Brian Zalewski — full-stack engineer turned solo hustle-gospel artist out of Newark NJ. Six albums, fifty-plus tracks, Suno-assisted production. Christian-gangster ethic. Zero drug references. Family-reverent. Soup-kitchen serving. The grind and the gospel point the same direction. <em>Hard but holy.</em></p>
 
@@ -1687,6 +1692,25 @@ async function loadRelated() {
   } catch {}
 }
 loadRelated();
+
+// The story behind this track — surface the grounded AI liner note (the
+// editorial angle an editor/playlister wants for an EPK). Reuses /api/liner
+// (Workers AI 70B, grounded, KV-cached); textContent-filled (Trusted-Types
+// safe), fail-soft — the kit stands if it's cold or errors.
+async function loadLiner() {
+  try {
+    const r = await fetch(ORIGIN + '/api/liner?track=' + encodeURIComponent(TRACK_ID));
+    if (!r.ok) return;
+    const d = await r.json();
+    if (!d || !d.liner) return;
+    const el = document.getElementById('pressLiner');
+    const sec = document.getElementById('pressStory');
+    if (!el || !sec) return;
+    el.textContent = d.liner;
+    sec.hidden = false;
+  } catch {}
+}
+loadLiner();
 
 async function loadMeta() {
   try {
