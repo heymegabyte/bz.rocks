@@ -8096,8 +8096,14 @@ function openSearch() {
   searchOpen = true;
   $('#cmdk')?.classList.add('is-open');
   searchActiveIdx = 0;
-  renderSearchResults(filterTracks(''));
-  requestAnimationFrame(() => ($('#cmdkInput') as HTMLInputElement | null)?.focus());
+  // Defer the initial result render one frame so OPENING the palette is instant
+  // — the overlay shows + animates in immediately; the list paints next frame,
+  // off the open-click's INP critical path. (Measured ~184ms open → the render
+  // was the cost.) Focus moves with it, imperceptibly (~16ms later).
+  requestAnimationFrame(() => {
+    renderSearchResults(filterTracks(''));
+    ($('#cmdkInput') as HTMLInputElement | null)?.focus();
+  });
   // Warm the lowercased search blobs off the critical path (on idle, after focus)
   // so the FIRST keystroke doesn't pay the one-time build cost mid-typing.
   const warmBlobs = () => {

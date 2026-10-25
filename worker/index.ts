@@ -2070,12 +2070,29 @@ export default {
         for (const g of ['home', 'album-or-page', 'track']) {
           byRoute[g] = agg(rows.filter(r => routeGroup(String(r.url ?? '')) === g));
         }
+        // Field attribution: which interaction elements drive the SLOW (>200ms)
+        // INP, ranked by frequency + their p75 — so the next INP fix targets the
+        // real culprit, not a lab guess (empty until the new beacons accumulate).
+        const inpByTarget = new Map<string, number[]>();
+        for (const r of rows) {
+          const inp = typeof r.inp === 'number' ? r.inp : null;
+          if (inp == null || inp <= 200) continue;
+          const t = typeof r.inpt === 'string' && r.inpt ? r.inpt : '(unlabeled)';
+          const arr = inpByTarget.get(t) ?? [];
+          arr.push(inp);
+          inpByTarget.set(t, arr);
+        }
+        const slowInteractions = [...inpByTarget.entries()]
+          .map(([target, vals]) => ({ target, n: vals.length, p75: p75(vals) }))
+          .sort((a, b) => b.n - a.n)
+          .slice(0, 12);
         const payload = {
           window: '24h',
           samples: rows.length,
           note: 'p75 per metric; lcp/inp/ttfb in ms, cls unitless. CWV targets: LCP<=2500, INP<=200, CLS<=0.1.',
           overall: agg(rows),
-          byRoute
+          byRoute,
+          slowInteractions
         };
         const resp = jsonResponse(payload, 200, { 'Cache-Control': 'public, max-age=300' }, request);
         ctx.waitUntil(cache.put(cacheKey, resp.clone()));

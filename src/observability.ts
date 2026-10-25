@@ -77,6 +77,9 @@ window.addEventListener('unhandledrejection', e => {
 // pagehide. Uses the Web Performance API directly; web-vitals npm pkg would
 // be more accurate but adds 5KB and another dependency.
 const vitals: Record<string, number> = {};
+// Which element drove the worst interaction (INP) — so field attribution
+// (aggregated in GET /api/vitals) names the slow interaction, not just its value.
+let inpTarget = '';
 
 function pushVital(name: string, value: number) {
   vitals[name] = value;
@@ -88,7 +91,15 @@ function flushVitals() {
     navigator.sendBeacon?.(
       '/api/vitals',
       new Blob(
-        [JSON.stringify({ ...vitals, url: location.pathname, ua: navigator.userAgent, ts: Date.now() })],
+        [
+          JSON.stringify({
+            ...vitals,
+            inpt: inpTarget,
+            url: location.pathname,
+            ua: navigator.userAgent,
+            ts: Date.now()
+          })
+        ],
         { type: 'application/json' }
       )
     );
@@ -124,7 +135,24 @@ if ('PerformanceObserver' in window) {
     new PerformanceObserver(list => {
       let maxDur = vitals.inp || 0;
       for (const e of list.getEntries()) {
-        if (e.duration > maxDur) maxDur = e.duration;
+        if (e.duration <= maxDur) continue;
+        maxDur = e.duration;
+        // Record the element that drove the worst interaction (prefer id, then a
+        // data-aichat hook, then the first class, then the tag) — low-cardinality
+        // so /api/vitals can rank the slow interactions.
+        const el = (e as PerformanceEntry & { target?: Element | null }).target;
+        if (el) {
+          const aichat = el.getAttribute?.('data-aichat');
+          inpTarget = (
+            el.id
+              ? '#' + el.id
+              : aichat
+                ? 'aichat:' + aichat
+                : typeof el.className === 'string' && el.className
+                  ? '.' + el.className.split(/\s+/)[0]
+                  : (el.tagName || '?').toLowerCase()
+          ).slice(0, 40);
+        }
       }
       pushVital('inp', Math.round(maxDur));
     }).observe({ type: 'event', buffered: true, durationThreshold: 40 } as PerformanceObserverInit & {
