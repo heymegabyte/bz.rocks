@@ -2619,7 +2619,7 @@ export default {
           !TRACK_BY_ID.has(toId)
         )
           return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
-        const cacheK = `segue:${fromId}>${toId}#v2`;
+        const cacheK = `segue:${fromId}>${toId}#v4`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2635,9 +2635,14 @@ export default {
         const to = TRACK_BY_ID.get(toId)!;
         const fromAlbum = ALBUM_BY_ID.get(from.album);
         const toAlbum = ALBUM_BY_ID.get(to.album);
+        const segueLyric = (t: (typeof from) | (typeof to)): string =>
+          (t.lyrics || []).map(l => l.trim()).find(l => l.length > 8 && l.length < 70 && !/^[[(]/.test(l)) ??
+          '';
+        const fromLyric = segueLyric(from);
+        const toLyric = segueLyric(to);
         const system =
-          "You are bZ's DJ explaining a segue — why the NEXT track flows from the CURRENT one, drawing ONLY on the two tracks' titles, albums, vibes, and wisdom lines. Name the real bridge (shared mood, rising/falling energy, a thematic echo). Voice: Newark hustle-gospel, hard but holy. STRICT: ONE sentence, max ~16 words, no preamble, no markdown, no quotation marks, zero drug references. NEVER invent facts; interpret what's given.";
-        const user = `CURRENT: "${from.title}" (${fromAlbum?.name ?? 'bZ'}) — vibe: ${from.vibe}; wisdom: ${from.wisdom}\nNEXT: "${to.title}" (${toAlbum?.name ?? 'bZ'}) — vibe: ${to.vibe}; wisdom: ${to.wisdom}`;
+          "You are bZ's DJ explaining a segue — why the NEXT track flows from the CURRENT one, drawing ONLY on the two songs' titles, albums, vibes, wisdom, and lyric lines. EVERY track is holy gospel-rap, so a generic spiritual bridge is a NON-reason: NEVER write 'holy vibes/faith/wisdom' or 'shared faith/wisdom'. Describe the bridge ITSELF as a vivid fragment — a specific shared image, place, character, or scripture, OR a precise energy shift. GOOD: 'Darkness shifts to neon skies' · 'Crossing borders, prophecy to mercy' · 'The same cracked-window bus rolls on'. BAD (never do this): 'Chef Lu links the two tracks', 'Steel connects both tracks' — naming the bridge then tacking on 'the two tracks'/'both tracks' is filler. STRICT: ONE fragment, max ~14 words, NEVER the words 'both tracks', 'the two tracks', 'these tracks', or 'the tracks'; no preamble, no markdown, no quotation marks, zero drug references. NEVER invent facts; interpret what's given.";
+        const user = `CURRENT: "${from.title}" (${fromAlbum?.name ?? 'bZ'}) — vibe: ${from.vibe}; wisdom: ${from.wisdom}${fromLyric ? `; a line: ${fromLyric}` : ''}\nNEXT: "${to.title}" (${toAlbum?.name ?? 'bZ'}) — vibe: ${to.vibe}; wisdom: ${to.wisdom}${toLyric ? `; a line: ${toLyric}` : ''}`;
         let why = '';
         try {
           const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
@@ -2652,6 +2657,26 @@ export default {
             .split(/\r?\n/)[0]!
             .trim()
             .replace(/^["']+|["']+$/g, '');
+          // Reject constant-axis platitudes + the "...the two tracks" filler
+          // frame — every track is holy gospel-rap, so "holy vibes bind both
+          // tracks" / "Steel links the two tracks" is a non-reason/filler (the #1
+          // generic-prose tell). First strip a trailing "… <verb> the two tracks"
+          // clause (keeps a real kernel); then reject if what remains is still a
+          // bare platitude. Fail-soft to null: the up-next card still names the
+          // real next track, just without a hollow "why".
+          why = why
+            .replace(
+              /\s*,?\s*(?:that\s+)?(?:connect(?:s|ing)?|link(?:s|ing)?|bridg(?:e|es|ing)|bind(?:s|ing)?|unit(?:e|es|ing)|tie(?:s)?)\s+(?:the\s+)?(?:two|both|these)\s+tracks\b\.?$/i,
+              ''
+            )
+            .trim()
+            .replace(/[,;:]+$/, '');
+          if (
+            /\b(?:both|the two|these)\s+tracks\b|^(?:holy|shared)\s+\w+\s+(?:binds?|bridges?|links?|unites?|connects?)\b/i.test(
+              why
+            )
+          )
+            why = '';
         } catch {
           why = '';
         }

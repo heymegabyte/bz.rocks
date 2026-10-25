@@ -30,6 +30,15 @@ test.describe('AI segue (/api/segue + up-next card)', () => {
     if (body.why != null) {
       expect(typeof body.why).toBe('string');
       expect(body.why.length).toBeGreaterThan(8);
+      // Every track is holy gospel-rap, so a generic spiritual bridge or a
+      // "...the two tracks" filler frame is a non-reason — the why must be a
+      // concrete bridge fragment (the quality fix, 2026-10-24).
+      expect(body.why, `filler frame: "${body.why}"`).not.toMatch(
+        /\b(?:both|the two|these)\s+tracks\b/i
+      );
+      expect(body.why, `bare platitude: "${body.why}"`).not.toMatch(
+        /^(?:holy|shared)\s+\w+\s+(?:binds?|bridges?|links?|unites?|connects?)\b/i
+      );
     }
 
     const bad = await request.get(`${BASE}/api/segue?from=bermuda-prophecy&to=not-a-real-track-xyz`);
