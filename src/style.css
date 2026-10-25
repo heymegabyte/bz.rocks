@@ -16229,6 +16229,53 @@ select:focus-visible,
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.notfound-banner__suggest {
+  flex: 0 1 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+  max-width: 54vw;
+  padding: 5px 13px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+.notfound-banner__suggest:hover {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.notfound-banner__suggest:focus-visible {
+  outline: 2px solid var(--ink-accent);
+  outline-offset: 2px;
+}
+.notfound-banner__play {
+  flex: 0 0 auto;
+  color: var(--ink-accent);
+  font-size: 0.68rem;
+}
+.notfound-banner__sg-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.notfound-banner__why {
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 22vw;
+}
 .notfound-banner__x {
   flex: 0 0 auto;
   width: 22px;
@@ -16257,10 +16304,19 @@ select:focus-visible,
 @media (max-width: 560px) {
   .notfound-banner {
     top: 56px;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 8px;
   }
   .notfound-banner__text {
     white-space: normal;
     font-size: 0.76rem;
+  }
+  .notfound-banner__suggest {
+    max-width: calc(100vw - 48px);
+  }
+  .notfound-banner__why {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -8026,10 +8026,89 @@ function maybeVibeSearch(query: string, literal: Track[]) {
   }, 450);
 }
 
+// Tokenize the attempted (404) URL slug into lowercased word tokens — e.g.
+// "/canopy/bermuda-prophcy" → ["canopy","bermuda","prophcy"]. Stopwords + the
+// junk words people append are dropped so the signal is the track/album name.
+const NFB_STOP = new Set([
+  'the',
+  'a',
+  'an',
+  'of',
+  'to',
+  'and',
+  'track',
+  'album',
+  'song',
+  'bz',
+  'page',
+  'real',
+  'not',
+  'this',
+  'is'
+]);
+function slugTokens(pathname: string): string[] {
+  return pathname
+    .toLowerCase()
+    .replace(/[^a-z0-9/]+/g, ' ')
+    .split(/[/\s]+/)
+    .filter(w => w.length >= 2 && !NFB_STOP.has(w));
+}
+
+// Tiny bounded Levenshtein (the catalog is small + tokens short) so a typo'd
+// slug ("prophcy") still finds its track ("prophecy").
+function nfbEditDistance(a: string, b: string): number {
+  const m = a.length;
+  const n = b.length;
+  if (Math.abs(m - n) > 3) return 99;
+  const d = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    let prev = d[0];
+    d[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const tmp = d[j];
+      d[j] = a[i - 1] === b[j - 1] ? prev : Math.min(prev, d[j - 1], d[j]) + 1;
+      prev = tmp;
+    }
+  }
+  return d[n];
+}
+
+// Score every REAL track by how well the attempted slug's tokens overlap its
+// title / vibe / album / id (with light typo tolerance). GROUNDED — only real
+// catalog tracks are ever suggested. Returns the best few, strongest first.
+function closestTracksForSlug(pathname: string, limit = 3): Track[] {
+  const tokens = slugTokens(pathname);
+  if (!tokens.length) return [];
+  const scored = TRACKS.map(t => {
+    const album = ALBUM_BY_ID.get(t.album);
+    const hayWords = `${t.title} ${t.vibe} ${album?.name ?? ''} ${t.id} ${t.album}`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .split(/\s+/)
+      .filter(Boolean);
+    let score = 0;
+    for (const tok of tokens) {
+      let best = 0;
+      for (const w of hayWords) {
+        if (w === tok) best = Math.max(best, 3);
+        else if (w.length >= 3 && (w.includes(tok) || tok.includes(w))) best = Math.max(best, 2);
+        else if (tok.length >= 4 && nfbEditDistance(tok, w) <= Math.max(1, Math.floor(tok.length / 4)))
+          best = Math.max(best, 2);
+      }
+      score += best;
+    }
+    return { t, score };
+  }).filter(s => s.score > 0);
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, limit).map(s => s.t);
+}
+
 // Friendly 404 banner — the worker serves the SPA shell with a 404 status +
-// window.__IS_404 on a mistyped/retired URL. Rather than silently show the
-// homepage, surface a dismissible "page not found" note (the player is still
-// right here). DOM-built (no innerHTML) for Trusted Types safety.
+// window.__IS_404 on a mistyped/retired URL. Rather than a dead-end, the bad
+// URL's slug is a strong intent signal: surface the closest REAL track with a
+// one-tap ▶ play (deterministic + instant + grounded), then let the AI vibe
+// matcher refine it in the background (hybrid — deterministic first, AI layered
+// on, never blocks). DOM-built (no innerHTML) for Trusted Types safety.
 function showNotFoundBanner(): void {
   if (document.querySelector('.notfound-banner')) return;
   const el = document.createElement('div');
@@ -8040,23 +8119,85 @@ function showNotFoundBanner(): void {
   dot.setAttribute('aria-hidden', 'true');
   const text = document.createElement('span');
   text.className = 'notfound-banner__text';
-  text.textContent = "That page slipped the net — but you're on the player. Press play.";
   const x = document.createElement('button');
   x.type = 'button';
   x.className = 'notfound-banner__x';
   x.setAttribute('aria-label', 'Dismiss');
   x.textContent = '✕';
-  el.appendChild(dot);
-  el.appendChild(text);
-  el.appendChild(x);
-  document.body.appendChild(el);
-  requestAnimationFrame(() => el.classList.add('is-in'));
+
   const dismiss = (): void => {
     el.classList.remove('is-in');
     window.setTimeout(() => el.remove(), 400);
   };
+
+  const matches = closestTracksForSlug(location.pathname);
+  const best = matches[0];
+
+  el.appendChild(dot);
+  el.appendChild(text);
+
+  if (best) {
+    text.textContent = 'That page slipped the net — did you mean';
+    let target = best;
+    const suggest = document.createElement('button');
+    suggest.type = 'button';
+    suggest.className = 'notfound-banner__suggest';
+    const label = (t: Track, why?: string): void => {
+      suggest.replaceChildren();
+      const play = document.createElement('span');
+      play.className = 'notfound-banner__play';
+      play.setAttribute('aria-hidden', 'true');
+      play.textContent = '▶';
+      const name = document.createElement('span');
+      name.className = 'notfound-banner__sg-title';
+      name.textContent = t.title;
+      suggest.appendChild(play);
+      suggest.appendChild(name);
+      if (why) {
+        const w = document.createElement('span');
+        w.className = 'notfound-banner__why';
+        w.textContent = why;
+        suggest.appendChild(w);
+      }
+      suggest.setAttribute('aria-label', `Play ${t.title}${why ? ' — ' + why : ''}`);
+    };
+    label(target);
+    suggest.addEventListener('click', () => {
+      dismiss();
+      void play(target);
+    });
+    el.appendChild(suggest);
+
+    // AI refinement — fire the grounded vibe matcher with the slug words; if it
+    // returns a REAL catalog pick, upgrade the suggestion to it + its "why".
+    const q = slugTokens(location.pathname).join(' ');
+    if (q.length >= 4) {
+      void (async () => {
+        try {
+          const r = await fetch(`/api/vibe?q=${encodeURIComponent(q)}`);
+          const d = (await r.json()) as { picks?: Array<{ id: string; why: string }> };
+          if (!document.body.contains(suggest)) return; // dismissed meanwhile
+          const pick = (d.picks ?? [])
+            .map(p => ({ track: TRACKS.find(t => t.id === p.id), why: p.why }))
+            .find((p): p is { track: Track; why: string } => !!p.track);
+          if (pick) {
+            target = pick.track;
+            label(pick.track, pick.why);
+          }
+        } catch {
+          /* fail-soft — the deterministic match stands */
+        }
+      })();
+    }
+  } else {
+    text.textContent = "That page slipped the net — but you're on the player. Press play.";
+  }
+
+  el.appendChild(x);
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('is-in'));
   x.addEventListener('click', dismiss);
-  window.setTimeout(dismiss, 9000);
+  window.setTimeout(dismiss, best ? 14000 : 9000);
 }
 
 function showWisdomToast(track: Track) {
