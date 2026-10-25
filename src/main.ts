@@ -3718,9 +3718,14 @@ function bindIntegrations() {
   // Wake-lock during full-screen lyrics / karaoke mode
   document.addEventListener('lyricsfs:open', () => {
     acquireWakeLock();
+    // The fullscreen-lyrics backdrop is near-opaque (rgba(6,6,16,0.96)+blur), so
+    // the visualizer behind it is invisible — pause it to free the main thread
+    // for the per-frame karaoke highlighting + save battery (zero visual change).
+    visualizer?.setOccluded(true);
   });
   document.addEventListener('lyricsfs:close', () => {
     releaseWakeLock();
+    visualizer?.setOccluded(false);
   });
 }
 

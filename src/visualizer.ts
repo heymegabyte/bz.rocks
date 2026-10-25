@@ -298,6 +298,9 @@ export class Visualizer {
   private dprMin = this.isLowPower ? 1 : 1.25;
   private lastDprCheck = 0;
   private rafId: number | null = null;
+  // True while a near-opaque full-screen overlay covers the canvas — keeps the
+  // renderer paused across tab-visibility changes (see setOccluded).
+  private occluded = false;
   private t0 = performance.now();
   private accent: [number, number, number] = [0, 229, 255];
   private mode: VizMode = 'starfield';
@@ -402,7 +405,7 @@ export class Visualizer {
     // on an offscreen canvas. Auto-resumes when visible.
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) this.stop();
-      else if (this.rafId === null) this.start();
+      else if (this.rafId === null && !this.occluded) this.start();
     });
     this.prewarmHeavyState();
   }
@@ -613,6 +616,17 @@ export class Visualizer {
   stop() {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     this.rafId = null;
+  }
+
+  /** Pause the renderer while a near-opaque full-screen overlay (e.g. the
+   *  fullscreen-lyrics view, whose backdrop is rgba(…,0.96)+blur) fully covers
+   *  the canvas — ZERO visual change (it's invisible), frees the main thread for
+   *  the karaoke tick + saves battery, and stays paused across tab-visibility
+   *  changes until un-occluded. */
+  setOccluded(v: boolean) {
+    this.occluded = v;
+    if (v) this.stop();
+    else if (!document.hidden) this.start();
   }
 
   private bandEnergy(from: number, to: number) {
