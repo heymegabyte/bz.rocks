@@ -1917,6 +1917,10 @@ function setupShell(root: HTMLElement) {
 
     <!-- Wisdom toast -->
     <div class="wisdom-toast" id="wisdomToast" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div class="net-banner" id="netBanner" role="status" aria-live="polite" hidden>
+      <span class="net-banner__dot" aria-hidden="true"></span>
+      <span class="net-banner__text" id="netBannerText"></span>
+    </div>
 
     <!-- More menu -->
     <div class="more-menu" id="moreMenu" role="menu" aria-label="Player options" hidden>
@@ -5050,6 +5054,37 @@ function showToast(message: string): void {
   }, 4400);
 }
 
+// Network-state indicator (PWA offline awareness). The shell loads offline (SW precache),
+// but audio isn't cached → offline is browse-only. Proactively say so (paired with the
+// reactive track-load error toast) + a brief "Back online" on reconnect.
+let netBannerTimer: number | null = null;
+function updateNetBanner(cameOnline = false): void {
+  const banner = $('#netBanner') as HTMLElement | null;
+  const text = $('#netBannerText');
+  if (!banner || !text) return;
+  if (netBannerTimer !== null) {
+    clearTimeout(netBannerTimer);
+    netBannerTimer = null;
+  }
+  if (!navigator.onLine) {
+    text.textContent = "You're offline — reconnect to play";
+    banner.classList.remove('is-online');
+    banner.classList.add('is-offline');
+    banner.hidden = false;
+  } else if (cameOnline) {
+    text.textContent = 'Back online';
+    banner.classList.remove('is-offline');
+    banner.classList.add('is-online');
+    banner.hidden = false;
+    netBannerTimer = window.setTimeout(() => {
+      banner.hidden = true;
+      netBannerTimer = null;
+    }, 2600);
+  } else {
+    banner.hidden = true;
+  }
+}
+
 const NOTIFY_LOCAL_KEY = 'bz:notify:email';
 const CAST_MODE_KEY = 'bz:cast:receiver-mode';
 
@@ -8046,6 +8081,12 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+function bindNetworkState() {
+  window.addEventListener('offline', () => updateNetBanner(false));
+  window.addEventListener('online', () => updateNetBanner(true));
+  updateNetBanner(false); // show immediately if the page loaded while offline
+}
+
 function bindInstallPrompt() {
   window.addEventListener('beforeinstallprompt', e => {
     // Only suppress Chrome's default mini-infobar when we're actually going to
@@ -9581,6 +9622,7 @@ window.addEventListener('DOMContentLoaded', () => {
   refreshShuffleBtn();
   refreshAiRadioBtn();
   bindInstallPrompt();
+  bindNetworkState();
   // Only load the Spotify OAuth callback handler when the URL actually
   // matches the callback route — saves ~14KB on every other route.
   if (location.pathname.startsWith('/spotify/callback')) {

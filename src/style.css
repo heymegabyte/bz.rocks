@@ -7259,6 +7259,67 @@ html.is-playing .np-panel.is-open .np-panel__stat strong {
     transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
   box-shadow: 0 12px 40px -18px color-mix(in srgb, var(--accent) 35%, transparent);
 }
+/* Network-state indicator — proactive offline/back-online pill (amber offline, cyan online). */
+.net-banner {
+  position: fixed;
+  top: calc(var(--topbar-h) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 61;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(10, 10, 24, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 176, 32, 0.32);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  pointer-events: none;
+  box-shadow: 0 12px 40px -18px rgba(0, 0, 0, 0.6);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    display 0.3s allow-discrete;
+}
+@starting-style {
+  .net-banner {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+}
+.net-banner[hidden] {
+  display: none;
+}
+.net-banner__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffb020;
+  box-shadow: 0 0 8px rgba(255, 176, 32, 0.6);
+}
+.net-banner.is-online {
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+}
+.net-banner.is-online .net-banner__dot {
+  background: var(--accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .net-banner {
+    transition: none;
+  }
+  @starting-style {
+    .net-banner {
+      opacity: 1;
+      transform: translateX(-50%);
+    }
+  }
+}
 .wisdom-toast.is-visible {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
