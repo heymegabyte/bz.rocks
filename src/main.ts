@@ -9141,6 +9141,23 @@ function bootstrapInitialRoute() {
   attemptDeeplinkPlay(t);
 }
 
+/**
+ * SEO heading de-dupe. The worker server-renders a crawlable `<h1>` inside the
+ * "About this page" SEO disclosure so no-JS crawlers get a track/album-named h1.
+ * Once the client shell mounts its own hero `<h1>`, that SEO heading must become
+ * an `<h2>` — otherwise the rendered page (and JS-rendering crawlers) carry two
+ * `<h1>`s, an a11y + SEO heading-outline defect. Replace it with an `<h2>`,
+ * preserving text + classes (createElement + textContent → Trusted-Types safe).
+ */
+function demoteSeoProseHeading(): void {
+  const h1 = document.querySelector('.route-seo-body h1');
+  if (!h1) return;
+  const h2 = document.createElement('h2');
+  if (h1.className) h2.className = h1.className;
+  h2.textContent = h1.textContent;
+  h1.replaceWith(h2);
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   const root = document.getElementById('app')!;
   loadPersisted();
@@ -9149,6 +9166,9 @@ window.addEventListener('DOMContentLoaded', () => {
   // ranking + play counts are now identical on every browser instead of each
   // browser showing its own cached history. /api/stats then fills exact counts.
   setupShell(root);
+  // The hero <h1> now exists in the shell — demote the server-rendered SEO
+  // prose <h1> to <h2> so the rendered page carries exactly one <h1>.
+  demoteSeoProseHeading();
   renderAlbums($('#albums')!);
   if ((window as unknown as { __IS_404?: boolean }).__IS_404) showNotFoundBanner();
   renderNowPlaying(null);
