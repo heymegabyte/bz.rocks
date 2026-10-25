@@ -36,6 +36,14 @@ test.describe('Cmd+K search — capped render', () => {
     const n = await rows.count();
     expect(n).toBeGreaterThan(0);
     expect(n).toBeLessThanOrEqual(24);
+    // Relevance-ranked: the capped results lead with TITLE matches, not just the
+    // first catalog-order matches — the first result's title contains "mercy".
+    const firstTitle = (
+      await page.locator('#cmdkResults .cmdk__item-title-text').first().innerText()
+    )
+      .trim()
+      .toLowerCase();
+    expect(firstTitle, `first result "${firstTitle}" should be a title match`).toContain('mercy');
     await input.press('ArrowDown');
     await input.press('Enter');
     await expect

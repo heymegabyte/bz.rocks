@@ -7942,20 +7942,44 @@ let vibeController: AbortController | null = null;
 // full lyrics array on EVERY keystroke, which drove search-typing INP to
 // ~144-216ms (over the 100ms target). Now a keystroke is just a substring scan
 // of the cached blob — the expensive lowercasing happens once per track.
-const trackSearchBlobs = new Map<string, string>();
-function trackSearchBlob(t: Track): string {
-  let blob = trackSearchBlobs.get(t.id);
-  if (blob === undefined) {
-    const album = ALBUM_BY_ID.get(t.album);
-    blob = `${t.title} ${t.vibe} ${album?.name ?? ''} ${t.lyrics.join(' ')}`.toLowerCase();
-    trackSearchBlobs.set(t.id, blob);
+interface TrackSearchFields {
+  blob: string; // title+vibe+album+lyrics, lowercased — fast "matches at all?"
+  title: string;
+  vibe: string;
+  album: string;
+}
+const trackSearchFields = new Map<string, TrackSearchFields>();
+function searchFields(t: Track): TrackSearchFields {
+  let f = trackSearchFields.get(t.id);
+  if (f === undefined) {
+    const title = t.title.toLowerCase();
+    const vibe = t.vibe.toLowerCase();
+    const album = (ALBUM_BY_ID.get(t.album)?.name ?? '').toLowerCase();
+    f = { title, vibe, album, blob: `${title} ${vibe} ${album} ${t.lyrics.join(' ').toLowerCase()}` };
+    trackSearchFields.set(t.id, f);
   }
-  return blob;
+  return f;
 }
 function filterTracks(query: string): Track[] {
   if (!query.trim()) return [...TRACKS];
   const q = query.toLowerCase().trim();
-  return TRACKS.filter(t => trackSearchBlob(t).includes(q));
+  // Fast-match via the cached blob, then RANK by WHERE the query hits so the
+  // 24-row render cap surfaces the most RELEVANT tracks — a title match (esp. a
+  // prefix) beats a mere lyric mention — instead of just the first matches in
+  // catalog order. All fields are precomputed-lowercased, so scoring is cheap.
+  const scored: Array<{ t: Track; score: number; idx: number }> = [];
+  for (let i = 0; i < TRACKS.length; i++) {
+    const t = TRACKS[i];
+    const f = searchFields(t);
+    if (!f.blob.includes(q)) continue;
+    let score = 1; // matched somewhere (at least a lyric line)
+    if (f.vibe.includes(q)) score = 3;
+    if (f.album.includes(q)) score = Math.max(score, 4);
+    if (f.title.includes(q)) score = Math.max(score, f.title.startsWith(q) ? 10 : 7);
+    scored.push({ t, score, idx: i });
+  }
+  scored.sort((a, b) => b.score - a.score || a.idx - b.idx); // best first, stable
+  return scored.map(s => s.t);
 }
 
 function filterContentPages(
@@ -8077,7 +8101,7 @@ function openSearch() {
   // Warm the lowercased search blobs off the critical path (on idle, after focus)
   // so the FIRST keystroke doesn't pay the one-time build cost mid-typing.
   const warmBlobs = () => {
-    for (const t of TRACKS) trackSearchBlob(t);
+    for (const t of TRACKS) searchFields(t);
   };
   const ric = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number })
     .requestIdleCallback;
