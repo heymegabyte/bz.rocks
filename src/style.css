@@ -1956,7 +1956,10 @@ html.is-playing .brand__logo {
   margin: 0 0 10px;
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(2rem, min(9vw, 14vh), 9rem);
+  /* --hero-scale (set per-title in JS by length + a fit measure-loop) shrinks
+     the font for long titles so they fill 2 lines without a mid-phrase ellipsis
+     ("SIGNALS FROM THE…"); short titles stay at scale 1 = huge + cinematic. */
+  font-size: clamp(2rem, calc(min(9vw, 14vh) * var(--hero-scale, 1)), 9rem);
   /* line-height ≥ 1 + small vertical padding so the 900-weight glyphs (tall
      ascenders + descenders) clear the hero's overflow:hidden. A sub-1
      line-height makes the line box shorter than the actual letters, which
@@ -5429,7 +5432,7 @@ html.is-appeal-open {
     --rail-w: 320px;
   }
   .viz__hero-title {
-    font-size: clamp(2.2rem, min(8vw, 13vh), 6rem);
+    font-size: clamp(2.2rem, calc(min(8vw, 13vh) * var(--hero-scale, 1)), 6rem);
   }
   .hud {
     top: 10px;
@@ -5564,7 +5567,7 @@ html.is-appeal-open {
     letter-spacing: 0.32em;
   }
   .viz__hero-title {
-    font-size: clamp(1.6rem, min(11vw, 11vh), 4rem);
+    font-size: clamp(1.6rem, calc(min(11vw, 11vh) * var(--hero-scale, 1)), 4rem);
   }
   .viz__hero-vibe {
     font-size: 0.92rem;

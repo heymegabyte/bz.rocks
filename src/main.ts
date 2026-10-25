@@ -2625,11 +2625,24 @@ function renderNowPlaying(track: Track | null) {
   const npChrome = $('#npChrome');
   if (heroAlbum) heroAlbum.textContent = (album?.name || 'bZ · Cyan Flag').toUpperCase();
   if (heroTitle) {
-    heroTitle.textContent = track
+    const heroText = track
       ? track.title.toUpperCase()
       : filteredAlbum
         ? filteredAlbum.name.toUpperCase()
         : 'PRESS PLAY';
+    heroTitle.textContent = heroText;
+    // Fit long titles to the 2-line hero without a mid-phrase ellipsis
+    // ("SIGNALS FROM THE…"): start from a length-based scale (short titles stay
+    // huge + cinematic at 1), then — since the element is -webkit-line-clamp:2 +
+    // overflow:hidden, so a truncated title has scrollHeight > clientHeight —
+    // step the scale down until it fits. Bounded loop; only on title change.
+    const n = heroText.length;
+    let heroScale = n <= 18 ? 1 : n <= 24 ? 0.72 : n <= 30 ? 0.56 : n <= 38 ? 0.46 : 0.4;
+    heroTitle.style.setProperty('--hero-scale', String(heroScale));
+    for (let i = 0; i < 5 && heroScale > 0.32 && heroTitle.scrollHeight > heroTitle.clientHeight + 2; i++) {
+      heroScale = Math.round((heroScale - 0.07) * 100) / 100;
+      heroTitle.style.setProperty('--hero-scale', String(heroScale));
+    }
   }
   if (heroVibe) {
     heroVibe.textContent = track?.vibe || filteredAlbum?.tagline || 'Web Audio API live. Hard but holy.';
