@@ -394,8 +394,13 @@ async function makeHeroPack(tok, lead) {
 }
 
 // Beat-synced edit: cut ON the song's beats, cycling a reusable shot POOL to fill the track.
-// Cut pace varies (2-4 beats per cut); each segment is a fresh slice of a pool clip.
+// Shots BREATHE — each holds a MINIMUM in SECONDS (robust to a double-time beat grid), snapped to
+// the nearest beat >= that hold; a climax window cuts faster. "Less rapid in general, except
+// sometimes" (Brian 2026-10-25). Tune via BEAT_MIN_HOLD / BEAT_PEAK_HOLD / BEAT_PEAK_FROM.
 async function beatCutReel(norms, beats, songDur, dest) {
+  const MIN_HOLD = parseFloat(process.env.BEAT_MIN_HOLD || '3.0'); // calm default hold (s)
+  const PEAK_HOLD = parseFloat(process.env.BEAT_PEAK_HOLD || '1.5'); // rapid, in the peak only (s)
+  const PEAK_FROM = parseFloat(process.env.BEAT_PEAK_FROM || '0.78'); // song fraction where the rapid climax starts
   const poolDur = [];
   for (const n of norms) poolDur.push(await probeDuration(n));
   const segs = [];
@@ -403,10 +408,14 @@ async function beatCutReel(norms, beats, songDur, dest) {
     t = 0,
     idx = 0;
   while (t < songDur - 0.1 && beats.length) {
-    let nb = bi + (2 + (idx % 3)); // 2,3,4 beats per cut
+    // Hold each shot >= `hold` seconds (longer by default, faster only at the climax),
+    // snapping the cut to the nearest beat so it still lands ON a beat.
+    const hold = t >= songDur * PEAK_FROM ? PEAK_HOLD : MIN_HOLD;
+    let nb = bi;
+    while (nb < beats.length && beats[nb] - (beats[bi] ?? t) < hold) nb++;
     if (nb >= beats.length) nb = beats.length - 1;
     let len = (beats[nb] ?? songDur) - (beats[bi] ?? t);
-    if (!(len > 0.3)) len = 1.2;
+    if (!(len > 0.3)) len = hold;
     len = Math.min(len, songDur - t);
     const ci = idx % norms.length;
     const room = Math.max(0.1, poolDur[ci] - len - 0.05);
