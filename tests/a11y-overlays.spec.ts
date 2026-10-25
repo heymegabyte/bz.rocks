@@ -106,3 +106,19 @@ test('a11y: shortcuts modal (open) has no serious/critical violations', async ({
   const blocking = await axeBlocking(page);
   expect(blocking, blocking.map(v => `${v.id}: ${v.help}`).join('; ')).toEqual([]);
 });
+
+// Regression guard (found 2026-10-24, invisible to the default scans + the
+// overlay scans above): the embeddable player's seek bar (#embedBar,
+// role="slider") shipped WITHOUT the required aria-valuemin/max/now attributes
+// — axe `aria-required-attr` (critical). It renders standalone at /embed/<album>
+// AND inside the share dialog's preview iframe. Fixed by adding the value attrs
+// + live aria-valuenow/valuetext updates on the engine tick (matches the main
+// player). This also scans the embed page itself, which no prior spec did.
+test('a11y: embed player (/embed/<album>) has no serious/critical violations', async ({ page }) => {
+  await page.goto(`${BASE}/embed/signals`, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(1200);
+  await expect(page.locator('#embedBar')).toHaveAttribute('aria-valuenow', /.+/);
+  await expect(page.locator('#embedBar')).toHaveAttribute('aria-valuemax', '1');
+  const blocking = await axeBlocking(page);
+  expect(blocking, blocking.map(v => `${v.id}: ${v.help}`).join('; ')).toEqual([]);
+});

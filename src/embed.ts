@@ -150,7 +150,7 @@ function renderPlayer(host: HTMLElement, target: NonNullable<EmbedTarget>) {
           <button class="embed__btn embed__btn--nav" id="embedPrev" type="button" aria-label="Previous track" ${navAttr}>‹</button>
           <button class="embed__btn embed__btn--play" id="embedPlay" type="button" aria-label="Play / Pause"><span id="embedPlayIcon">▶</span></button>
           <button class="embed__btn embed__btn--nav" id="embedNext" type="button" aria-label="Next track" ${navAttr}>›</button>
-          <div class="embed__bar" id="embedBar" role="slider" aria-label="Seek" tabindex="0"><div class="embed__fill" id="embedFill"></div></div>
+          <div class="embed__bar" id="embedBar" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" aria-valuetext="0:00 of 0:00" tabindex="0"><div class="embed__fill" id="embedFill"></div></div>
           <span class="embed__time" id="embedTime">0:00 / 0:00</span>
         </div>
         <a class="embed__deep" href="${escapeHtml(deepHref)}" target="_blank" rel="noopener">bz.rocks →</a>
@@ -344,7 +344,13 @@ function renderPlayer(host: HTMLElement, target: NonNullable<EmbedTarget>) {
     const s = engine.state();
     playIcon.textContent = s.playing ? '❚❚' : '▶';
     timeEl.textContent = `${fmtTime(s.currentTime)} / ${fmtTime(s.duration)}`;
-    fillEl.style.width = s.duration ? `${(s.currentTime / s.duration) * 100}%` : '0%';
+    const ratio = s.duration ? s.currentTime / s.duration : 0;
+    fillEl.style.width = `${ratio * 100}%`;
+    // Keep the role="slider" ARIA state current so screen readers announce the
+    // seek position (matches the main/cast players — mirrors aria-valuenow as a
+    // 0-1 ratio + a human-readable aria-valuetext).
+    bar.setAttribute('aria-valuenow', ratio.toFixed(3));
+    bar.setAttribute('aria-valuetext', `${fmtTime(s.currentTime)} of ${fmtTime(s.duration)}`);
     updateMediaSessionPosition();
     if (engine.audio.ended && playlist.length > 1) void load(idx + 1, true);
   });
