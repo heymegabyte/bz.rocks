@@ -997,7 +997,11 @@ function renderWatchPage(trackId: string, origin: string): string {
   const coverUrl = `${origin}${album?.cover ?? '/art/cover-signals.jpg'}`;
   const playerUrl = track ? `${origin}/${track.album}/${trackId}` : `${origin}/`;
   const watchUrl = `${origin}/watch/${trackId}`;
-  const desc = `${title} by bZ — cinematic music video. Watch the film.`;
+  // Grounded, per-track description (VideoObject + meta/OG) — the track's REAL
+  // wisdom line beats a generic "watch the film" template for video SEO.
+  const desc = track?.wisdom
+    ? `${title} — a cinematic music video by bZ, Newark hustle-gospel. ${track.wisdom}`
+    : `${title} — a cinematic music video by bZ, Newark hustle-gospel.`;
   // schema.org VideoObject — only for tracks that actually have a video, and only
   // with fields we can ground in real data (no invented duration/interaction stats).
   // uploadDate derives from the owning album's release date when known.
@@ -1058,6 +1062,9 @@ ${videoJsonLd}
   .cta{color:#00E5FF;text-decoration:none;font:600 .68rem/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;
        border:1px solid color-mix(in srgb,#00E5FF 45%,transparent);border-radius:999px;padding:11px 18px;transition:.16s}
   .cta:hover{background:rgba(0,229,255,.1);transform:translateY(-1px)}
+  .film-story{max-width:64ch;margin:6px auto 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);text-align:left}
+  .film-story h2{margin:0 0 8px;font:600 .62rem/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:#00E5FF}
+  .film-story p{margin:0;color:rgba(244,244,255,.86);font-size:.95rem;line-height:1.65}
 </style>
 </head><body>
   <nav class="wnav">
@@ -1070,7 +1077,32 @@ ${videoJsonLd}
     <h1>${escapeXmlText(title)} &mdash; the film</h1>
     ${track?.wisdom ? `<p class="wisd">${escapeXmlText(track.wisdom)}</p>` : ''}
     <a class="cta" href="${escapeHtmlAttr(playerUrl)}">Listen in the full player &rarr;</a>
+    <section id="filmStory" class="film-story" hidden>
+      <h2>The story behind the film</h2>
+      <p id="filmLiner"></p>
+    </section>
   </main>
+  <script>
+    /* The story behind the film — surface the track's grounded AI liner note
+       (reuse /api/liner, Workers AI 70B, grounded, KV-cached). textContent-filled
+       (Trusted-Types safe), fail-soft, hidden until it loads. CSP-compliant:
+       script-src 'unsafe-inline' + connect-src 'self' (see SECURITY_HEADERS). */
+    (function () {
+      try {
+        fetch('/api/liner?track=' + encodeURIComponent(${JSON.stringify(trackId)}))
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            if (!d || !d.liner) return;
+            var el = document.getElementById('filmLiner');
+            var sec = document.getElementById('filmStory');
+            if (!el || !sec) return;
+            el.textContent = d.liner;
+            sec.hidden = false;
+          })
+          .catch(function () {});
+      } catch (e) {}
+    })();
+  </script>
 </body></html>`;
 }
 
