@@ -2913,7 +2913,7 @@ export default {
           !TRACK_BY_ID.has(toId)
         )
           return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
-        const cacheK = `segue:${fromId}>${toId}#v4`;
+        const cacheK = `segue:${fromId}>${toId}#v5`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2935,7 +2935,7 @@ export default {
         const fromLyric = segueLyric(from);
         const toLyric = segueLyric(to);
         const system =
-          "You are bZ's DJ explaining a segue — why the NEXT track flows from the CURRENT one, drawing ONLY on the two songs' titles, albums, vibes, wisdom, and lyric lines. EVERY track is holy gospel-rap, so a generic spiritual bridge is a NON-reason: NEVER write 'holy vibes/faith/wisdom' or 'shared faith/wisdom'. Describe the bridge ITSELF as a vivid fragment — a specific shared image, place, character, or scripture, OR a precise energy shift. GOOD: 'Darkness shifts to neon skies' · 'Crossing borders, prophecy to mercy' · 'The same cracked-window bus rolls on'. BAD (never do this): 'Chef Lu links the two tracks', 'Steel connects both tracks' — naming the bridge then tacking on 'the two tracks'/'both tracks' is filler. STRICT: ONE fragment, max ~14 words, NEVER the words 'both tracks', 'the two tracks', 'these tracks', or 'the tracks'; no preamble, no markdown, no quotation marks, zero drug references. NEVER invent facts; interpret what's given.";
+          "You are bZ's DJ explaining a segue — why the NEXT track flows from the CURRENT one, drawing ONLY on the two songs' titles, albums, vibes, wisdom, and lyric lines. EVERY track is holy gospel-rap, so a generic spiritual bridge is a NON-reason: NEVER write 'holy vibes/faith/wisdom' or 'shared faith/wisdom'. Describe the bridge ITSELF as a vivid fragment — a specific shared image, place, character, or scripture, OR a precise energy shift. GOOD (these show the STYLE ONLY — build YOUR fragment from THIS pair's own vibes/images/lyrics, and NEVER reuse an example's words or opener): 'Crossing borders, prophecy to mercy' · 'The same cracked-window bus rolls on'. NEVER begin with 'Darkness shifts to' or any reused template opener. BAD (never do this): 'Chef Lu links the two tracks', 'Steel connects both tracks' — naming the bridge then tacking on 'the two tracks'/'both tracks' is filler. STRICT: ONE fragment, max ~14 words, NEVER the words 'both tracks', 'the two tracks', 'these tracks', or 'the tracks'; no preamble, no markdown, no quotation marks, zero drug references. NEVER invent facts; interpret what's given.";
         const user = `CURRENT: "${from.title}" (${fromAlbum?.name ?? 'bZ'}) — vibe: ${from.vibe}; wisdom: ${from.wisdom}${fromLyric ? `; a line: ${fromLyric}` : ''}\nNEXT: "${to.title}" (${toAlbum?.name ?? 'bZ'}) — vibe: ${to.vibe}; wisdom: ${to.wisdom}${toLyric ? `; a line: ${toLyric}` : ''}`;
         let why = '';
         try {
@@ -2974,6 +2974,11 @@ export default {
         } catch {
           why = '';
         }
+        // Example-parrot backstop: the few-shot GOOD example got copied verbatim
+        // ungrounded — "Darkness shifts to X" (the old example opener) + "neon
+        // skies" (example imagery no real bZ track uses) recurred ~50% of samples.
+        // Reject them → fail-soft null (the up-next card still names the track).
+        if (/^\s*darkness shifts to\b/i.test(why) || /\bneon skies\b/i.test(why)) why = '';
         if (why.length < 12) return jsonResponse({ why: null }, 200, {}, request);
         ctx.waitUntil(env.COUNTERS.put(cacheK, why, { expirationTtl: 2592000 }));
         return jsonResponse({ why }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
