@@ -105,9 +105,9 @@ function hashOf(s: string): string {
   return (h >>> 0).toString(36);
 }
 
-/** Lyrics source: the inline `track.lyrics` while they still live on the Track;
- * once lyrics move to `lyrics-static.ts` (LCP split), callers pass them in. */
-export function deriveTags(track: Track, lyrics: readonly string[] = track.lyrics ?? []): TrackTags {
+/** Lyrics now live in `lyrics-static.ts` (LCP split) — callers pass the track's
+ * lyric lines in (`STATIC_LYRICS[track.id]`); the gen script + drift test do so. */
+export function deriveTags(track: Track, lyrics: readonly string[]): TrackTags {
   const album = ALBUM_BY_ID.get(track.album);
   const body = [
     track.title,

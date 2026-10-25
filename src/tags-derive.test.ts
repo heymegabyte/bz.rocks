@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TRACKS } from './data';
 import { deriveTags } from './tags-derive';
 import { STATIC_TAGS } from './tags-static';
+import { STATIC_LYRICS } from './lyrics-static';
 import { TRACK_TAGS } from './tags';
 
 // tags-static.ts is PRECOMPUTED (scripts/gen-track-tags.mjs). This guards that it
@@ -14,7 +15,10 @@ describe('tags-static matches the live derivation', () => {
 
   it('deriveTags(track) deep-equals the precomputed STATIC_TAGS entry', () => {
     for (const t of TRACKS) {
-      expect(deriveTags(t), `tags drift for ${t.id} — run \`npm run gen:tags\``).toEqual(STATIC_TAGS[t.id]);
+      expect(
+        deriveTags(t, STATIC_LYRICS[t.id] ?? []),
+        `tags drift for ${t.id} — run \`npm run gen:tags\``
+      ).toEqual(STATIC_TAGS[t.id]);
     }
   });
 

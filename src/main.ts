@@ -2736,15 +2736,22 @@ async function loadLyrics(track: Track): Promise<LyricsBundle> {
     /* fall through */
   }
   const dur = engine.audio.duration && Number.isFinite(engine.audio.duration) ? engine.audio.duration : 180;
-  const lines =
-    track.lyrics && track.lyrics.length
-      ? track.lyrics
-      : [
-          track.title,
-          track.vibe || '—',
-          'Lyrics unavailable for this drop.',
-          'Press F for full-screen visualizer.'
-        ];
+  // Lyrics live in a lazy chunk now (LCP split) — load it for the .json-failure
+  // fallback. Fail-soft to the placeholder if the chunk can't load.
+  let staticLines: string[] = [];
+  try {
+    staticLines = (await import('./lyrics-static')).STATIC_LYRICS[track.id] ?? [];
+  } catch {
+    /* lyrics chunk unavailable */
+  }
+  const lines = staticLines.length
+    ? staticLines
+    : [
+        track.title,
+        track.vibe || '—',
+        'Lyrics unavailable for this drop.',
+        'Press F for full-screen visualizer.'
+      ];
   const bundle = synthesizeBundle(lines, dur);
   lyricsCache.set(track.id, bundle);
   return bundle;
@@ -7948,10 +7955,11 @@ let vibeController: AbortController | null = null;
 // ~144-216ms (over the 100ms target). Now a keystroke is just a substring scan
 // of the cached blob — the expensive lowercasing happens once per track.
 interface TrackSearchFields {
-  blob: string; // title+vibe+album+lyrics, lowercased — fast "matches at all?"
+  blob: string; // title+vibe+album [+ lyric words once enriched], lowercased
   title: string;
   vibe: string;
   album: string;
+  base: string; // title+vibe+album only — so lyric enrichment is idempotent
 }
 const trackSearchFields = new Map<string, TrackSearchFields>();
 function searchFields(t: Track): TrackSearchFields {
@@ -7960,19 +7968,36 @@ function searchFields(t: Track): TrackSearchFields {
     const title = t.title.toLowerCase();
     const vibe = t.vibe.toLowerCase();
     const album = (ALBUM_BY_ID.get(t.album)?.name ?? '').toLowerCase();
-    // Lyric CONTENT is searchable, but the markdown SECTION MARKERS
-    // ('**[Chorus]**', '**[Verse 1]**', '[Intro]') are structure, not words —
-    // indexing them made "chorus"/"verse" match every track (33/56 noise hits).
-    // Drop pure-marker lines + strip markdown emphasis so only real words index.
-    const lyricWords = t.lyrics
-      .filter(l => !/^\s*\*{0,2}\[[^\]]*\]\*{0,2}\s*$/.test(l))
-      .join(' ')
-      .replace(/[*_`#]/g, '')
-      .toLowerCase();
-    f = { title, vibe, album, blob: `${title} ${vibe} ${album} ${lyricWords}` };
+    const base = `${title} ${vibe} ${album}`;
+    f = { title, vibe, album, base, blob: base };
     trackSearchFields.set(t.id, f);
   }
   return f;
+}
+
+// Lyrics live in a lazy chunk (LCP split — not in the eager bundle). Enrich every
+// cached blob with the track's cleaned lyric WORDS once, off the critical path (on
+// search-open idle), so lyric-CONTENT search still works. Section markers
+// ('**[Chorus]**' etc.) are structure, not words — dropped (they polluted
+// "chorus"/"verse" to 33/56 hits); markdown emphasis stripped. Fail-soft.
+let lyricsEnriched = false;
+async function enrichSearchLyrics(): Promise<void> {
+  if (lyricsEnriched) return;
+  lyricsEnriched = true;
+  try {
+    const { STATIC_LYRICS } = await import('./lyrics-static');
+    for (const t of TRACKS) {
+      const f = searchFields(t);
+      const words = (STATIC_LYRICS[t.id] ?? [])
+        .filter(l => !/^\s*\*{0,2}\[[^\]]*\]\*{0,2}\s*$/.test(l))
+        .join(' ')
+        .replace(/[*_`#]/g, '')
+        .toLowerCase();
+      f.blob = `${f.base} ${words}`;
+    }
+  } catch {
+    lyricsEnriched = false; // allow retry on the next search-open
+  }
 }
 function filterTracks(query: string): Track[] {
   if (!query.trim()) return [...TRACKS];
@@ -8122,6 +8147,9 @@ function openSearch() {
   // so the FIRST keystroke doesn't pay the one-time build cost mid-typing.
   const warmBlobs = () => {
     for (const t of TRACKS) searchFields(t);
+    // Lazy-load the lyrics chunk + fold lyric words into the blobs so
+    // lyric-content search works (off the eager bundle — LCP).
+    void enrichSearchLyrics();
   };
   const ric = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number })
     .requestIdleCallback;

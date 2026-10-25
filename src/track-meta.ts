@@ -1,5 +1,8 @@
 import type { Album, Track } from './types';
 import { ALBUMS, ALBUM_BY_ID, TRACKS, TRACK_BY_ID } from './data';
+// Lyrics moved out of data.ts (LCP split) — the Worker imports them eagerly here
+// for per-route SEO/OG (server bundle size is irrelevant); the client lazy-loads.
+import { STATIC_LYRICS } from './lyrics-static';
 import { TRACK_DURATIONS } from './durations';
 import merchSuite from '../public/merch/suite.json';
 
@@ -178,7 +181,7 @@ function isStructuralLyric(line: string): boolean {
  * song rather than "# Title" or "[Intro — Haunting Synths]". */
 export function firstSungLines(track: Track, n: number): string[] {
   const out: string[] = [];
-  for (const line of track.lyrics) {
+  for (const line of STATIC_LYRICS[track.id] ?? []) {
     if (isStructuralLyric(line)) continue;
     // Callers re-wrap the line in quotes ("…"), so strip the line's own quotes
     // (else "…" lyrics double up) and any trailing terminal punctuation.
@@ -269,7 +272,7 @@ function siblingAlbumLinks(excludeId?: string, limit = 5): string {
 
 function buildTrackBody(track: Track, album: Album): string {
   const wisdom = cleanQuotes(track.wisdom).trim();
-  const lyrics = track.lyrics.map(cleanLyricLine).filter(Boolean);
+  const lyrics = (STATIC_LYRICS[track.id] ?? []).map(cleanLyricLine).filter(Boolean);
   const hookLine = firstSungLines(track, 1)[0] || track.title;
   const stanza1 = lyrics.slice(0, 4).map(escapeHtml).join('<br/>');
   const stanza2 = lyrics.slice(4, 8).map(escapeHtml).join('<br/>');

@@ -1,5 +1,6 @@
 import { SEO_INDEX, firstSungLines, type RouteSeo } from '../src/track-meta';
 import { TRACK_BY_ID, ALBUM_BY_ID, ALBUMS } from '../src/data';
+import { STATIC_LYRICS } from '../src/lyrics-static';
 import { buildRssFeed } from '../src/feed';
 import { buildLlmsTxt } from '../src/llms';
 import { sendPushBatch, type PushSubscriptionRecord } from './web-push';
@@ -2909,7 +2910,7 @@ export default {
         const fromAlbum = ALBUM_BY_ID.get(from.album);
         const toAlbum = ALBUM_BY_ID.get(to.album);
         const segueLyric = (t: (typeof from) | (typeof to)): string =>
-          (t.lyrics || []).map(l => l.trim()).find(l => l.length > 8 && l.length < 70 && !/^[[(]/.test(l)) ??
+          (STATIC_LYRICS[t.id] || []).map(l => l.trim()).find(l => l.length > 8 && l.length < 70 && !/^[[(]/.test(l)) ??
           '';
         const fromLyric = segueLyric(from);
         const toLyric = segueLyric(to);
@@ -2987,7 +2988,7 @@ export default {
         if (isTrack) {
           const t = TRACK_BY_ID.get(trackId)!;
           const album = ALBUM_BY_ID.get(t.album);
-          const lyric = (t.lyrics || [])
+          const lyric = (STATIC_LYRICS[t.id] || [])
             .map(l => l.trim())
             .find(l => l.length > 8 && l.length < 70 && !/^[\[(]/.test(l));
           facts = `SONG: "${t.title}" from the album ${album?.name ?? 'bZ'}\nvibe: ${t.vibe}\nwisdom: ${t.wisdom ?? ''}${lyric ? `\na line from it: ${lyric}` : ''}`;

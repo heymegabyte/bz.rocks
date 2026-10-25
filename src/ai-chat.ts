@@ -14,6 +14,16 @@ import { getTrackTags } from './tags';
 import { renderWidgets, parseAiWidgets, type AiChatWidget } from './ai-widgets';
 import { buildShortCommandsPalette } from './ai-shortcommands';
 
+// Lyrics live in a lazy chunk (LCP split). The chat is itself lazy-mounted, so
+// load the lyrics map once here (off the eager bundle) into a sync-readable cache
+// for the "now playing" lyric-line context. Empty until loaded — fail-soft.
+let staticLyricsCache: Record<string, string[]> = {};
+void import('./lyrics-static')
+  .then(m => {
+    staticLyricsCache = m.STATIC_LYRICS;
+  })
+  .catch(() => {});
+
 interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -1200,14 +1210,12 @@ export function mountAIChat(opts: MountOpts = {}) {
 
   function currentLyric(): string {
     const st = opts.engine?.state();
-    if (!st?.track?.lyrics?.length) return '';
-    const dur = st.duration || 0;
-    if (!dur) return st.track.lyrics[0] || '';
-    const idx = Math.min(
-      st.track.lyrics.length - 1,
-      Math.floor((st.currentTime / dur) * st.track.lyrics.length)
-    );
-    return st.track.lyrics[idx] || '';
+    const lyr = st?.track ? (staticLyricsCache[st.track.id] ?? []) : [];
+    if (!lyr.length) return '';
+    const dur = st?.duration || 0;
+    if (!dur) return lyr[0] || '';
+    const idx = Math.min(lyr.length - 1, Math.floor(((st?.currentTime ?? 0) / dur) * lyr.length));
+    return lyr[idx] || '';
   }
 
   function expandVariables(text: string): string {

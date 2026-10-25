@@ -7,7 +7,9 @@ export interface Track {
   album: string;
   vibe: string;
   zone: { row: number; col: number };
-  lyrics: string[];
+  // Lyrics live in src/lyrics-static.ts (lazy-loaded) — NOT on the Track, so the
+  // ~450KB of lyrics stays out of the eager client bundle (LCP). Look up via
+  // STATIC_LYRICS[track.id]; the worker imports it eagerly, the client lazily.
   wisdom: string;
   /** Optional cinematic music-video URL (served from R2 via /media/*). */
   video?: string;
