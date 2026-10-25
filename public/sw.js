@@ -1,4 +1,13 @@
-const VERSION = 'panda-desiiignare-v2';
+// scripts/inject-sw-assets.mjs (post `vite build`) rewrites these two lines with
+// the current hashed entry assets + a content hash, so a deploy that changes the
+// bundle busts the cache AND precaches the new critical render path — the app
+// renders fully offline + loads instantly from cache on the very first return
+// visit, not just after a runtime-cache warmup. Safe defaults if the injector
+// hasn't run (dev): no build assets, static version.
+const BUILD_HASH = 'dev';
+const BUILD_ASSETS = [];
+
+const VERSION = `panda-desiiignare-v3-${BUILD_HASH}`;
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const AUDIO_CACHE = `${VERSION}-audio`;
@@ -7,18 +16,36 @@ const IMAGE_CACHE = `${VERSION}-image`;
 const PRECACHE = [
   '/',
   '/ashton.html',
-  '/offline.html',
   '/site.webmanifest',
   '/favicon.ico',
-  '/apple-touch-icon.png'
+  '/apple-touch-icon.png',
+  ...BUILD_ASSETS
 ];
+
+// Self-contained offline fallback. Served INLINE (not from a cached file) so it
+// has zero fetch/URL dependency — previously the SW precached '/offline.html',
+// but CF Assets redirects /offline.html → /offline and the worker soft-404s the
+// extensionless /offline, so the entry could never be cached and (via addAll)
+// killed the ENTIRE service-worker install. Branded, reduced-motion-safe, no
+// external assets, works with no network.
+const OFFLINE_HTML = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline · bZ</title><style>:root{color-scheme:dark}*{margin:0;box-sizing:border-box}body{min-height:100svh;display:grid;place-items:center;background:#060610;color:#f4f4ff;font-family:'Space Grotesk',system-ui,sans-serif;text-align:center;padding:2rem;overflow:hidden}.wrap{max-width:30rem;position:relative;z-index:1}.mark{font-family:'Sora',system-ui,sans-serif;font-weight:900;font-size:3.2rem;letter-spacing:-.03em;background:linear-gradient(135deg,#00E5FF,#7C3AED);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:1rem}h1{font-size:1.5rem;font-weight:800;margin-bottom:.75rem}p{color:#a8a8c0;line-height:1.55;margin-bottom:1.75rem}button{font:inherit;font-weight:700;color:#060610;background:#00E5FF;border:0;border-radius:999px;padding:.72rem 1.7rem;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;box-shadow:0 8px 30px -8px #00E5FF}button:hover{transform:translateY(-2px);box-shadow:0 14px 42px -8px #00E5FF}.pulse{position:fixed;inset:0;background:radial-gradient(circle at 50% 42%,rgba(0,229,255,.14),transparent 60%);animation:breathe 6s ease-in-out infinite;z-index:0}@keyframes breathe{0%,100%{opacity:.35}50%{opacity:.9}}@media(prefers-reduced-motion:reduce){.pulse{animation:none}button{transition:none}}</style></head><body><div class="pulse" aria-hidden="true"></div><div class="wrap"><div class="mark">bZ</div><h1>You're offline</h1><p>The signal dropped — but the music's still here. Reconnect and press play.</p><button type="button" onclick="location.reload()">Try again</button></div></body></html>`;
+
+function offlineResponse() {
+  return new Response(OFFLINE_HTML, {
+    status: 200,
+    headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }
+  });
+}
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches
-      .open(SHELL_CACHE)
-      .then(cache => cache.addAll(PRECACHE))
-      .then(() => self.skipWaiting())
+    caches.open(SHELL_CACHE).then(async cache => {
+      // Individual adds (NOT addAll) so one failing/redirecting entry never
+      // rejects the whole install — addAll is all-or-nothing, and a single
+      // 404/redirect previously killed the entire SW (no caching, no offline).
+      await Promise.allSettled(PRECACHE.map(u => cache.add(u)));
+      await self.skipWaiting();
+    })
   );
 });
 
@@ -77,10 +104,7 @@ async function networkFirst(request, cacheName, timeoutMs = 3000) {
   } catch {
     const cached = await cache.match(request);
     if (cached) return cached;
-    if (isHTML(request)) {
-      const offline = await caches.match('/offline.html');
-      if (offline) return offline;
-    }
+    if (isHTML(request)) return offlineResponse();
     throw new Error('offline');
   }
 }
@@ -97,7 +121,11 @@ async function cacheFirst(request, cacheName, maxEntries = 60) {
 
 async function staleWhileRevalidate(request, cacheName, maxEntries = 80) {
   const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
+  // Check this cache first, then ALL caches — the precached critical JS/CSS live
+  // in the SHELL cache, so an offline asset request must find them there too,
+  // else the shell loads from cache but its bundle can't and the SPA renders
+  // blank offline.
+  const cached = (await cache.match(request)) || (await caches.match(request));
   const networkPromise = fetch(request)
     .then(async res => {
       await safePut(cache, request, res);
@@ -105,7 +133,9 @@ async function staleWhileRevalidate(request, cacheName, maxEntries = 80) {
       return res;
     })
     .catch(() => null);
-  return cached || (await networkPromise) || (await caches.match('/offline.html'));
+  // Images never fall back to the HTML offline page — a failed/uncached image
+  // returns a clean network error (broken <img>), not an HTML document.
+  return cached || (await networkPromise) || Response.error();
 }
 
 async function trimCache(cacheName, maxEntries) {

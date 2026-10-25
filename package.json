@@ -19,7 +19,7 @@
     "suno:queue": "vite-node scripts/build-suno-queue.ts",
     "suno:ingest": "node scripts/ingest-suno-downloads.mjs",
     "lint": "oxlint src worker scripts",
-    "build": "tsc -b && vite build && node scripts/build-embed-component.mjs",
+    "build": "tsc -b && vite build && node scripts/build-embed-component.mjs && node scripts/inject-sw-assets.mjs",
     "typecheck": "tsc -b --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,md,html,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,md,html,css}\"",
