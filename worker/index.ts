@@ -1025,6 +1025,18 @@ function renderWatchPage(trackId: string, origin: string): string {
   const coverUrl = `${origin}${album?.cover ?? '/art/cover-signals.jpg'}`;
   const playerUrl = track ? `${origin}/${track.album}/${trackId}` : `${origin}/`;
   const watchUrl = `${origin}/watch/${trackId}`;
+  // Interconnectedness: a film page shouldn't dead-end — link to every OTHER
+  // track that has a cinematic film (grounded in real Track.video entries, so it
+  // auto-grows as more films ship). Hidden when this is the only film.
+  const otherFilms = [...TRACK_BY_ID.values()].filter(t => t.video && t.id !== trackId);
+  const moreFilmsHtml = otherFilms.length
+    ? `<section class="film-more"><h2>More films</h2><div class="film-more__row">${otherFilms
+        .map(t => {
+          const cov = `${origin}${ALBUM_BY_ID.get(t.album)?.cover ?? '/art/cover-signals.jpg'}`;
+          return `<a class="film-more__card" href="${escapeHtmlAttr(`${origin}/watch/${t.id}`)}"><img src="${escapeHtmlAttr(cov)}" alt="" width="46" height="46" loading="lazy" /><span>${escapeXmlText(t.title)} &mdash; the film</span></a>`;
+        })
+        .join('')}</div></section>`
+    : '';
   // Grounded, per-track description (VideoObject + meta/OG) — the track's REAL
   // wisdom line beats a generic "watch the film" template for video SEO.
   const desc = track?.wisdom
@@ -1093,6 +1105,13 @@ ${videoJsonLd}
   .film-story{max-width:64ch;margin:6px auto 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);text-align:left}
   .film-story h2{margin:0 0 8px;font:600 .62rem/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:#00E5FF}
   .film-story p{margin:0;color:rgba(244,244,255,.86);font-size:.95rem;line-height:1.65}
+  .film-more{max-width:64ch;width:100%;margin:6px auto 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.1)}
+  .film-more h2{margin:0 0 10px;font:600 .62rem/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:#00E5FF}
+  .film-more__row{display:flex;flex-wrap:wrap;gap:10px}
+  .film-more__card{display:flex;align-items:center;gap:10px;text-decoration:none;color:#f4f4ff;font-size:.9rem;
+        border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 13px 8px 8px;transition:.16s}
+  .film-more__card img{border-radius:6px;object-fit:cover;flex:none}
+  .film-more__card:hover{border-color:#00E5FF;background:rgba(0,229,255,.08);transform:translateY(-1px)}
 </style>
 </head><body>
   <nav class="wnav">
@@ -1109,6 +1128,7 @@ ${videoJsonLd}
       <h2>The story behind the film</h2>
       <p id="filmLiner"></p>
     </section>
+    ${moreFilmsHtml}
   </main>
   <script>
     /* The story behind the film — surface the track's grounded AI liner note
