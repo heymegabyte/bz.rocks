@@ -1808,6 +1808,12 @@ function setupShell(root: HTMLElement) {
         <!-- Wisdom: track tagline / artist note -->
         <blockquote class="np-panel__wisdom" id="npPanelWisdom">Play a track to see its wisdom.</blockquote>
 
+        <!-- AI "how this song lives its wisdom" — one grounded line tying the law/scripture to the song. -->
+        <div class="np-panel__wisdom-how" id="npPanelWisdomHow" hidden>
+          <span class="np-panel__liner-eyebrow">How this song lives it <em>· AI</em></span>
+          <p class="np-panel__wisdom-how-body" id="npPanelWisdomHowBody"></p>
+        </div>
+
         <!-- AI "story behind the song" liner note — lazily fetched per track. -->
         <div class="np-panel__liner" id="npPanelLiner" hidden>
           <span class="np-panel__liner-eyebrow">Story behind the song <em>· AI</em></span>
@@ -8962,6 +8968,43 @@ async function loadLinerNote(trackId: string | null): Promise<void> {
   }
 }
 
+// ── AI "how this song lives its wisdom" ──────────────────────────────────────
+// One grounded line per track from /api/wisdom (Workers AI, KV-cached), tying
+// the track's Greene-law / scripture wisdom to a CONCRETE action/image in the
+// song — never restating the law. Memoized client-side, fail-soft: the panel
+// simply shows no "how" line if generation errors or the track has no wisdom.
+// Rendered directly under the wisdom quote in the now-playing panel.
+const wisdomHowCache = new Map<string, string>();
+async function loadWisdomHow(trackId: string | null): Promise<void> {
+  const wrap = $('#npPanelWisdomHow') as HTMLElement | null;
+  const bodyEl = $('#npPanelWisdomHowBody') as HTMLElement | null;
+  if (!wrap || !bodyEl) return;
+  if (!trackId) {
+    wrap.hidden = true;
+    return;
+  }
+  const memo = wisdomHowCache.get(trackId);
+  if (memo !== undefined) {
+    bodyEl.textContent = memo;
+    wrap.hidden = !memo;
+    return;
+  }
+  wrap.hidden = true; // hide until the real line arrives (generation ~1-3s cold)
+  try {
+    const r = await fetch(`/api/wisdom?track=${encodeURIComponent(trackId)}`);
+    const d = (await r.json()) as { how?: string | null };
+    const how = (d.how || '').trim();
+    wisdomHowCache.set(trackId, how);
+    // Only render if this track is still the one on screen.
+    if (currentTrackId === trackId && how) {
+      bodyEl.textContent = how;
+      wrap.hidden = false;
+    }
+  } catch {
+    /* fail-soft — no "how" line shown */
+  }
+}
+
 // ── AI lyric deep-dive — "what it's really saying" ───────────────────────────
 // 3 grounded interpretive beats per track from /api/meaning (Workers AI,
 // KV-cached server-side), memoized client-side, fail-soft. Rendered below the
@@ -9294,6 +9337,7 @@ function refreshNpPanel() {
   if (label) label.textContent = album?.name ?? 'bZ';
   if (title) title.textContent = track?.title ?? 'Press play';
   if (wisdom) wisdom.textContent = track?.wisdom ?? 'Play a track to see its wisdom.';
+  void loadWisdomHow(track?.id ?? null);
   void loadLinerNote(track?.id ?? null);
   void loadMeaning(track?.id ?? null);
   void loadSegue(track?.id ?? null);

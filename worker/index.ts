@@ -2784,6 +2784,63 @@ export default {
         return jsonResponse({ liner }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
       }
 
+      // AI "the wisdom, in action" — ONE grounded line on HOW this song LIVES OUT
+      // its wisdom (a Robert Greene law or a scripture — the catalog's defining
+      // framework), from the song's real lyrics. Closes the gap where the wisdom
+      // quote is SHOWN on every track but never CONNECTED to the song. Same
+      // Workers-AI + KV-cache + fail-soft pattern as /api/liner.
+      if (url.pathname === '/api/wisdom' && request.method === 'GET') {
+        const trackId = (url.searchParams.get('track') || '').trim();
+        if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
+          return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
+        const track = TRACK_BY_ID.get(trackId)!;
+        if (!track.wisdom) return jsonResponse({ how: null }, 200, {}, request);
+        const cacheK = `wisdom-how:${trackId}#v1`;
+        const cached = await env.COUNTERS.get(cacheK);
+        if (cached)
+          return jsonResponse(
+            { how: cached, cached: true },
+            200,
+            { 'Cache-Control': 'public, max-age=86400' },
+            request
+          );
+        if (!env.AI) return jsonResponse({ how: null }, 200, {}, request);
+        if (await rateLimitedCount(env.COUNTERS, ip, 'wisdom', 'minute', 12, 60))
+          return jsonResponse({ how: null, throttled: true }, 200, {}, request);
+        const album = ALBUM_BY_ID.get(track.album);
+        const lyricSnippet = firstSungLines(track, 14).join(' / ');
+        const system =
+          "In ONE vivid line, explain HOW this bZ song LIVES OUT its wisdom line (a Robert Greene law or a scripture) — name the SPECIFIC action, image, character, or move IN THE SONG that embodies it, drawn ONLY from the title/vibe/lyrics given. Lead with the song's OWN concrete detail. Do NOT restate or quote the law/verse. NEVER use interchangeable faith-platitudes that fit any bZ song — BANNED phrasings: 'through faith and action', 'faith in action', 'embodies resilience/determination/strength', 'a testament to', 'hard-won wisdom', 'holy fire'. Voice: Newark hustle-gospel — hard but holy. STRICT: ONE line, ~18 words max, no preamble, no quotation marks, no markdown, no 'Law N', zero drug references. NEVER invent people, places, or facts. Output only the line.";
+        const user = `Song: "${track.title}" (${album?.name ?? 'bZ'}). Vibe: ${track.vibe}. Wisdom to embody: ${track.wisdom}. Lyrics: ${lyricSnippet}`;
+        let how = '';
+        try {
+          const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: user }
+            ],
+            max_tokens: 60,
+            temperature: 0.75
+          })) as { response?: string };
+          how = (out.response || '')
+            .split(/\r?\n/)[0]!
+            .trim()
+            .replace(/^["'`*]+|["'`*]+$/g, '')
+            .trim();
+        } catch {
+          how = '';
+        }
+        // Anti-generic backstop: reject faith-platitude frames that fit any song
+        // (a prompt alone doesn't reliably hold on a homogeneous gospel catalog).
+        const GENERIC =
+          /\bthrough faith and action\b|\bfaith in action\b|\bembodies?\s+(?:resilience|determination|strength|the ?law)\b|\ba testament to\b|\bhard-?won wisdom\b/i;
+        if (GENERIC.test(how)) how = '';
+        if (how.length > 140) how = how.slice(0, 137).trimEnd() + '…';
+        if (how.length < 10) return jsonResponse({ how: null }, 200, {}, request);
+        ctx.waitUntil(env.COUNTERS.put(cacheK, how, { expirationTtl: 2592000 }));
+        return jsonResponse({ how }, 200, { 'Cache-Control': 'public, max-age=86400' }, request);
+      }
+
       // AI lyric deep-dive — "what it's really saying": 3 grounded interpretive
       // beats per track. Same Workers-AI + KV-cache + fail-soft pattern as
       // /api/liner, but grounds on MORE sung lines and returns a typed string[]

@@ -7089,6 +7089,24 @@ html.is-playing .np-panel.is-open .np-panel__stat strong {
   quotes: none;
 }
 
+/* AI "how this song lives its wisdom" — one grounded line tying the law/
+   scripture to a concrete move in the song. Pulled up snug under the quote
+   with an accent rail so it reads as flowing FROM the wisdom above it. */
+.np-panel__wisdom-how {
+  margin: -12px 0 20px;
+}
+.np-panel__wisdom-how-body {
+  margin: 6px 0 0;
+  padding-left: 11px;
+  border-left: 2px solid rgba(0, 229, 255, 0.28);
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
 /* AI "story behind the song" liner note — sits below the wisdom line, clearly
    labeled (with an AI tag for transparency) and visually secondary. */
 .np-panel__liner {
