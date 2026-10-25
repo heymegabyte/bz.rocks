@@ -11409,6 +11409,14 @@ body.cast-tv-open .transport {
 .aichat__chips button:active {
   transform: translateY(0);
 }
+/* Context-aware chip — names the current track; accent-tinted so it reads as
+   the "about what you're playing" primary suggestion (album accent per track). */
+.aichat__chips button.aichat__chip--now {
+  background: color-mix(in srgb, var(--album-accent, var(--aichat-accent)) 12%, transparent);
+  border-color: color-mix(in srgb, var(--album-accent, var(--aichat-accent)) 42%, var(--line));
+  color: var(--ink-album-accent-neon, var(--ink-accent-neon, var(--ink)));
+  max-inline-size: 100%;
+}
 
 /* ── Suggested follow-up chips (after every assistant turn) ───────────── */
 /* Three contextual one-tap prompts rendered below assistant replies — the

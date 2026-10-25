@@ -376,6 +376,7 @@ export function mountAIChat(opts: MountOpts = {}) {
           <p class="aichat__welcome-sub">Tracks, lyrics, gear, prayer — hard but holy.</p>
           <div class="aichat__welcome-rotating" data-aichat="welcomeRotating" aria-live="polite"></div>
           <div class="aichat__chips" data-aichat="chips">
+            <button type="button" class="aichat__chip--now" data-aichat="nowChip" data-prompt="Tell me the real story behind the track I'm playing." hidden>✦ Story behind this track</button>
             <button type="button" data-prompt="What's playing right now?">What's playing?</button>
             <button type="button" data-prompt="Explain the meaning of this song's lyrics.">Explain these lyrics</button>
             <button type="button" data-prompt="Recommend three bZ tracks for late-night driving.">Late-night picks</button>
@@ -658,6 +659,7 @@ export function mountAIChat(opts: MountOpts = {}) {
   const sendBtn = $<HTMLButtonElement>('send');
   const welcome = $('welcome');
   const welcomeRotating = $('welcomeRotating');
+  const nowChip = $<HTMLButtonElement>('nowChip');
   const sidebar = $('sidebar');
   const settingsPanel = $('settingsPanel');
   const sessionList = $<HTMLUListElement>('sessionList');
@@ -2662,10 +2664,15 @@ export function mountAIChat(opts: MountOpts = {}) {
   // ── Now-playing chip + audio-reactive glow ───────────────────────────────
   let lastCoverSrc = '';
   let lastFabTitle = '';
+  let lastNowChipId = '';
   function refreshNow() {
     const st = opts.engine?.state();
     if (!st?.track) {
       now.hidden = true;
+      if (lastNowChipId) {
+        nowChip.hidden = true;
+        lastNowChipId = '';
+      }
       if (lastFabTitle) {
         fabTip.hidden = true;
         fabTip.textContent = '';
@@ -2675,6 +2682,16 @@ export function mountAIChat(opts: MountOpts = {}) {
     }
     now.hidden = false;
     nowTitle.textContent = st.track.title;
+    if (st.track.id !== lastNowChipId) {
+      lastNowChipId = st.track.id;
+      // Context-aware welcome chip — names the CURRENT track so the DJ's empty
+      // state is about what you're actually playing. Grounded: the DJ answers
+      // from the catalog in its system prompt. Updated only on track change
+      // (refreshNow runs every rAF frame, so guard on the id to avoid DOM churn).
+      nowChip.textContent = `✦ Story behind "${st.track.title}"`;
+      nowChip.dataset.prompt = `Tell me the real story behind the track "${st.track.title}".`;
+      nowChip.hidden = false;
+    }
     const min = Math.floor((st.currentTime || 0) / 60);
     const sec = Math.floor((st.currentTime || 0) % 60)
       .toString()
