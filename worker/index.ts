@@ -2992,7 +2992,7 @@ export default {
         const id = isTrack ? trackId : albumId;
         if (isTrack ? !TRACK_BY_ID.has(trackId) : !ALBUM_BY_ID.has(albumId))
           return jsonResponse({ error: 'unknown_target' }, 404, {}, request);
-        const cacheK = `sharecopy:${isTrack ? 't' : 'a'}:${id}#v1`;
+        const cacheK = `sharecopy:${isTrack ? 't' : 'a'}:${id}#v2`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -3017,7 +3017,7 @@ export default {
           facts = `ALBUM: "${a.name}" by bZ\ntagline: ${a.tagline ?? ''}\nabout: ${a.description ?? ''}`;
         }
         const system =
-          "You write ONE irresistible social share caption for bZ's gospel-rap music, drawing ONLY on the details given. Make a stranger want to press play. Voice: Newark hustle-gospel — hard, holy, vivid. STRICT: one line, max ~22 words AND under 170 characters, no hashtags, at most one tasteful emoji, no quotation marks, no markdown, no preamble, zero drug references. NEVER invent facts, numbers, features, or collaborators — interpret only what is given. Output ONLY the caption text.";
+          "You write ONE irresistible social share caption for bZ's gospel-rap music, drawing ONLY on the details given. Make a stranger want to press play. Voice: Newark hustle-gospel — street-smart, faith-rooted, cinematic. LEAD WITH THIS SONG'S OWN concrete image, story, place, or a vivid line from it — the specific detail that sets it apart from every other track. NEVER open with generic faith-words that could describe any gospel song. BAD (banned — says nothing, fits every bZ track): \"Holy vibes from <album>\", \"Hard holy vibes\", \"Gospel vibes\", \"Holy beats\". GOOD (concrete, specific to the song): \"Mama called us Baby Sharks in the dark\", \"A CBO pen against a trillion-dollar hole\", \"Killed the dragon, kept the mercy\". STRICT: one line, max ~22 words AND under 170 characters, no hashtags, at most one tasteful emoji, no quotation marks, no markdown, no preamble, zero drug references. NEVER invent facts, numbers, features, or collaborators — interpret only what is given. Output ONLY the caption text.";
         let caption = '';
         try {
           const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
@@ -3042,6 +3042,26 @@ export default {
         // not a prompt leak, so it must NOT be suppressed.
         if (/\b(drawing only on|output only the|interpret only what|never invent)\b/i.test(caption))
           caption = '';
+        // Anti-generic backstop: "(hard) holy/gospel vibes/beats" is a formula
+        // that fits EVERY bZ track — reject it and backfill from the song's OWN
+        // words (a vivid lyric) or the album's tagline, both grounded + concrete.
+        // Per ai-abundance: a prompt alone doesn't reliably hold the invariant.
+        const GENERIC_CAP = /\b(?:hard\s+)?(?:holy|gospel)\s+(?:vibes?|beats?)\b/i;
+        if (!caption || GENERIC_CAP.test(caption)) {
+          if (isTrack) {
+            const t = TRACK_BY_ID.get(trackId)!;
+            const line = (STATIC_LYRICS[t.id] || [])
+              .map(l => l.trim())
+              .find(
+                l => l.length > 14 && l.length < 90 && !/^[[(]/.test(l) && !GENERIC_CAP.test(l)
+              );
+            if (line) caption = line.length > 160 ? line.slice(0, 157).trimEnd() + '…' : line;
+            else caption = '';
+          } else {
+            const a = ALBUM_BY_ID.get(albumId)!;
+            caption = a.tagline ? a.tagline.slice(0, 160) : '';
+          }
+        }
         if (caption.length > 180) caption = caption.slice(0, 177).trimEnd() + '…';
         if (caption.length < 12) return jsonResponse({ caption: null }, 200, {}, request);
         ctx.waitUntil(env.COUNTERS.put(cacheK, caption, { expirationTtl: 2592000 }));
