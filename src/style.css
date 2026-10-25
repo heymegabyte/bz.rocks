@@ -349,6 +349,17 @@ body {
   opacity: 0.4;
   cursor: not-allowed;
 }
+/* Live validity affordance (classes set by refreshNlValidity as the user types):
+   the row border reflects the email's validity instantly — album-accent glow when
+   valid, a soft red when non-empty-but-invalid — and the submit arrow enables only
+   when valid. Gives instant per-field feedback instead of a post-submit error. */
+.nl-inline:has(.nl-inline__input--valid) {
+  border-color: color-mix(in srgb, var(--album-accent, var(--accent)) 55%, var(--line-strong));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--album-accent, var(--accent)) 20%, transparent);
+}
+.nl-inline:has(.nl-inline__input--invalid) {
+  border-color: color-mix(in srgb, #ff5a7a 48%, var(--line));
+}
 .nl-inline__status {
   position: absolute;
   margin-left: 6px;

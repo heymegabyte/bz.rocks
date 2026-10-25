@@ -670,7 +670,7 @@ function renderInlineNewsletter(source: string): string {
   return `
     <form class="nl-inline" data-nl-source="${safeSource}" novalidate>
       <input type="email" class="nl-inline__input" name="email" placeholder="email — first listen, every drop" autocomplete="email" required aria-label="Email for bZ drops" inputmode="email" spellcheck="false" autocapitalize="off" />
-      <button type="submit" class="nl-inline__submit" aria-label="Subscribe">
+      <button type="submit" class="nl-inline__submit" aria-label="Subscribe" disabled>
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
       </button>
       <button type="button" class="nl-inline__push" aria-label="Also enable push notifications" aria-pressed="false" title="Also push to my lock screen">
@@ -679,6 +679,30 @@ function renderInlineNewsletter(source: string): string {
       <span class="nl-inline__status" data-nl-status hidden></span>
     </form>`;
 }
+
+/** Shared email validity check — drives BOTH the live per-field affordance and
+ *  the submit guard so they can never disagree (matches the server's accept
+ *  rule in /api/subscribe). */
+function isValidEmail(s: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s.trim());
+}
+
+/** Live validity affordance for a newsletter email input (per the zod-everywhere
+ *  mandate: validate on input, visible per-field state, gate submit). Valid →
+ *  accent + enabled submit; non-empty-but-invalid → red + aria-invalid + disabled
+ *  submit; empty → neutral + disabled submit. */
+function refreshNlValidity(input: HTMLInputElement): void {
+  const v = input.value.trim();
+  const valid = isValidEmail(v);
+  const invalid = v !== '' && !valid;
+  input.classList.toggle('nl-inline__input--valid', valid);
+  input.classList.toggle('nl-inline__input--invalid', invalid);
+  if (invalid) input.setAttribute('aria-invalid', 'true');
+  else input.removeAttribute('aria-invalid');
+  const submit = input.closest('.nl-inline')?.querySelector<HTMLButtonElement>('.nl-inline__submit');
+  if (submit) submit.disabled = !valid;
+}
+
 function albumPath(albumId: string) {
   return `/${albumId}`;
 }
@@ -4902,6 +4926,12 @@ function setupInlineNewsletter(): void {
     e.preventDefault();
     void submitInlineNewsletter(form);
   });
+  // Live email validity — instant per-field affordance + submit gating as the
+  // user types (delegated so dynamically-rendered widgets all flow through here).
+  document.addEventListener('input', e => {
+    const input = (e.target as HTMLElement | null)?.closest<HTMLInputElement>('.nl-inline__input');
+    if (input) refreshNlValidity(input);
+  });
   // Push-bell button — toggles browser push subscription inline.
   document.addEventListener('click', e => {
     const btn = (e.target as HTMLElement | null)?.closest('.nl-inline__push');
@@ -4915,6 +4945,7 @@ function setupInlineNewsletter(): void {
     if (saved) {
       document.querySelectorAll<HTMLInputElement>('.nl-inline__input').forEach(i => {
         i.value = saved;
+        refreshNlValidity(i);
       });
     }
   } catch {
@@ -4953,7 +4984,7 @@ async function submitInlineNewsletter(form: HTMLFormElement): Promise<void> {
     status.dataset.kind = kind;
     status.hidden = false;
   };
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+  if (!isValidEmail(email)) {
     showStatus('valid email please', 'err');
     input.focus();
     return;
