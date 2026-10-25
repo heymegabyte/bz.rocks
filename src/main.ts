@@ -3456,6 +3456,10 @@ async function play(track: Track) {
   updateMediaSession(track);
   showWisdomToast(track);
   trackRecent(track.id);
+  // AI Radio: warm the next similar pick NOW (while this track plays) so advancing is
+  // instant — no /api/similar fetch after the track ends, no silent gap between songs.
+  aiRadioPrefetch = null;
+  if (aiRadioOn) void prefetchAiRadioNext(track.id);
   applyAlbumPalette(track);
   if (npPanelOpen) refreshNpPanel();
   if (lyricsFsOpen) refreshLyricsFs();
@@ -7422,7 +7426,13 @@ function nextTrack(dir: 1 | -1) {
 // (keeps the radio exploring). Shared by smartNext (what PLAYS) AND the np-panel UP NEXT
 // preview (what's SHOWN), so the preview always matches what will actually play. Fail-soft
 // → null (callers fall back to catalog order).
-async function pickSimilarNext(trackId: string): Promise<Track | null> {
+// Prefetched AI-Radio next pick (warmed on play when AI Radio is on) — so advancing is
+// INSTANT (no /api/similar fetch after the track ends → no silent inter-track gap) and the
+// np-panel UP NEXT preview + the actual advance share the exact same pick.
+let aiRadioPrefetch: { forId: string; next: Track | null } | null = null;
+
+// The raw /api/similar pick (always fetches, prefers a not-recently-played track). Fail-soft.
+async function fetchSimilarNext(trackId: string): Promise<Track | null> {
   try {
     const r = await fetch(`/api/similar?track=${encodeURIComponent(trackId)}`);
     if (r.ok) {
@@ -7439,6 +7449,20 @@ async function pickSimilarNext(trackId: string): Promise<Track | null> {
     /* fail-soft */
   }
   return null;
+}
+
+// The AI-Radio next for trackId — the prefetched pick if we have it (instant), else a fresh
+// fetch. Shared by smartNext (what PLAYS) + loadSegue (what's SHOWN) so they can't drift.
+async function pickSimilarNext(trackId: string): Promise<Track | null> {
+  if (aiRadioPrefetch?.forId === trackId) return aiRadioPrefetch.next;
+  return fetchSimilarNext(trackId);
+}
+
+// Warm the next pick WHILE the current track plays, so the advance finishes minutes before
+// the track ends → zero gap. Only runs when AI Radio is on.
+async function prefetchAiRadioNext(trackId: string): Promise<void> {
+  const next = await fetchSimilarNext(trackId);
+  if (currentTrackId === trackId) aiRadioPrefetch = { forId: trackId, next }; // ignore if track changed
 }
 
 // Flow to the most vibe-similar track. Fail-soft: any miss → catalog-order next (the
@@ -7477,6 +7501,9 @@ function toggleAiRadio(): void {
   persist(LS_KEYS.aiRadio, aiRadioOn ? '1' : '0');
   refreshAiRadioBtn();
   showToast(aiRadioOn ? '✦ AI Radio on — flowing to similar tracks' : 'AI Radio off');
+  // Warm (or clear) the next-pick prefetch immediately so a mid-track toggle is instant too.
+  aiRadioPrefetch = null;
+  if (aiRadioOn && currentTrackId) void prefetchAiRadioNext(currentTrackId);
   if (npPanelOpen) void loadSegue(currentTrackId);
 }
 

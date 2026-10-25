@@ -115,4 +115,27 @@ test.describe('AI Radio', () => {
     await expect(page.locator('#npPanelSegueTitle')).toHaveText(expectTitle, { timeout: 12000 });
     await expect(page.locator('#npPanelSegueEyebrow')).toContainText(/AI Radio/i);
   });
+
+  test('prefetches the next pick ON PLAY (gapless advance) when AI Radio is on', async ({
+    page
+  }) => {
+    const simReqs: string[] = [];
+    page.on('request', r => {
+      if (r.url().includes('/api/similar')) simReqs.push(r.url().split('track=')[1] ?? '');
+    });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page
+      .locator('#apClose')
+      .click({ timeout: 2000 })
+      .catch(() => {});
+    await page.waitForTimeout(1000);
+    // Enable AI Radio FIRST, then play — /api/similar must be requested ON PLAY (the warm),
+    // not only when the track ends, so advancing has no silent gap.
+    await page.locator('#btnAiRadio').click();
+    simReqs.length = 0;
+    await page.locator('.trackrow').first().click();
+    await page.waitForTimeout(2500);
+    const id = await page.evaluate(curId);
+    expect(simReqs.some(t => t === id), `prefetched /api/similar for ${id} on play`).toBeTruthy();
+  });
 });
