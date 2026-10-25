@@ -3244,6 +3244,24 @@ html.is-playing .transport__np-title {
 .transport__shuffle:hover {
   opacity: 1;
 }
+.transport__airadio {
+  opacity: 0.5;
+  transition:
+    opacity 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+.transport__airadio.is-on {
+  opacity: 1;
+  color: var(--ink-accent);
+  border-color: var(--accent);
+}
+.transport__airadio.is-on svg {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 60%, transparent));
+}
+.transport__airadio:hover {
+  opacity: 1;
+}
 
 .transport__bar {
   position: relative;

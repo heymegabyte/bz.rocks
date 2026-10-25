@@ -98,6 +98,10 @@ let lyricsClickBound = false;
 let currentAlbumFilter: string | null = null;
 let autoplayPromptTrack: Track | null = null;
 let shuffleOn = false;
+// AI Radio: on forward auto-advance (free play), flow to a vibe-SIMILAR track (via the
+// cached /api/similar engine) instead of catalog order — a cohesive, endless radio.
+// Opt-in, OFF by default (zero change to existing behavior), mutually exclusive w/ shuffle.
+let aiRadioOn = false;
 // An AI "play as a set" queue. While the current track is part of it, next/prev
 // walk THIS order; stepping outside it (playing any other track) auto-reverts
 // to catalog order. Set by playVibeSet(), never torn down explicitly.
@@ -154,7 +158,8 @@ const LS_KEYS = {
   crossfade: 'bz:crossfade',
   listenStats: 'bz:listenStats',
   statsCache: 'bz:statsCache',
-  aiExpanded: 'bz:aiExpanded'
+  aiExpanded: 'bz:aiExpanded',
+  aiRadio: 'bz:aiRadio'
 };
 
 interface LocalListenStat {
@@ -178,6 +183,7 @@ function loadPersisted() {
     if (l && (l === 'off' || l === 'one' || l === 'all')) loopMode = l;
     const s = localStorage.getItem(LS_KEYS.shuffle);
     if (s === '1') shuffleOn = true;
+    if (localStorage.getItem(LS_KEYS.aiRadio) === '1') aiRadioOn = true;
     if (localStorage.getItem(LS_KEYS.aiExpanded) === '1') aiPlaylistExpanded = true;
     const cf = localStorage.getItem(LS_KEYS.crossfade);
     if (cf === '1') crossfadeEnabled = true;
@@ -1470,6 +1476,9 @@ function setupShell(root: HTMLElement) {
       <div class="transport__controls">
         <button id="btnShuffle" class="round transport__shuffle" type="button" aria-label="Shuffle" title="Shuffle (S)">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        </button>
+        <button id="btnAiRadio" class="round transport__airadio" type="button" aria-label="AI Radio — auto-flow to similar tracks" title="AI Radio — flow to similar tracks (R)" aria-pressed="false">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.7 5.7a9 9 0 0 0 0 12.6M18.3 5.7a9 9 0 0 1 0 12.6"/></svg>
         </button>
         <button id="btnPrev" class="round" type="button" aria-label="Previous track">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
@@ -6386,8 +6395,20 @@ function bindUi() {
 
   $('#btnShuffle')?.addEventListener('click', () => {
     shuffleOn = !shuffleOn;
+    if (shuffleOn) disableAiRadio(); // mutually exclusive — one flow mode at a time
     persist(LS_KEYS.shuffle, shuffleOn ? '1' : '0');
     refreshShuffleBtn();
+  });
+  $('#btnAiRadio')?.addEventListener('click', () => {
+    aiRadioOn = !aiRadioOn;
+    if (aiRadioOn && shuffleOn) {
+      shuffleOn = false;
+      persist(LS_KEYS.shuffle, '0');
+      refreshShuffleBtn();
+    }
+    persist(LS_KEYS.aiRadio, aiRadioOn ? '1' : '0');
+    refreshAiRadioBtn();
+    showToast(aiRadioOn ? '✦ AI Radio on — flowing to similar tracks' : 'AI Radio off');
   });
   $('#btnPrev')?.addEventListener('click', () => nextTrack(-1));
   $('#btnNext')?.addEventListener('click', () => nextTrack(1));
@@ -7154,8 +7175,19 @@ function bindUi() {
     } else if (e.code === 'KeyR') cycleLoop();
     else if (e.code === 'KeyS') {
       shuffleOn = !shuffleOn;
+      if (shuffleOn) disableAiRadio();
       persist(LS_KEYS.shuffle, shuffleOn ? '1' : '0');
       refreshShuffleBtn();
+    } else if (e.code === 'KeyR') {
+      aiRadioOn = !aiRadioOn;
+      if (aiRadioOn && shuffleOn) {
+        shuffleOn = false;
+        persist(LS_KEYS.shuffle, '0');
+        refreshShuffleBtn();
+      }
+      persist(LS_KEYS.aiRadio, aiRadioOn ? '1' : '0');
+      refreshAiRadioBtn();
+      showToast(aiRadioOn ? '✦ AI Radio on — flowing to similar tracks' : 'AI Radio off');
     } else if (e.key === '?' || (e.shiftKey && e.code === 'Slash')) {
       e.preventDefault();
       if (shortcutsOpen) closeShortcuts();
@@ -7281,8 +7313,9 @@ function handleEnded() {
     }
   }
   // 'all' loops the full track list at end (default behavior); 'off' still advances
-  // but if at the last track and not 'all', stops.
-  if (loopMode === 'off') {
+  // but if at the last track and not 'all', stops. AI Radio never stops — it flows to a
+  // similar track regardless of catalog position, so skip the last-track stop when it's on.
+  if (loopMode === 'off' && !aiRadioOn) {
     const order = playbackOrder(currentTrackId);
     const idx = order.findIndex(t => t.id === currentTrackId);
     if (idx === order.length - 1) {
@@ -7379,6 +7412,17 @@ function playbackOrder(refId: string | null): Track[] {
 }
 
 function nextTrack(dir: 1 | -1) {
+  // AI Radio: forward advance in FREE play flows to a vibe-similar track (not catalog
+  // order). Skipped for manual prev, and for a custom set (play-as-set / vibe set) the
+  // listener explicitly queued — those keep their order.
+  if (
+    aiRadioOn &&
+    dir === 1 &&
+    !(customQueue && currentTrackId && customQueue.some(t => t.id === currentTrackId))
+  ) {
+    void smartNext();
+    return;
+  }
   if (shuffleOn && dir === 1) {
     const others = TRACKS.filter(t => t.id !== currentTrackId);
     const next = others[Math.floor(Math.random() * others.length)];
@@ -7389,6 +7433,46 @@ function nextTrack(dir: 1 | -1) {
   const idx = order.findIndex(t => t.id === currentTrackId);
   const next = order[(idx + dir + order.length) % order.length];
   if (next) play(next);
+}
+
+// Flow to the most vibe-SIMILAR track (grounded by the cached /api/similar engine),
+// preferring one not played recently so the radio keeps exploring. Fail-soft: any miss
+// → catalog-order next (the original behavior), so AI Radio can never dead-end playback.
+async function smartNext(): Promise<void> {
+  const cur = currentTrackId;
+  const catalogNext = (): void => {
+    const order = playbackOrder(cur);
+    const idx = order.findIndex(t => t.id === cur);
+    const next = order[(idx + 1 + order.length) % order.length];
+    if (next) play(next);
+  };
+  if (!cur) return catalogNext();
+  try {
+    const r = await fetch(`/api/similar?track=${encodeURIComponent(cur)}`);
+    if (r.ok) {
+      const d = (await r.json()) as { similar?: Array<{ id?: string }> };
+      const ids = Array.isArray(d.similar)
+        ? d.similar
+            .map(s => s?.id)
+            .filter((x): x is string => !!x && TRACK_BY_ID.has(x) && x !== cur)
+        : [];
+      const pick = ids.find(id => !recentTracks.includes(id)) ?? ids[0];
+      if (pick) {
+        play(TRACK_BY_ID.get(pick)!);
+        return;
+      }
+    }
+  } catch {
+    /* fail-soft → catalog next below */
+  }
+  catalogNext();
+}
+
+function disableAiRadio(): void {
+  if (!aiRadioOn) return;
+  aiRadioOn = false;
+  persist(LS_KEYS.aiRadio, '0');
+  refreshAiRadioBtn();
 }
 
 function setLoopMode(m: LoopMode) {
@@ -7418,6 +7502,13 @@ function refreshLoopBtn() {
 
 function refreshShuffleBtn() {
   $('#btnShuffle')?.classList.toggle('is-on', shuffleOn);
+}
+
+function refreshAiRadioBtn() {
+  const b = $('#btnAiRadio');
+  if (!b) return;
+  b.classList.toggle('is-on', aiRadioOn);
+  b.setAttribute('aria-pressed', aiRadioOn ? 'true' : 'false');
 }
 
 function setActiveSleepChip(value: string | null) {
@@ -9418,6 +9509,7 @@ window.addEventListener('DOMContentLoaded', () => {
   bindIntegrations();
   refreshLoopBtn();
   refreshShuffleBtn();
+  refreshAiRadioBtn();
   bindInstallPrompt();
   // Only load the Spotify OAuth callback handler when the URL actually
   // matches the callback route — saves ~14KB on every other route.
