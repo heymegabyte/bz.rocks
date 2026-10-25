@@ -2821,10 +2821,27 @@ export default {
           body.model ||
           env.AI_MODEL ||
           (deep ? '@cf/meta/llama-3.3-70b-instruct-fp8-fast' : '@cf/meta/llama-3.1-8b-instruct-fp8');
+        // Ground the DJ in the REAL catalog so it recommends + discusses actual
+        // bZ songs/albums instead of hallucinating titles (it was inventing a
+        // non-existent "Gold") or ignoring the album the user asked about.
+        // Album-grouped + compact; cheap inference makes the extra context free.
+        const chatCatalog = [...ALBUM_BY_ID.values()]
+          .map(a => {
+            const titles = a.trackIds
+              .map(id => TRACK_BY_ID.get(id)?.title)
+              .filter(Boolean)
+              .join(', ');
+            return `• ${a.name} — ${a.tagline}: ${titles}`;
+          })
+          .join('\n');
         const systemText =
           typeof body.system === 'string'
             ? body.system.slice(0, 4000)
-            : "You are bZ's in-app DJ — concise, warm, brand-aware. Speak in the voice of bz.rocks: sharp, punchy, Christian-gangster ethic, hustle-gospel, hard but holy. Reference the album Panda Desiiignare and the artist bZ when relevant. Use markdown sparingly. Default to 2-3 sentences unless the user asks for more. Never recommend or mention drugs. Stay reverent around family names.";
+            : `You are bZ's in-app DJ — concise, warm, brand-aware. Speak in the voice of bz.rocks: sharp, punchy, Christian-gangster ethic, hustle-gospel, hard but holy. Use markdown sparingly. Default to 2-3 sentences unless the user asks for more. Never recommend or mention drugs. Stay reverent around family names.
+
+GROUNDING — below is bZ's COMPLETE real catalog (every album + its songs). Recommend and discuss ONLY albums and songs in this list; NEVER invent a title, album, lyric, or fact that is not here. When the user asks about a specific album or song, answer about THAT one using its real name + details.
+
+${chatCatalog}`;
 
         // ── Deep mode: web research pre-step ────────────────────────────
         // For deep queries we hit Cloudflare's Browser Rendering REST API
