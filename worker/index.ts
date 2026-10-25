@@ -1132,7 +1132,7 @@ async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext):
   // AI "state of the catalog" read — a grounded 1-2 sentence insight over the
   // live totals + most-played list. Cache HIT → inject; MISS → generate async
   // (ctx.waitUntil) + cache for the next load, so the page NEVER blocks on AI.
-  const insight = (await env.COUNTERS.get('stats-insight#v2')) || '';
+  const insight = (await env.COUNTERS.get('stats-insight#v3')) || '';
   if (!insight && env.AI && top.length >= 3) {
     const topList = top
       .slice(0, 6)
@@ -1141,7 +1141,7 @@ async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext):
     ctx.waitUntil(
       (async () => {
         try {
-          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+          const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
             messages: [
               {
                 role: 'system',
@@ -1156,9 +1156,14 @@ async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext):
             max_tokens: 120,
             temperature: 0.7
           })) as { response?: string };
-          const text = (out.response || '').replace(/"/g, '').trim();
+          let text = (out.response || '').replace(/"/g, '').trim();
+          // 70B can echo the prompt's instruction framing (the 8B→70B leak class);
+          // suppress a generation that leaks instruction phrases (fail-soft to no
+          // insight). INSTRUCTION phrases ONLY — never the artist's own voice words
+          // ("Newark hustle-gospel"/"Christian-gangster"), which belong in the output.
+          if (/\b(grounded only|most-played list|no preamble|no markdown)\b/i.test(text)) text = '';
           // Cache 1h — refreshes with the catalog's momentum, cheap to regen.
-          if (text.length >= 20) await env.COUNTERS.put('stats-insight#v2', text, { expirationTtl: 3600 });
+          if (text.length >= 20) await env.COUNTERS.put('stats-insight#v3', text, { expirationTtl: 3600 });
         } catch {
           /* fail-soft — no insight this round; the page renders without it */
         }
