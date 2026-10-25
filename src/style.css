@@ -1997,9 +1997,13 @@ html.is-playing .brand__logo {
     animation: heroRise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
   .viz__hero-title {
-    animation:
-      heroRise 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both,
-      heroGlow 8s ease-in-out 1.1s infinite;
+    /* NO entrance fade on the LCP element. The hero title is the Largest
+       Contentful Paint AND is client-rendered, so fading it from opacity:0
+       kept it invisible until the animation finished → LCP ~2.2s (over the 2.0s
+       target). Paint it instantly; keep only the ambient breathing glow
+       (text-shadow — doesn't affect paint). The eyebrow + vibe still fade-rise
+       around it, so the staggered cinematic entrance is preserved. */
+    animation: heroGlow 8s ease-in-out 1.1s infinite;
   }
   .viz__hero-vibe {
     animation: heroRise 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both;
