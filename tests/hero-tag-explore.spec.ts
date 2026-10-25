@@ -66,5 +66,12 @@ test.describe('hero vibe tags — tap to explore', () => {
     const firstTitle = page.locator('#cmdkResults .cmdk__item .cmdk__item-title-text').first();
     await expect(firstTitle).toBeVisible();
     expect(((await firstTitle.textContent()) || '').trim().length).toBeGreaterThan(0);
+
+    // Explore finds OTHERS — the current track is excluded, and results are
+    // ranked by relevance to it (so a big tag's top-24 are the most related).
+    const titles = (await page.locator('#cmdkResults .cmdk__item .cmdk__item-title-text').allInnerTexts()).map(
+      s => s.trim().toLowerCase()
+    );
+    expect(titles).not.toContain('chef lu stew');
   });
 });

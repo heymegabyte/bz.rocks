@@ -8613,9 +8613,34 @@ function openSearch(preset?: { query: string; tracks: Track[] }) {
 function exploreTag(label: string) {
   const tag = label.trim();
   if (!tag) return;
-  const tracks = tracksByTag(tag)
-    .map(id => TRACK_BY_ID.get(id))
-    .filter((t): t is Track => !!t);
+  let ids = tracksByTag(tag);
+  // Order the co-tagged set by RELEVANCE to what's playing — shared AI-tag count
+  // (+ same-album bonus) — so for a big tag (12/25 explorable tags exceed the
+  // 24-row render cap) the shown "top 24" surfaces the most related tag-mates,
+  // not just catalog order. Exclude the current track ("explore" = find OTHERS).
+  // Fail-soft to catalog order when there's no current track to rank against.
+  const curTags = currentTrackId ? getTrackTags(currentTrackId) : undefined;
+  if (curTags) {
+    const curSet = new Set([
+      ...curTags.moods,
+      ...curTags.themes,
+      ...curTags.genres,
+      ...curTags.places
+    ]);
+    const curAlbum = TRACK_BY_ID.get(currentTrackId!)?.album;
+    ids = ids
+      .filter(id => id !== currentTrackId)
+      .map(id => {
+        const tg = getTrackTags(id);
+        const shared = tg
+          ? [...tg.moods, ...tg.themes, ...tg.genres, ...tg.places].filter(x => curSet.has(x)).length
+          : 0;
+        return { id, score: shared + (TRACK_BY_ID.get(id)?.album === curAlbum ? 1 : 0) };
+      })
+      .sort((a, b) => b.score - a.score) // V8 sort is stable → ties keep catalog order
+      .map(x => x.id);
+  }
+  const tracks = ids.map(id => TRACK_BY_ID.get(id)).filter((t): t is Track => !!t);
   if (!tracks.length) return;
   openSearch({ query: tag, tracks });
 }
