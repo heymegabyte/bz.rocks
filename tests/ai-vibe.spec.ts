@@ -18,15 +18,32 @@ async function openPalette(page: Page) {
 }
 
 test.describe('AI vibe matcher (/api/vibe + Cmd+K)', () => {
-  test('API returns grounded typed picks for a mood; empties a too-short query', async ({ request }) => {
-    const ok = await request.get(`${BASE}/api/vibe?q=${encodeURIComponent(MOOD)}`);
-    expect(ok.status()).toBe(200);
-    const body = (await ok.json()) as { picks?: Array<{ id: string; why: string }> };
-    expect(Array.isArray(body.picks)).toBe(true);
-    for (const p of body.picks ?? []) {
-      expect(typeof p.id).toBe('string');
-      expect(typeof p.why).toBe('string');
-      expect(p.why.length).toBeGreaterThan(3);
+  test('API returns grounded, CONCRETE (non-circular) picks across moods; empties a too-short query', async ({
+    request
+  }) => {
+    // Queries that previously produced circular/leaky/templated whys on the 8B
+    // ("X matches the <query> mood", "reason:" leak, id-as-title, off-intent padding).
+    const QUERIES = [MOOD, 'mercy at the border', 'scripture about forgiveness'];
+    for (const q of QUERIES) {
+      const ok = await request.get(`${BASE}/api/vibe?q=${encodeURIComponent(q)}`);
+      expect(ok.status(), q).toBe(200);
+      const body = (await ok.json()) as { picks?: Array<{ id: string; why: string }> };
+      expect(Array.isArray(body.picks), q).toBe(true);
+      for (const p of body.picks ?? []) {
+        expect(typeof p.id).toBe('string');
+        expect(typeof p.why).toBe('string');
+        expect(p.why.length, `${q} → ${p.id}`).toBeGreaterThan(3);
+        const why = p.why.toLowerCase();
+        // No prompt-format leak (the 8B leaked a `reason:`/`why:` prefix).
+        expect(why, `${q} leak`).not.toMatch(/^\s*(reason|why|mood|track)\s*[:\-]/);
+        // No circular non-reason — restating the query/id as "the mood" ("X matches
+        // the <query> mood", "is a song about …") is meaningless; demand a concrete tie.
+        expect(why, `${q} circular`).not.toMatch(
+          /matches the .*(mood|vibe|query)|fits the .*(mood|vibe|query)|is a song about|^["']?[a-z0-9-]+["']?\s+matches/
+        );
+        // Refer to the track by TITLE, never its id-slug.
+        expect(why, `${q} id-as-title`).not.toContain(p.id);
+      }
     }
 
     const tooShort = await request.get(`${BASE}/api/vibe?q=a`);

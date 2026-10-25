@@ -2686,7 +2686,7 @@ export default {
         const q = (url.searchParams.get('q') || '').trim().slice(0, 80);
         if (q.length < 2) return jsonResponse({ picks: [] }, 200, {}, request);
         const norm = q.toLowerCase().replace(/\s+/g, ' ');
-        const cacheK = `vibe:${norm}#v2`;
+        const cacheK = `vibe:${norm}#v3`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -2699,33 +2699,51 @@ export default {
         if (await rateLimitedCount(env.COUNTERS, ip, 'vibe', 'minute', 15, 60))
           return jsonResponse({ picks: [], throttled: true }, 200, {}, request);
         const catalog = [...TRACK_BY_ID.values()]
-          .map(t => `${t.id} | ${t.title} | ${ALBUM_BY_ID.get(t.album)?.name ?? 'bZ'} | ${t.vibe}`)
+          .map(
+            t =>
+              `${t.id} | ${t.title} | ${ALBUM_BY_ID.get(t.album)?.name ?? 'bZ'} | ${t.vibe} | ${t.wisdom ?? ''}`
+          )
           .join('\n');
+        // Hardened like /api/similar: the 8B leaked a `reason:` prefix + emitted
+        // circular non-reasons ("X matches the <query> mood") + padded to 6 with
+        // off-intent tracks. 70B + forbid-genre/circular/template + concrete-tie +
+        // GOOD/BAD examples + "fewer beats padding", backstopped in the parser.
         const system =
-          "You are bZ's music matchmaker. From the CATALOG (each line `id | title | album | vibe`), pick the up-to-6 tracks that best fit the listener's MOOD. Output ONLY lines formatted `id | reason` — the id copied EXACTLY from the catalog, the reason ONE short sentence (max ~12 words) on why it fits the mood. In the reason, refer to the track by its exact TITLE (the 2nd catalog field) — NEVER by its id-slug. Order best-first. No preamble, no markdown, no numbering, and NEVER a track absent from the catalog. Christian-gangster ethic; zero drug references.";
-        const user = `MOOD: ${q}\n\nCATALOG:\n${catalog}`;
+          "You are bZ's music search. From the CATALOG (each line `id | title | album | vibe | wisdom`), choose the tracks whose THEME, STORY, PLACE, SCRIPTURE, CHARACTER, or EMOTION genuinely fits the listener's QUERY. Output ONLY lines `id | reason` — the id copied EXACTLY from the catalog; the reason a SPECIFIC phrase (max ~10 words) naming the CONCRETE thing that ties THAT track to the query. Refer to the track by its TITLE, NEVER its id-slug. Every track is gospel-rap, so the GENRE is NEVER a reason. NEVER restate the query as the reason — BAD: 'matches the <query> mood', 'fits the vibe', 'is a song about X', '\"some-id\" matches'. GOOD: 'Mother waiting at the checkpoint line', 'Surrender at the bruised-hands table', 'Noah-ready launch for the hungry'. Return ONLY genuine fits — FEWER is better than padding; return NOTHING rather than a track that does not truly fit. Max 6, best first. No preamble, no markdown, no numbering; NEVER a track absent from the catalog. Christian-gangster ethic; zero drug references.";
+        const user = `QUERY: ${q}\n\nCATALOG:\n${catalog}`;
         let picks: Array<{ id: string; why: string }> = [];
         try {
-          const out = (await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
+          const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
             messages: [
               { role: 'system', content: system },
               { role: 'user', content: user }
             ],
             max_tokens: 320,
-            temperature: 0.6
+            temperature: 0.5
           })) as { response?: string };
+          // A reason that just restates the query as "the mood" / "is a song about"
+          // is a non-reason (the #1 generic tell); a leaked `reason:`/`why:` prefix
+          // is prompt-format bleed. Strip the prefix, then reject circular + genre-only.
+          const circular =
+            /\bmatches the .*(?:mood|vibe|query)\b|\bfits the .*(?:mood|vibe|query)\b|\bis a song about\b|^["']?[a-z0-9-]+["']?\s+matches\b/i;
+          const genreOnly =
+            /^(?:(?:epic|latin|hard|holy|dark|raw)\s+)?gospel[\s-]?trap(?:\s+(?:vibe|sound|energy))?$|^(?:same|similar)\s+(?:vibe|sound|genre|energy)$/i;
           const seen = new Set<string>();
           for (const line of (out.response || '').split(/\r?\n+/)) {
             const parts = line.split('|');
             const rawId = parts[0];
             if (parts.length < 2 || !rawId) continue;
             const id = rawId.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '').trim();
-            const why = parts
+            let why = parts
               .slice(1)
               .join('|')
               .trim()
-              .replace(/^["']+|["']+$/g, '');
+              .replace(/^\s*(?:reason|why|mood|track)\s*[:\-]\s*/i, '')
+              .replace(/^["']+|["']+$/g, '')
+              .trim();
             if (!TRACK_BY_ID.has(id) || seen.has(id) || why.length < 4) continue;
+            // Drop circular / genre-only / id-as-title non-reasons.
+            if (circular.test(why) || genreOnly.test(why) || why.toLowerCase().includes(id)) continue;
             seen.add(id);
             picks.push({ id, why });
             if (picks.length >= 6) break;
