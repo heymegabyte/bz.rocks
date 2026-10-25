@@ -2637,6 +2637,7 @@ export const TRACKS: Track[] = [
     title: 'Border Mercy',
     artist: 'bZ',
     file: '/audio/Border_Mercy.mp3',
+    video: '/media/pub/border-mercy.mp4',
     cover: COVERS.c1,
     album: 'mercy-drop',
     vibe: 'checkpoint paperwork-saint dawn',
