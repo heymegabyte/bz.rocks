@@ -184,6 +184,9 @@ export function firstSungLines(track: Track, n: number): string[] {
     // (else "…" lyrics double up) and any trailing terminal punctuation.
     const cleaned = cleanLyricLine(line)
       .replace(/"/g, '')
+      // Strip a leading dialogue/list dash or bullet ("- Brother…" → "Brother…")
+      // so the quoted hook reads clean in meta descriptions + AI grounding.
+      .replace(/^[-–—•*·]+\s*/, '')
       .replace(/[.,;:?!…]+$/, '')
       .trim();
     if (!cleaned) continue;
@@ -216,7 +219,11 @@ function trackDescription(track: Track, album: Album): string {
       `${track.title} on ${album.name} by bZ. "${firstLine}." Cyan-flag hustle gospel.`,
       `bZ presents ${track.title} from ${album.name}: ${album.tagline}. "${firstLine}."`
     ],
-    `${album.tagline}. ${album.description}`
+    // Padder for too-short candidates — the album DESCRIPTION only (not the
+    // tagline): several candidates already lead with the tagline, so padding
+    // with "tagline. description" duplicated it ("The flagship gospel of bZ."
+    // twice) in the rendered <meta description>.
+    album.description
   );
 }
 

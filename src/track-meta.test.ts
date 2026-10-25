@@ -170,3 +170,37 @@ describe('SEO_INDEX uniqueness', () => {
     }
   });
 });
+
+describe('meta description quality (SEO regression guard)', () => {
+  // Every description must sit in the HARD 120–156 range and must NOT repeat the
+  // album tagline. A padder bug once produced "…The flagship gospel of bZ. "-
+  // Brother, no, no, no." The flagship gospel of bZ…" at 166 chars (fixed
+  // 2026-10-24 — the padder appended "tagline. description" onto a candidate that
+  // already led with the tagline).
+  it('every track description is 120–156 chars with no duplicated tagline', () => {
+    for (const track of TRACKS) {
+      const album = ALBUMS.find(a => a.id === track.album)!;
+      const d = trackSeo(track).description;
+      expect(d.length, `${track.id}: "${d}" (${d.length})`).toBeGreaterThanOrEqual(120);
+      expect(d.length, `${track.id}: "${d}" (${d.length})`).toBeLessThanOrEqual(156);
+      if (album.tagline) {
+        expect(d.split(album.tagline).length - 1, `${track.id} repeats tagline: "${d}"`).toBeLessThanOrEqual(
+          1
+        );
+      }
+    }
+  });
+
+  it('every album description is 120–156 chars with no duplicated tagline', () => {
+    for (const album of ALBUMS) {
+      const d = albumSeo(album).description;
+      expect(d.length, `${album.id}: "${d}" (${d.length})`).toBeGreaterThanOrEqual(120);
+      expect(d.length, `${album.id}: "${d}" (${d.length})`).toBeLessThanOrEqual(156);
+      if (album.tagline) {
+        expect(d.split(album.tagline).length - 1, `${album.id} repeats tagline: "${d}"`).toBeLessThanOrEqual(
+          1
+        );
+      }
+    }
+  });
+});
