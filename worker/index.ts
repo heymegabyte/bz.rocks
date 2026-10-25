@@ -2817,8 +2817,17 @@ export default {
         // Workers AI Llama 3.3 70B FP8-fast — free tier, 2-3× faster than
         // the bare alias which is retired on most accounts. Per model-routing
         // rule: always reach for the FP8 variant.
+        // Only REAL Workers AI models are accepted — the chat runs on env.AI
+        // (Llama), NEVER Claude/OpenAI. A bogus or "claude-*" body.model is
+        // ignored (not passed to env.AI.run, which would error + fall back to 8B
+        // while the UI still labelled it "Opus") so we never fake a model we
+        // don't have. Per ai-abundance: label the REAL model.
+        const CHAT_MODELS = new Set([
+          '@cf/meta/llama-3.1-8b-instruct-fp8',
+          '@cf/meta/llama-3.3-70b-instruct-fp8-fast'
+        ]);
         const model =
-          body.model ||
+          (typeof body.model === 'string' && CHAT_MODELS.has(body.model) ? body.model : '') ||
           env.AI_MODEL ||
           (deep ? '@cf/meta/llama-3.3-70b-instruct-fp8-fast' : '@cf/meta/llama-3.1-8b-instruct-fp8');
         // Ground the DJ in the REAL catalog so it recommends + discusses actual
@@ -2916,12 +2925,16 @@ ${chatCatalog}`;
             throw lastErr;
           };
           let aiResponse: ReadableStream<Uint8Array> | { response: string };
+          // Track the model ACTUALLY used so the response echoes the truth even
+          // when the primary errors and we fall back to 8B (never mislabel).
+          let usedModel = model;
           try {
             aiResponse = await runWithRetry(model);
           } catch (primaryErr) {
             // Fall back to the smaller, faster, more-available 8B model
             if (model !== '@cf/meta/llama-3.1-8b-instruct-fp8') {
-              aiResponse = await runWithRetry('@cf/meta/llama-3.1-8b-instruct-fp8');
+              usedModel = '@cf/meta/llama-3.1-8b-instruct-fp8';
+              aiResponse = await runWithRetry(usedModel);
             } else {
               throw primaryErr;
             }
@@ -2977,7 +2990,7 @@ ${chatCatalog}`;
 
           // Non-streaming response
           const text = (aiResponse as { response: string }).response || '';
-          return jsonResponse({ text, model, deep });
+          return jsonResponse({ text, model: usedModel, deep });
         } catch (err) {
           return jsonResponse(
             {

@@ -22,7 +22,7 @@ A field guide to the runtime, the worker, and the assumptions baked into both.
 │    ├─ SEO HTMLRewriter (title, OG, JSON-LD per route)         │
 │    ├─ /api/oembed, /api/play, /api/share, /api/stats          │
 │    ├─ /api/subscribe (Listmonk + KV push record)              │
-│    ├─ /api/ai/chat   (Anthropic Claude Haiku 4.5 SSE proxy)   │
+│    ├─ /api/ai/chat   (Workers AI Llama 8B/70B SSE)            │
 │    ├─ /api/push/*    (VAPID web push fan-out)                 │
 │    ├─ /api/hue/discover (Hue meethue.com discovery proxy)     │
 │    ├─ /audio/* edge cache + Range slicing                     │

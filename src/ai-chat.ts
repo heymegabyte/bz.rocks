@@ -351,12 +351,11 @@ export function mountAIChat(opts: MountOpts = {}) {
             <label class="aichat__field">
               <span class="aichat__field-label">Model</span>
               <select data-aichat="model">
-                <option value="claude-haiku-4-5-20251001">Haiku 4.5 — fastest</option>
-                <option value="claude-sonnet-4-6">Sonnet 4.6 — balanced</option>
-                <option value="claude-opus-4-7">Opus 4.7 — deepest</option>
+                <option value="@cf/meta/llama-3.1-8b-instruct-fp8">Llama 3.1 8B — fast</option>
+                <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">Llama 3.3 70B — deep</option>
               </select>
             </label>
-            <p class="aichat__field-desc">Haiku ships fast snappy answers for most chat. Bump to Sonnet for nuanced takes and Opus for the hardest theological / creative-direction questions.</p>
+            <p class="aichat__field-desc">bZ's DJ runs on Cloudflare Workers AI — Llama, served at the edge, no external API. 8B ships snappy answers for most chat; 70B goes deeper on nuanced theology, lyric, and creative-direction takes.</p>
 
             <label class="aichat__field">
               <span class="aichat__field-label">Temperature <em data-aichat="tempVal">0.70</em></span>
@@ -597,7 +596,7 @@ export function mountAIChat(opts: MountOpts = {}) {
 
   function loadState(): Persisted {
     const defaults: Settings = {
-      model: 'claude-haiku-4-5-20251001',
+      model: '@cf/meta/llama-3.1-8b-instruct-fp8',
       temperature: 0.7,
       maxTokens: 1024,
       systemOverride: '',
@@ -632,10 +631,20 @@ export function mountAIChat(opts: MountOpts = {}) {
       if (raw) {
         const p = JSON.parse(raw) as Partial<Persisted>;
         if (p?.sessions?.length && p.activeId) {
+          const settings = { ...defaults, ...(p.settings || {}) } as Settings;
+          // Coerce any stale/invalid stored model (e.g. a legacy "claude-*"
+          // value from before the honest Llama selector) to a real Workers AI
+          // model so the UI never advertises a model we don't actually run.
+          if (
+            settings.model !== '@cf/meta/llama-3.1-8b-instruct-fp8' &&
+            settings.model !== '@cf/meta/llama-3.3-70b-instruct-fp8-fast'
+          ) {
+            settings.model = defaults.model;
+          }
           return {
             sessions: p.sessions,
             activeId: p.activeId,
-            settings: { ...defaults, ...(p.settings || {}) } as Settings,
+            settings,
             history: p.history?.slice(-50) || []
           };
         }
@@ -1241,7 +1250,7 @@ export function mountAIChat(opts: MountOpts = {}) {
             }
           ],
           system: 'You are a precise summarizer. No filler. Bullet points only.',
-          model: 'claude-haiku-4-5-20251001',
+          model: '@cf/meta/llama-3.1-8b-instruct-fp8',
           temperature: 0.2,
           max_tokens: 320,
           stream: false

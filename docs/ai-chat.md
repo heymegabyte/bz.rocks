@@ -7,7 +7,7 @@ The AI DJ lives in `src/ai-chat.ts` and renders into a single `<aside class="aic
 - **Floating action button** — bottom-right `[data-aichat="fab"]`. Hidden via CSS when the panel is open. Restores focus on close.
 - **Side panel** — `[data-aichat="panel"]`. Slides in from the right on desktop, near-fullscreen on phones. `Cmd/Ctrl + I` toggles. `Escape` closes.
 - **Sessions** — multi-conversation list persisted to `localStorage` under `bz:aichat:state`. Rename, pin, delete, branch, export to Markdown.
-- **Streaming replies** — SSE from `POST /api/ai/chat`. Worker streams Anthropic Claude responses; client renders tokens incrementally with a blinking caret.
+- **Streaming replies** — SSE from `POST /api/ai/chat`. Worker runs **Cloudflare Workers AI** (Llama — `@cf/meta/llama-3.1-8b-instruct-fp8` fast / `@cf/meta/llama-3.3-70b-instruct-fp8-fast` deep, selectable in the drawer) and re-emits Workers AI SSE as Anthropic-style `content_block_delta` events so the client parser stays unchanged; client renders tokens incrementally with a blinking caret.
 - **Slash commands** — `/help`, `/clear`, `/copy`, `/persona <name>`, `/play`, `/pause`, `/viz <mode>`, `/catalog`, `/track <id>`, `/album <id>`, `/shortcommands`, …
 - **Rich widgets** — assistant messages can carry a `widgets[]` array of typed payloads (track cards, command palettes, photos, pricing tiers, alerts, citations, …). See [`ai-chat-widgets.md`](./ai-chat-widgets.md).
 - **Voice** — Web Speech API push-to-talk. Wake-word listener ("hey bZ") is opt-in via the settings drawer.
