@@ -8447,9 +8447,20 @@ async function loadSimilar(trackId: string | null): Promise<void> {
           btn.type = 'button';
           btn.className = 'np-panel__similar-chip';
           btn.dataset.trackId = t.id;
-          btn.textContent = t.title;
-          btn.title = it.why;
-          btn.setAttribute('aria-label', `Play ${t.title} — ${it.why}`);
+          const titleEl = document.createElement('span');
+          titleEl.className = 'np-panel__similar-title';
+          titleEl.textContent = t.title;
+          btn.appendChild(titleEl);
+          // Surface the grounded "why" inline (not just a tooltip) — it's the
+          // real reason this track is recommended, and it's specific + distinct.
+          const why = (it.why || '').trim();
+          if (why) {
+            const whyEl = document.createElement('span');
+            whyEl.className = 'np-panel__similar-why';
+            whyEl.textContent = why;
+            btn.appendChild(whyEl);
+          }
+          btn.setAttribute('aria-label', why ? `Play ${t.title} — ${why}` : `Play ${t.title}`);
           return btn;
         })
         .filter((b): b is HTMLButtonElement => b !== null)

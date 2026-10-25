@@ -61,6 +61,13 @@ test.describe('AI more-like-this (/api/similar + NP chips)', () => {
       await expect(similar).toBeVisible({ timeout: 10000 });
       const chips = page.locator('#npPanelSimilarChips .np-panel__similar-chip');
       expect(await chips.count()).toBeGreaterThanOrEqual(1);
+      // The grounded "why" is surfaced INLINE (two-line card), not hidden in a
+      // tooltip — the recommendation shows its reasoning (2026-10-24).
+      const firstWhy = chips.first().locator('.np-panel__similar-why');
+      await expect(firstWhy).toBeVisible();
+      await expect(firstWhy).not.toBeEmpty();
+      const firstTitle = chips.first().locator('.np-panel__similar-title');
+      await expect(firstTitle).not.toBeEmpty();
       await chips.first().click();
       await expect(async () => {
         const t = (await page.locator('#transportNpTitle').innerText()).trim();
