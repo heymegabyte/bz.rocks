@@ -83,4 +83,36 @@ test.describe('AI Radio', () => {
     expect(sims, `advanced to a similar pick (${newId})`).toContain(newId);
     await page.locator('#btnAiRadio').click(); // reset
   });
+
+  test('np-panel UP NEXT previews the SAME similar track it will play (+ an AI Radio label)', async ({
+    page
+  }) => {
+    await playFirst(page);
+    const id = await page.evaluate(curId);
+    const sims = (await page.evaluate(async (t) => {
+      const r = await fetch(`/api/similar?track=${encodeURIComponent(t as string)}`);
+      if (!r.ok) return [];
+      const d = (await r.json()) as { similar?: Array<{ id?: string }> };
+      return (d.similar ?? []).map(s => s?.id).filter(Boolean);
+    }, id)) as string[];
+    expect(sims.length).toBeGreaterThan(0);
+    const expectTitle = await page.evaluate(
+      sid =>
+        document.querySelector(`.trackrow[data-track="${sid}"] .trackrow__title`)?.textContent?.trim() ??
+        '',
+      sims[0]
+    );
+
+    // Enable AI Radio (panel closed), then open the np-panel. The cover art animates
+    // (beat-sync), so a normal click never stabilizes — open it via a JS click.
+    await page.locator('#btnAiRadio').click();
+    await expect(page.locator('#btnAiRadio')).toHaveClass(/is-on/);
+    await page.evaluate(() =>
+      (document.getElementById('transportNpCover') as HTMLElement | null)?.click()
+    );
+
+    // UP NEXT previews the AI-Radio pick (matches what will play) + says "AI Radio".
+    await expect(page.locator('#npPanelSegueTitle')).toHaveText(expectTitle, { timeout: 12000 });
+    await expect(page.locator('#npPanelSegueEyebrow')).toContainText(/AI Radio/i);
+  });
 });

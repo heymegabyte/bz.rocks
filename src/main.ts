@@ -1477,7 +1477,7 @@ function setupShell(root: HTMLElement) {
         <button id="btnShuffle" class="round transport__shuffle" type="button" aria-label="Shuffle" title="Shuffle (S)">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
         </button>
-        <button id="btnAiRadio" class="round transport__airadio" type="button" aria-label="AI Radio — auto-flow to similar tracks" title="AI Radio — flow to similar tracks (R)" aria-pressed="false">
+        <button id="btnAiRadio" class="round transport__airadio" type="button" aria-label="AI Radio — auto-flow to similar tracks" title="AI Radio — flow to similar tracks (A)" aria-pressed="false">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.7 5.7a9 9 0 0 0 0 12.6M18.3 5.7a9 9 0 0 1 0 12.6"/></svg>
         </button>
         <button id="btnPrev" class="round" type="button" aria-label="Previous track">
@@ -1822,7 +1822,7 @@ function setupShell(root: HTMLElement) {
 
         <!-- AI segue — the next track + a grounded one-line "why it flows". -->
         <div class="np-panel__segue" id="npPanelSegue" hidden>
-          <span class="np-panel__liner-eyebrow">Up next <em>· AI</em></span>
+          <span class="np-panel__liner-eyebrow" id="npPanelSegueEyebrow">Up next <em>· AI</em></span>
           <button class="np-panel__segue-btn" id="npPanelSegueBtn" type="button" aria-label="Play the next track">
             <span class="np-panel__segue-title" id="npPanelSegueTitle"></span>
             <span class="np-panel__segue-why" id="npPanelSegueWhy"></span>
@@ -2057,6 +2057,7 @@ function setupShell(root: HTMLElement) {
         <div><kbd>↑</kbd> <kbd>↓</kbd><span>Volume up / down</span></div>
         <div><kbd>M</kbd><span>Mute toggle</span></div>
         <div><kbd>S</kbd><span>Shuffle</span></div>
+        <div><kbd>A</kbd><span>AI Radio</span></div>
         <div><kbd>R</kbd><span>Loop mode</span></div>
         <div><kbd>L</kbd> <kbd>F</kbd><span>Full-screen lyrics</span></div>
         <div><kbd>V</kbd><span>Visualizer mode</span></div>
@@ -6399,17 +6400,7 @@ function bindUi() {
     persist(LS_KEYS.shuffle, shuffleOn ? '1' : '0');
     refreshShuffleBtn();
   });
-  $('#btnAiRadio')?.addEventListener('click', () => {
-    aiRadioOn = !aiRadioOn;
-    if (aiRadioOn && shuffleOn) {
-      shuffleOn = false;
-      persist(LS_KEYS.shuffle, '0');
-      refreshShuffleBtn();
-    }
-    persist(LS_KEYS.aiRadio, aiRadioOn ? '1' : '0');
-    refreshAiRadioBtn();
-    showToast(aiRadioOn ? '✦ AI Radio on — flowing to similar tracks' : 'AI Radio off');
-  });
+  $('#btnAiRadio')?.addEventListener('click', toggleAiRadio);
   $('#btnPrev')?.addEventListener('click', () => nextTrack(-1));
   $('#btnNext')?.addEventListener('click', () => nextTrack(1));
   $('#btnPlay')?.addEventListener('click', () => {
@@ -7178,16 +7169,8 @@ function bindUi() {
       if (shuffleOn) disableAiRadio();
       persist(LS_KEYS.shuffle, shuffleOn ? '1' : '0');
       refreshShuffleBtn();
-    } else if (e.code === 'KeyR') {
-      aiRadioOn = !aiRadioOn;
-      if (aiRadioOn && shuffleOn) {
-        shuffleOn = false;
-        persist(LS_KEYS.shuffle, '0');
-        refreshShuffleBtn();
-      }
-      persist(LS_KEYS.aiRadio, aiRadioOn ? '1' : '0');
-      refreshAiRadioBtn();
-      showToast(aiRadioOn ? '✦ AI Radio on — flowing to similar tracks' : 'AI Radio off');
+    } else if (e.code === 'KeyA') {
+      toggleAiRadio();
     } else if (e.key === '?' || (e.shiftKey && e.code === 'Slash')) {
       e.preventDefault();
       if (shortcutsOpen) closeShortcuts();
@@ -7435,9 +7418,31 @@ function nextTrack(dir: 1 | -1) {
   if (next) play(next);
 }
 
-// Flow to the most vibe-SIMILAR track (grounded by the cached /api/similar engine),
-// preferring one not played recently so the radio keeps exploring. Fail-soft: any miss
-// → catalog-order next (the original behavior), so AI Radio can never dead-end playback.
+// The vibe-SIMILAR "next" for AI Radio — the top /api/similar pick not played recently
+// (keeps the radio exploring). Shared by smartNext (what PLAYS) AND the np-panel UP NEXT
+// preview (what's SHOWN), so the preview always matches what will actually play. Fail-soft
+// → null (callers fall back to catalog order).
+async function pickSimilarNext(trackId: string): Promise<Track | null> {
+  try {
+    const r = await fetch(`/api/similar?track=${encodeURIComponent(trackId)}`);
+    if (r.ok) {
+      const d = (await r.json()) as { similar?: Array<{ id?: string }> };
+      const ids = Array.isArray(d.similar)
+        ? d.similar
+            .map(s => s?.id)
+            .filter((x): x is string => !!x && TRACK_BY_ID.has(x) && x !== trackId)
+        : [];
+      const pick = ids.find(id => !recentTracks.includes(id)) ?? ids[0];
+      if (pick) return TRACK_BY_ID.get(pick) ?? null;
+    }
+  } catch {
+    /* fail-soft */
+  }
+  return null;
+}
+
+// Flow to the most vibe-similar track. Fail-soft: any miss → catalog-order next (the
+// original behavior), so AI Radio can never dead-end playback.
 async function smartNext(): Promise<void> {
   const cur = currentTrackId;
   const catalogNext = (): void => {
@@ -7447,25 +7452,9 @@ async function smartNext(): Promise<void> {
     if (next) play(next);
   };
   if (!cur) return catalogNext();
-  try {
-    const r = await fetch(`/api/similar?track=${encodeURIComponent(cur)}`);
-    if (r.ok) {
-      const d = (await r.json()) as { similar?: Array<{ id?: string }> };
-      const ids = Array.isArray(d.similar)
-        ? d.similar
-            .map(s => s?.id)
-            .filter((x): x is string => !!x && TRACK_BY_ID.has(x) && x !== cur)
-        : [];
-      const pick = ids.find(id => !recentTracks.includes(id)) ?? ids[0];
-      if (pick) {
-        play(TRACK_BY_ID.get(pick)!);
-        return;
-      }
-    }
-  } catch {
-    /* fail-soft → catalog next below */
-  }
-  catalogNext();
+  const pick = await pickSimilarNext(cur);
+  if (pick) play(pick);
+  else catalogNext();
 }
 
 function disableAiRadio(): void {
@@ -7473,6 +7462,22 @@ function disableAiRadio(): void {
   aiRadioOn = false;
   persist(LS_KEYS.aiRadio, '0');
   refreshAiRadioBtn();
+}
+
+// Shared by the transport button + the 'A' shortcut. Toggles AI Radio, turns shuffle off
+// (mutually exclusive), persists, and refreshes the np-panel UP NEXT so its preview
+// immediately matches (or reverts from) the AI-Radio flow.
+function toggleAiRadio(): void {
+  aiRadioOn = !aiRadioOn;
+  if (aiRadioOn && shuffleOn) {
+    shuffleOn = false;
+    persist(LS_KEYS.shuffle, '0');
+    refreshShuffleBtn();
+  }
+  persist(LS_KEYS.aiRadio, aiRadioOn ? '1' : '0');
+  refreshAiRadioBtn();
+  showToast(aiRadioOn ? '✦ AI Radio on — flowing to similar tracks' : 'AI Radio off');
+  if (npPanelOpen) void loadSegue(currentTrackId);
 }
 
 function setLoopMode(m: LoopMode) {
@@ -8811,17 +8816,34 @@ async function loadSegue(trackId: string | null): Promise<void> {
   const titleEl = $('#npPanelSegueTitle');
   const whyEl = $('#npPanelSegueWhy');
   if (!wrap || !titleEl || !whyEl) return;
+  const eyebrow = $('#npPanelSegueEyebrow');
   segueNext = null;
   if (!trackId || shuffleOn) {
     wrap.hidden = true;
     return;
   }
-  const order = playbackOrder(trackId);
-  const idx = order.findIndex(t => t.id === trackId);
-  const next = idx >= 0 ? order[(idx + 1) % order.length] : undefined;
+  // With AI Radio on, the UP NEXT preview MUST show the track AI Radio will actually flow
+  // to (the top similar pick) — not the catalog-next — via the SAME picker smartNext uses.
+  let next: Track | undefined;
+  if (aiRadioOn) {
+    next = (await pickSimilarNext(trackId)) ?? undefined;
+    // the track may have changed while the picker awaited — bail if so
+    if (currentTrackId !== trackId) return;
+  }
+  if (!next) {
+    const order = playbackOrder(trackId);
+    const idx = order.findIndex(t => t.id === trackId);
+    next = idx >= 0 ? order[(idx + 1) % order.length] : undefined;
+  }
   if (!next || next.id === trackId) {
     wrap.hidden = true;
     return;
+  }
+  if (eyebrow) {
+    eyebrow.textContent = 'Up next ';
+    const em = document.createElement('em');
+    em.textContent = aiRadioOn ? '· AI Radio' : '· AI';
+    eyebrow.appendChild(em);
   }
   segueNext = next;
   titleEl.textContent = next.title;
