@@ -981,3 +981,36 @@ describe('parseAiWidgets', () => {
     expect(out.text).toBe('Middle prose.');
   });
 });
+
+describe('renderWidgets — Play as a set', () => {
+  const tc = (id: string): AiChatWidget => ({
+    kind: 'track-card',
+    trackId: id,
+    title: id,
+    album: 'bZ',
+    href: `/${id}`
+  });
+
+  it('adds a "Play as a set" button for >=2 track cards, carrying the real ids', () => {
+    const html = renderWidgets([tc('bermuda-prophecy'), tc('border-mercy'), tc('mama-called-us')]);
+    expect(html).toContain('data-aichat-playset="bermuda-prophecy,border-mercy,mama-called-us"');
+    expect(html).toContain('Play all 3 as a set');
+    expect(html).toContain('aichat__playset');
+  });
+
+  it('shows no set button for a single track card', () => {
+    const html = renderWidgets([tc('solo-track')]);
+    expect(html).not.toContain('aichat__playset');
+  });
+
+  it('shows no set button when there are no playable track widgets', () => {
+    const html = renderWidgets([{ kind: 'text-card', body: 'just prose' } as AiChatWidget]);
+    expect(html).not.toContain('aichat__playset');
+  });
+
+  it('escapes the ids in the data attribute (no raw injection)', () => {
+    const html = renderWidgets([tc('a"><img src=x>'), tc('b')]);
+    expect(html).not.toContain('<img src=x>');
+    expect(html).toContain('aichat__playset');
+  });
+});

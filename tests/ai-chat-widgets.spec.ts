@@ -80,6 +80,39 @@ test.describe('AI chat — widget renderer', () => {
     );
   });
 
+  test('/album renders a playable tracklist with one-tap "Play as a set"', async ({ page }) => {
+    await gotoHome(page);
+    await page
+      .locator('#apClose')
+      .click({ timeout: 2000 })
+      .catch(() => {});
+    await openChat(page);
+    await sendSlash(page, '/album signals');
+    // The album's tracks render as playable cards...
+    const cards = page.locator('.aichat__widget--track, .aichat__widget--audio');
+    await expect(cards.first()).toBeVisible({ timeout: 8000 });
+    expect(await cards.count()).toBeGreaterThanOrEqual(2);
+    // ...and a single "Play as a set" button loads the whole album as a queue.
+    const setBtn = page.locator('.aichat__playset').first();
+    await expect(setBtn).toBeVisible();
+    await expect(setBtn).toContainText(/play all \d+ as a set/i);
+    await setBtn.click();
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() => {
+            const a = document.querySelector('audio[data-engine="bz"]') as HTMLAudioElement | null;
+            return !!a && !a.paused;
+          }),
+        { timeout: 8000 }
+      )
+      .toBe(true);
+    await expect(page.locator('[data-aichat="panel"]').first()).toHaveAttribute(
+      'aria-hidden',
+      'false'
+    );
+  });
+
   test('/stats emits chart + comparison-table widgets or graceful empty state', async ({ page }) => {
     await gotoHome(page);
     await openChat(page);

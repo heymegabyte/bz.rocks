@@ -980,8 +980,27 @@ export function renderWidget(w: unknown): string {
  */
 export function renderWidgets(widgets?: AiChatWidget[] | null): string {
   if (!Array.isArray(widgets) || !widgets.length) return '';
-  const rendered = widgets.slice(0, 24).map(renderWidget).filter(Boolean).join('');
-  return rendered ? `<div class="aichat__widgets" role="list">${rendered}</div>` : '';
+  const slice = widgets.slice(0, 24);
+  const rendered = slice.map(renderWidget).filter(Boolean).join('');
+  if (!rendered) return '';
+  // When the assistant returns a SET of playable tracks (a generated playlist),
+  // offer a one-tap "Play as a set" — loads them as an ordered queue in the
+  // persistent player (mirrors the vibe-search set). Grounded: the ids come from
+  // the rendered widgets, which the chat already validated against the catalog.
+  const trackIds = slice
+    .filter(
+      (w): w is AiChatWidget & { trackId: string } =>
+        (w.kind === 'track-card' || w.kind === 'audio-card') &&
+        typeof (w as { trackId?: unknown }).trackId === 'string'
+    )
+    .map(w => w.trackId);
+  const setBtn =
+    trackIds.length >= 2
+      ? `<button type="button" class="aichat__playset" data-aichat-playset="${escapeHtml(
+          trackIds.join(',')
+        )}" aria-label="Play these ${trackIds.length} tracks as a set"><span aria-hidden="true">▶</span> Play all ${trackIds.length} as a set</button>`
+      : '';
+  return `<div class="aichat__widgets" role="list">${rendered}</div>${setBtn}`;
 }
 
 const VALID_WIDGET_KINDS: ReadonlySet<string> = new Set([

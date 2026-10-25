@@ -2111,6 +2111,17 @@ export function mountAIChat(opts: MountOpts = {}) {
       return;
     }
     const tracks = tracksForAlbum(a.id);
+    // Album card + the full tracklist as playable cards, so the whole album is
+    // one tap away ("▶ Play all N as a set" appears automatically for ≥2 tracks).
+    const trackCards: AiChatWidget[] = tracks.map(t => ({
+      kind: 'track-card',
+      trackId: t.id,
+      title: t.title,
+      album: a.name,
+      vibe: t.vibe,
+      cover: t.cover ?? a.cover,
+      href: `/${a.id}/${t.id}`
+    }));
     pushAssistantWithWidgets(`**${a.name}** — ${a.tagline}`, [
       {
         kind: 'album-card',
@@ -2120,7 +2131,8 @@ export function mountAIChat(opts: MountOpts = {}) {
         cover: a.cover,
         trackCount: tracks.length,
         href: `/${a.id}`
-      }
+      },
+      ...trackCards
     ]);
   }
 
@@ -2905,6 +2917,17 @@ export function mountAIChat(opts: MountOpts = {}) {
         const played = opts.onCommand('play-track', [trackWidget.dataset.trackId]) === true;
         const title = trackWidget.querySelector('.aichat__w-title')?.textContent?.trim();
         setStatus(played ? (title ? `▶ Playing “${title}”` : '▶ Playing') : 'Could not play that track');
+        return;
+      }
+      // "Play as a set" on a generated playlist → load all tracks as an ordered
+      // queue in the persistent player (user stays in the chat).
+      const setBtn = t.closest<HTMLButtonElement>('[data-aichat-playset]');
+      if (setBtn && opts.onCommand) {
+        const ids = (setBtn.dataset.aichatPlayset || '').split(',').filter(Boolean);
+        if (ids.length) {
+          const ok = opts.onCommand('play-set', ids) === true;
+          setStatus(ok ? `▶ Playing ${ids.length} tracks as a set` : 'Could not play that set');
+        }
         return;
       }
       // Suggested follow-up chip — fills the composer with the chip's

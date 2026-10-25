@@ -9065,6 +9065,22 @@ window.addEventListener('DOMContentLoaded', () => {
       }
       return false;
     }
+    if (lc === 'play-set') {
+      // Play a DJ-chat generated playlist as an ordered set — loads the real
+      // tracks into customQueue (next/prev walk them in order) + plays the first,
+      // mirroring the vibe-search "Play as a set". Grounded: every id resolved
+      // against the catalog; unknown ids are dropped.
+      const tracks = args.map(id => TRACK_BY_ID.get(id)).filter((t): t is Track => Boolean(t));
+      if (!tracks.length) return false;
+      customQueue = tracks;
+      if (shuffleOn) {
+        shuffleOn = false;
+        persist(LS_KEYS.shuffle, '0');
+        refreshShuffleBtn();
+      }
+      void play(tracks[0]);
+      return true;
+    }
     if (lc === 'play') {
       void engine.audio.play();
       return true;

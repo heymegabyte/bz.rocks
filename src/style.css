@@ -11464,6 +11464,40 @@ body.cast-tv-open .transport {
   gap: 10px;
   margin-top: 10px;
 }
+.aichat__playset {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 9px;
+  padding: 8px 15px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--aichat-accent) 55%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--aichat-accent) 22%, transparent),
+    color-mix(in srgb, var(--aichat-accent) 10%, transparent)
+  );
+  color: var(--aichat-accent);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.1s ease;
+}
+.aichat__playset:hover {
+  border-color: var(--aichat-accent);
+  background: color-mix(in srgb, var(--aichat-accent) 28%, transparent);
+}
+.aichat__playset:active {
+  transform: scale(0.98);
+}
+.aichat__playset:focus-visible {
+  outline: 2px solid var(--aichat-accent);
+  outline-offset: 2px;
+}
 .aichat__widget {
   display: block;
   background: color-mix(in srgb, var(--aichat-accent) 5%, rgba(8, 8, 22, 0.6));
