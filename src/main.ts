@@ -9243,43 +9243,80 @@ function refreshNpPanel() {
   if (rateInput) rateInput.value = String(currentRate);
   if (rateVal) rateVal.textContent = `${currentRate.toFixed(2)}×`;
 
-  // Related tracks — top 3 by shared-tag count (simple Jaccard-like score)
+  // Related tracks — grounded "more like this" via the 70B /api/similar engine
+  // (same engine behind the Queue AI tab + AI Radio), with an instant local
+  // tag-Jaccard paint underneath so it never blocks on the network.
   const relatedEl = $('#npPanelRelated') as HTMLElement | null;
   const relatedGrid = $('#npPanelRelatedGrid');
   if (relatedEl && relatedGrid && track) {
-    const myTags = getTrackTags(track.id);
-    if (myTags) {
-      const mySet = new Set([...myTags.moods, ...myTags.themes, ...myTags.genres, ...myTags.places]);
-      const scored = TRACKS.filter(t => t.id !== track.id)
-        .map(t => {
-          const tags = getTrackTags(t.id);
-          if (!tags) return { t, score: 0 };
-          const theirs = [...tags.moods, ...tags.themes, ...tags.genres, ...tags.places];
-          let score = theirs.filter(x => mySet.has(x)).length;
-          // Same-album bonus so the cluster reads as a curated mini-playlist
-          if (t.album === track.album) score += 1;
-          return { t, score };
-        })
-        .filter(x => x.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 3);
-      if (scored.length) {
-        relatedEl.hidden = false;
-        relatedGrid.innerHTML = scored
-          .map(({ t }) => {
-            const a = ALBUM_BY_ID.get(t.album);
-            return `<button class="np-panel__related-item" data-related-track="${t.id}" type="button" title="Play ${escapeHtml(t.title)}">
+    const relTrack = track; // captured for the async race-guard below
+    const renderRelatedItem = (t: Track, why?: string) => {
+      const a = ALBUM_BY_ID.get(t.album);
+      // A grounded "why" is the SEMANTIC reason this track is "more like this" —
+      // surface it in place of the bare album label (mirrors the Queue AI tab).
+      const sub = why
+        ? `<span class="np-panel__related-why" title="${escapeHtml(why)}">${escapeHtml(why)}</span>`
+        : `<span class="np-panel__related-album">${escapeHtml(a?.name ?? 'bZ')}</span>`;
+      return `<button class="np-panel__related-item" data-related-track="${t.id}" type="button" title="Play ${escapeHtml(t.title)}">
             <img class="np-panel__related-cover" src="${a?.cover ?? '/art/cover-panda-desiiignare.jpg'}" alt="" width="56" height="56" loading="lazy" />
             <div class="np-panel__related-meta">
               <span class="np-panel__related-title">${escapeHtml(t.title)}</span>
-              <span class="np-panel__related-album">${escapeHtml(a?.name ?? 'bZ')}</span>
+              ${sub}
             </div>
           </button>`;
-          })
-          .join('');
-      } else {
-        relatedEl.hidden = true;
-      }
+    };
+    // Instant local paint — top 3 by shared-tag Jaccard (+ same-album bonus).
+    const myTags = getTrackTags(relTrack.id);
+    const mySet = myTags
+      ? new Set([...myTags.moods, ...myTags.themes, ...myTags.genres, ...myTags.places])
+      : new Set<string>();
+    const jaccard = TRACKS.filter(t => t.id !== relTrack.id)
+      .map(t => {
+        const tags = getTrackTags(t.id);
+        const theirs = tags ? [...tags.moods, ...tags.themes, ...tags.genres, ...tags.places] : [];
+        let score = theirs.filter(x => mySet.has(x)).length;
+        if (t.album === relTrack.album) score += 1; // same-album = curated mini-playlist
+        return { t, score };
+      })
+      .filter(x => x.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map(x => x.t);
+    if (jaccard.length) {
+      relatedEl.hidden = false;
+      relatedGrid.innerHTML = jaccard.map(t => renderRelatedItem(t)).join('');
+    } else {
+      relatedEl.hidden = true;
+    }
+    // Async upgrade to the grounded /api/similar picks (SHARED cache with the
+    // Queue AI tab → zero duplicate fetches), each with its "why". Fail-soft:
+    // any miss/empty/error keeps the instant Jaccard paint above.
+    const applySimilar = (picks: Array<{ id: string; why: string }>) => {
+      const items = picks
+        .map(p => ({ t: TRACK_BY_ID.get(p.id), why: p.why }))
+        .filter((x): x is { t: Track; why: string } => !!x.t)
+        .slice(0, 3);
+      // Only upgrade if the panel is still open on the SAME track (no skip race).
+      if (!items.length || !npPanelOpen || currentTrackId !== relTrack.id) return;
+      relatedEl.hidden = false;
+      relatedGrid.innerHTML = items.map(x => renderRelatedItem(x.t, x.why)).join('');
+    };
+    const cachedSim = queueSimilarCache.get(relTrack.id);
+    if (cachedSim) {
+      applySimilar(cachedSim);
+    } else {
+      fetch(`/api/similar?track=${encodeURIComponent(relTrack.id)}`)
+        .then(r => (r.ok ? r.json() : null))
+        .then((d: unknown) => {
+          const arr = (d as { similar?: Array<{ id?: string; why?: string }> } | null)?.similar;
+          const sim = Array.isArray(arr)
+            ? arr.filter((s): s is { id: string; why: string } => !!s?.id && !!s?.why)
+            : [];
+          if (!sim.length) return;
+          queueSimilarCache.set(relTrack.id, sim);
+          applySimilar(sim);
+        })
+        .catch(() => {});
     }
   }
 
