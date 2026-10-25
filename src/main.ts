@@ -3580,6 +3580,27 @@ function bindMediaSession() {
     setMediaSessionPosition(engine.audio);
   });
   engine.audio.addEventListener('ended', () => recordTrackEnded());
+
+  // Designed error state: a track that genuinely fails to load (after the engine's one
+  // self-heal retry) must NOT dead-stop silently. Surface it + auto-skip so the session
+  // keeps flowing (respects AI Radio / shuffle / order). Cap consecutive failures so a
+  // real outage (offline) stops cleanly with an honest message instead of racing the list.
+  let consecutiveTrackErrors = 0;
+  engine.onTrackError = track => {
+    consecutiveTrackErrors++;
+    if (consecutiveTrackErrors <= 3) {
+      showToast(`Couldn't load "${track.title}" — skipping`);
+      nextTrack(1);
+    } else {
+      showToast("Can't reach the audio — check your connection");
+      engine.audio.pause();
+      consecutiveTrackErrors = 0;
+    }
+  };
+  // A track actually started → the failure streak is over.
+  engine.audio.addEventListener('playing', () => {
+    consecutiveTrackErrors = 0;
+  });
 }
 
 function bindIntegrations() {

@@ -44,6 +44,10 @@ export class AudioEngine {
   freqL: Uint8Array<ArrayBuffer> = new Uint8Array(new ArrayBuffer(0));
   freqR: Uint8Array<ArrayBuffer> = new Uint8Array(new ArrayBuffer(0));
   current: Track | null = null;
+  // Set by main.ts — fired once when a track genuinely fails to load (after the single
+  // self-heal retry below), so the UI can surface an error + auto-skip instead of the
+  // player dead-stopping silently.
+  onTrackError?: (track: Track) => void;
   beatPulse = 0;
   lastBeatAt = 0;
   bpm = 0;
@@ -106,8 +110,17 @@ export class AudioEngine {
     this.audio.addEventListener('error', () => {
       const code = this.audio.error?.code;
       if (!this.current || (code !== 2 && code !== 4)) return; // network/src only
-      if (this.reloadGuard === this.current.id) return; // already retried this track
-      this.reloadGuard = this.current.id;
+      const id = this.current.id;
+      if (this.reloadGuard === id) {
+        // the one self-heal retry ALSO failed → this track is genuinely broken; tell the
+        // UI once so it can surface an error + skip (never dead-stop silently).
+        if (this.erroredId !== id) {
+          this.erroredId = id;
+          this.onTrackError?.(this.current);
+        }
+        return;
+      }
+      this.reloadGuard = id;
       const wasPlaying = !this.audio.paused;
       const at = this.audio.currentTime || 0;
       setTimeout(() => {
@@ -127,6 +140,7 @@ export class AudioEngine {
   }
 
   private reloadGuard = '';
+  private erroredId = '';
 
   on(fn: Listener) {
     this.listeners.add(fn);
