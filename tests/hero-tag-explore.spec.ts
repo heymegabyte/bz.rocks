@@ -74,4 +74,31 @@ test.describe('hero vibe tags — tap to explore', () => {
     );
     expect(titles).not.toContain('chef lu stew');
   });
+
+  test('now-playing panel tags are also distinctive + explorable (tap opens search)', async ({
+    page
+  }) => {
+    await page.goto(`${BASE}/${ALBUM}/${TRACK}`, { waitUntil: 'domcontentloaded' });
+    await page
+      .locator('#apClose')
+      .click({ timeout: 2000 })
+      .catch(() => {});
+    await page.waitForTimeout(1200);
+    // JS click — the transport cover has an idle animation, so a normal click
+    // waits for stability and times out.
+    await page.locator('#transportNpCover').evaluate((el: HTMLElement) => el.click());
+    const tagButtons = page.locator('#npPanelTags button[data-explore-tag]');
+    await expect(tagButtons.first()).toBeVisible({ timeout: 8000 });
+    const labels = (await tagButtons.allInnerTexts()).map(s => s.trim().toLowerCase());
+    expect(labels.length).toBeGreaterThan(0);
+    // Distinctiveness-ranked, same as the hero — near-universal tags are never buttons.
+    for (const universal of ['sacred', 'mercy', 'gospel']) expect(labels).not.toContain(universal);
+
+    // Tapping closes the panel and opens the search filtered to that tag.
+    const tag = (await tagButtons.first().getAttribute('data-explore-tag'))!;
+    await tagButtons.first().click();
+    await expect(page.locator('#cmdk.is-open')).toHaveCount(1);
+    await expect(page.locator('#cmdkInput')).toHaveValue(tag);
+    await expect(page.locator('#cmdkResults .cmdk__item').first()).toBeVisible();
+  });
 });

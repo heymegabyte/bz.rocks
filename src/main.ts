@@ -7047,6 +7047,15 @@ function bindUi() {
     const btn = (e.target as Element | null)?.closest('[data-explore-tag]') as HTMLButtonElement | null;
     if (btn?.dataset.exploreTag) exploreTag(btn.dataset.exploreTag);
   });
+  // Same explore affordance on the now-playing panel's tag strip — close the
+  // panel first so the search overlay isn't layered over the open dialog.
+  $('#npPanelTags')?.addEventListener('click', e => {
+    const btn = (e.target as Element | null)?.closest('[data-explore-tag]') as HTMLButtonElement | null;
+    if (btn?.dataset.exploreTag) {
+      closeNpPanel();
+      exploreTag(btn.dataset.exploreTag);
+    }
+  });
   $('#npPanelClose')?.addEventListener('click', () => closeNpPanel());
   $('#npPanelBackdrop')?.addEventListener('click', () => closeNpPanel());
   $('#eqBass')?.addEventListener('input', e => {
@@ -9288,18 +9297,23 @@ function refreshNpPanel() {
     } else playsChip.hidden = true;
   }
 
-  // Tags from getTrackTags — flatten the structured shape into a single
-  // ordered chip list (moods → themes → places → genres). Energy + tempo
-  // are surface-level descriptors that read well in the chip strip too.
+  // Tags — ranked by DISTINCTIVENESS (topTagsFor, same as the hero chips) so the
+  // strip characterizes the track instead of leading with near-universal moods;
+  // SELECTIVE ones are tappable to explore co-tagged tracks (same `tagExplorable`
+  // + `exploreTag` as the hero). Energy/tempo fill only if <7 distinctive tags.
   const tagsEl = $('#npPanelTags');
   if (tagsEl) {
     const tt = track ? getTrackTags(track.id) : undefined;
-    if (tt) {
-      const flat = [tt.energy, tt.tempo, ...tt.moods, ...tt.themes, ...tt.genres, ...tt.places].filter(
-        Boolean
-      ) as string[];
-      const unique = Array.from(new Set(flat)).slice(0, 7);
-      tagsEl.innerHTML = unique.map(tag => `<span class="np-panel__tag">${escapeHtml(tag)}</span>`).join('');
+    const chips = tt ? topTagsFor(tt, 7) : [];
+    if (chips.length) {
+      const TAG_KINDS = new Set(['mood', 'genre', 'theme', 'place']);
+      tagsEl.innerHTML = chips
+        .map(c =>
+          TAG_KINDS.has(c.kind) && tagExplorable(c.label)
+            ? `<button type="button" class="np-panel__tag np-panel__tag--explore" data-explore-tag="${escapeHtml(c.label)}" title="Explore ${escapeHtml(c.kind)}: ${escapeHtml(c.label)}" aria-label="Explore tracks tagged ${escapeHtml(c.label)}">${escapeHtml(c.label)}</button>`
+            : `<span class="np-panel__tag">${escapeHtml(c.label)}</span>`
+        )
+        .join('');
     } else {
       tagsEl.innerHTML = '';
     }
