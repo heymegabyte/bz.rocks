@@ -1729,7 +1729,7 @@ function setupShell(root: HTMLElement) {
       <div class="cmdk__dialog">
         <div class="cmdk__head">
           <svg class="cmdk__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input class="cmdk__input" id="cmdkInput" type="search" placeholder="Search tracks…" autocomplete="off" spellcheck="false" aria-label="Search tracks" aria-controls="cmdkResults" aria-autocomplete="list" />
+          <input class="cmdk__input" id="cmdkInput" type="search" placeholder="Search a title, lyric, or vibe…" autocomplete="off" spellcheck="false" aria-label="Search by title, lyric, or vibe" aria-controls="cmdkResults" aria-autocomplete="list" />
           <kbd class="cmdk__kbd">Esc</kbd>
         </div>
         <div class="cmdk__results" id="cmdkResults" role="listbox" aria-label="Search results" tabindex="0"></div>
@@ -6887,6 +6887,18 @@ function bindUi() {
       playVibeSet();
       return;
     }
+    // Empty-state suggestion chip → fill the input + run the query (triggers the same
+    // literal filter + /api/vibe AI augmentation as typing it), demonstrating the power.
+    const chip = (e.target as HTMLElement).closest('.cmdk__suggest-chip') as HTMLElement | null;
+    if (chip) {
+      const inp = $('#cmdkInput') as HTMLInputElement | null;
+      if (inp) {
+        inp.value = chip.dataset.suggest ?? '';
+        inp.focus();
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      return;
+    }
     const item = (e.target as HTMLElement).closest('.cmdk__item') as HTMLElement | null;
     if (!item) return;
     // Content page hit?
@@ -8213,6 +8225,18 @@ function trackRowHtml(t: Track, idx: number, sub: string, badge: string): string
     </div>`;
 }
 
+// Example queries shown in the empty search state — each showcases a capability users
+// don't discover from a "Search tracks" box: NL mood/vibe (→ /api/vibe AI picks), a
+// theme/scripture query, and a lyric phrase (→ the lyric-moment jump). Grounded in the
+// real catalog's gospel-rap world so the demo returns strong results.
+const SEARCH_SUGGESTIONS = [
+  'late night prayer',
+  'something triumphant',
+  'scripture about forgiveness',
+  'mercy at the checkpoint',
+  'feeling low, need hope'
+];
+
 function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why: string }> = []) {
   const results = $('#cmdkResults');
   const empty = $('#cmdkEmpty') as HTMLElement | null;
@@ -8300,7 +8324,15 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
         )
         .join('')
     : '';
-  results.innerHTML = pagesHtml + tracksHtml + aiHtml;
+  // Empty-state launchpad: when nothing's typed, surface the search's SUPER-powers —
+  // NL vibe/mood + lyric search (otherwise invisible; users just type a title). Clicking
+  // a chip fills + runs the query (incl. the /api/vibe AI augmentation), demonstrating it.
+  const suggestHtml = sq
+    ? ''
+    : `<div class="cmdk__suggest"><div class="cmdk__group">✦ Try a vibe, mood, or lyric</div><div class="cmdk__suggest-chips">${SEARCH_SUGGESTIONS.map(
+        q => `<button type="button" class="cmdk__suggest-chip" data-suggest="${escapeHtml(q)}">${escapeHtml(q)}</button>`
+      ).join('')}</div></div>`;
+  results.innerHTML = suggestHtml + pagesHtml + tracksHtml + aiHtml;
 }
 
 function openSearch() {

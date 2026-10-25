@@ -16254,6 +16254,49 @@ select:focus-visible,
   color: var(--ink-mute);
   border-bottom: 1px solid color-mix(in srgb, var(--album-accent, var(--accent)) 14%, var(--line));
 }
+/* Empty-search launchpad — clickable example-query chips that surface the NL vibe +
+   lyric search (otherwise invisible from a "search tracks" box). */
+.cmdk__suggest .cmdk__group {
+  color: var(--ink-album-accent);
+  border-bottom: 0;
+}
+.cmdk__suggest-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 2px 16px 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--album-accent, var(--accent)) 14%, var(--line));
+}
+.cmdk__suggest-chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  color: var(--ink-album-accent);
+  background: color-mix(in srgb, var(--album-accent, var(--accent)) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--album-accent, var(--accent)) 28%, transparent);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    transform 0.12s ease;
+}
+.cmdk__suggest-chip:hover,
+.cmdk__suggest-chip:focus-visible {
+  background: color-mix(in srgb, var(--album-accent, var(--accent)) 22%, transparent);
+  border-color: color-mix(in srgb, var(--album-accent, var(--accent)) 55%, transparent);
+  transform: translateY(-1px);
+  outline: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cmdk__suggest-chip {
+    transition: none;
+  }
+  .cmdk__suggest-chip:hover {
+    transform: none;
+  }
+}
 .cmdk__item--page .cmdk__item-badge--inline {
   background: color-mix(in srgb, var(--album-accent, var(--accent)) 14%, transparent);
   border-color: color-mix(in srgb, var(--album-accent, var(--accent)) 40%, transparent);
