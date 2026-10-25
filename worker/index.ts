@@ -3598,6 +3598,7 @@ ${chatCatalog}`;
       const html = await renderStatsPage(env, url.origin, ctx);
       const resp = new Response(html, {
         headers: {
+          ...SECURITY_HEADERS,
           'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'public, max-age=300, must-revalidate'
         }
@@ -3612,7 +3613,7 @@ ${chatCatalog}`;
       if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
         return new Response('Not found', { status: 404 });
       return new Response(renderClipPage(trackId, url.origin), {
-        headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=3600' }
+        headers: { ...SECURITY_HEADERS, 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=3600' }
       });
     }
 
@@ -3625,7 +3626,7 @@ ${chatCatalog}`;
       if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
         return new Response('Not found', { status: 404 });
       return new Response(renderPressPage(trackId, url.origin), {
-        headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=600' }
+        headers: { ...SECURITY_HEADERS, 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=600' }
       });
     }
 
@@ -3636,7 +3637,7 @@ ${chatCatalog}`;
       // Only tracks that actually have a film get a watch page — everything else 404s.
       if (!track || !track.video) return new Response('Not found', { status: 404 });
       return new Response(renderWatchPage(trackId, url.origin), {
-        headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=600' }
+        headers: { ...SECURITY_HEADERS, 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=600' }
       });
     }
 
