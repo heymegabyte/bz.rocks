@@ -196,4 +196,37 @@ test.describe('AI chat — widget renderer', () => {
       )
       .toBe(true);
   });
+
+  test('a PROSE album recommendation is auto-carded with "Play all as a set" (grounded backstop)', async ({
+    page
+  }) => {
+    await gotoHome(page);
+    await openChat(page);
+    // The model usually names an album in prose with no ```aiwidgets``` block —
+    // the album backstop must still surface an album-card + its tracklist so the
+    // whole pick is one tap (▶ Play all as a set) from the persistent player.
+    await sendSlash(page, 'Which bZ album should I start with? Name one.');
+    const reply = page.locator('.aichat__msg.aichat__msg--ai').last();
+    await expect(reply).toBeAttached({ timeout: 10000 });
+    const albumCard = page.locator('.aichat__widget--album');
+    let carded = false;
+    for (let i = 0; i < 24; i++) {
+      await page.waitForTimeout(1400);
+      if (await albumCard.count()) {
+        carded = true;
+        break;
+      }
+      const t = (await reply.textContent()) || '';
+      if (/throttl|could not|unavailable|rate.?limit|try again/i.test(t)) break;
+    }
+    // AI throttled / didn't name a recognizable album this run → nothing to assert.
+    test.skip(!carded, 'model did not name a catalog album this run (throttled or rephrased)');
+
+    // The album-card links to a real album route, and the backstop attached the
+    // album's tracklist so a single "Play all as a set" plays it in-context.
+    await expect(albumCard.first()).toHaveAttribute('href', /^\/[a-z0-9-]+$/);
+    await expect(page.locator('.aichat__widget--track').first()).toBeVisible();
+    await expect(page.locator('.aichat__playset').first()).toBeVisible();
+    await expect(page.locator('.aichat__playset').first()).toContainText(/play all \d+ as a set/i);
+  });
 });

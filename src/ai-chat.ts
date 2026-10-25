@@ -234,6 +234,65 @@ export function detectTrackMentions(text: string, cap = 4): AiChatWidget[] {
   return out;
 }
 
+// The album sibling of detectTrackMentions. The model recommends an ALBUM in
+// prose ("start with Panda Desiiignare") just as often as a track — also a
+// dead-end sentence without a card. Returns an album-card + the album's full
+// tracklist (so renderWidgets auto-adds "▶ Play all N as a set" → plays the
+// album IN-CONTEXT, honoring the AI-native rule). Grounded (only real album
+// names match), zero AI cost, fail-soft. Cap 1 — one rich album set per reply.
+let albumTitleIdx: { id: string; name: string; lc: string }[] | null = null;
+function albumTitleIndex() {
+  if (!albumTitleIdx) {
+    albumTitleIdx = ALBUMS.map(a => ({ id: a.id, name: a.name, lc: a.name.toLowerCase() })).sort(
+      (a, b) => b.lc.length - a.lc.length
+    );
+  }
+  return albumTitleIdx;
+}
+
+export function detectAlbumMentions(text: string, cap = 1): AiChatWidget[] {
+  if (typeof text !== 'string' || text.length < 3) return [];
+  let hay = text;
+  const out: AiChatWidget[] = [];
+  let found = 0;
+  for (const { id, name, lc } of albumTitleIndex()) {
+    if (found >= cap) break;
+    // False-positive guard: strip a leading "the " and require the remainder to
+    // be ≥2 words OR ≥9 chars, so common "The Appeal" / "The Pause" phrases in
+    // ordinary prose can't false-trigger an album card. Every other album name
+    // is a distinctive multi-word title.
+    const core = lc.replace(/^the\s+/, '');
+    if (core.split(/\s+/).length < 2 && core.length < 9) continue;
+    const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (!new RegExp(`(^|[^a-z0-9])${esc}([^a-z0-9]|$)`, 'i').test(hay)) continue;
+    const a = ALBUM_BY_ID.get(id);
+    if (!a) continue;
+    const tracks = tracksForAlbum(a.id);
+    out.push({
+      kind: 'album-card',
+      albumId: a.id,
+      name: a.name,
+      tagline: a.tagline,
+      cover: a.cover,
+      trackCount: tracks.length,
+      href: `/${a.id}`
+    });
+    for (const t of tracks)
+      out.push({
+        kind: 'track-card',
+        trackId: t.id,
+        title: t.title,
+        album: a.name,
+        vibe: t.vibe,
+        cover: t.cover ?? a.cover,
+        href: `/${a.id}/${t.id}`
+      });
+    hay = hay.replace(new RegExp(esc, 'gi'), ' '); // consume so it isn't re-matched
+    found++;
+  }
+  return out;
+}
+
 export function mountAIChat(opts: MountOpts = {}) {
   if (mounted) return;
   mounted = true;
@@ -1497,15 +1556,17 @@ export function mountAIChat(opts: MountOpts = {}) {
           renderMessages();
         }
       }
-      // Grounded actionability backstop: when the model recommended tracks in
-      // PROSE (no aiwidgets block — the common fast-model case), auto-attach
-      // tap-to-play cards for any verbatim catalog titles so every pick is one
-      // tap from the persistent player. Zero AI cost, grounded, fail-soft.
+      // Grounded actionability backstop: when the model recommended an album or
+      // tracks in PROSE (no aiwidgets block — the common fast-model case),
+      // auto-attach cards so the pick is one tap from the persistent player.
+      // Zero AI cost, grounded, fail-soft. Album-first (its tracklist already
+      // covers any track also named) → else per-track cards.
       if (!aiMsg.widgets?.length && aiMsg.content) {
         try {
-          const auto = detectTrackMentions(aiMsg.content);
-          if (auto.length) {
-            aiMsg.widgets = auto;
+          const auto = detectAlbumMentions(aiMsg.content);
+          const widgets = auto.length ? auto : detectTrackMentions(aiMsg.content);
+          if (widgets.length) {
+            aiMsg.widgets = widgets;
             renderMessages();
           }
         } catch {}

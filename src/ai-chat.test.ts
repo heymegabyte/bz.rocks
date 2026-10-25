@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { detectTrackMentions } from './ai-chat';
-import { TRACK_BY_ID } from './data';
+import { detectTrackMentions, detectAlbumMentions } from './ai-chat';
+import { TRACK_BY_ID, ALBUM_BY_ID } from './data';
 
 // The fast chat model usually recommends tracks in plain prose with no
 // ```aiwidgets``` block. detectTrackMentions is the grounded backstop that turns
@@ -54,5 +54,51 @@ describe('detectTrackMentions — grounded actionability backstop', () => {
     expect(detectTrackMentions('hi')).toEqual([]);
     // @ts-expect-error — defends against a non-string at runtime
     expect(detectTrackMentions(null)).toEqual([]);
+  });
+});
+
+describe('detectAlbumMentions — grounded album backstop', () => {
+  it('turns a prose album recommendation into an album-card + its tracklist (play-all)', () => {
+    const w = detectAlbumMentions('I gotchu! Start with Panda Desiiignare — the flagship gospel of bZ.');
+    expect(w.length).toBeGreaterThan(1); // album-card + ≥1 track-card
+    const card = w[0] as { kind: string; albumId: string; name: string; href: string; trackCount: number };
+    expect(card.kind).toBe('album-card');
+    expect(card.albumId).toBe('desiiignare');
+    expect(card.href).toBe('/desiiignare');
+    expect(card.name).toBe('Panda Desiiignare');
+    // The rest are the album's real tracks (so renderWidgets adds "Play all as a set").
+    const trackCards = w.slice(1);
+    expect(trackCards.length).toBe(card.trackCount);
+    for (const t of trackCards) {
+      expect((t as { kind: string }).kind).toBe('track-card');
+      expect(TRACK_BY_ID.get((t as { trackId: string }).trackId)).toBeTruthy();
+    }
+  });
+
+  it('never fabricates an album card for a name not in the catalog', () => {
+    expect(detectAlbumMentions('Check out the "Diamond Supernova" album.')).toEqual([]);
+  });
+
+  it('does NOT false-trigger on common "The Appeal" / "The Pause" prose', () => {
+    // These two album names reduce to a common single word after "the" — they'd
+    // false-fire on ordinary prose, so the stripped-"the" guard excludes them.
+    expect(detectAlbumMentions('I love the appeal of this gospel record.')).toEqual([]);
+    expect(detectAlbumMentions('There was a long pause, then the pause ended.')).toEqual([]);
+  });
+
+  it('DOES card a distinctive album even when another is only mentioned in prose', () => {
+    const w = detectAlbumMentions('Try Little Lanterns or maybe the appeal of something quieter.');
+    expect(w.length).toBeGreaterThan(0);
+    expect((w[0] as { albumId: string }).albumId).toBe('little-lanterns');
+    expect(ALBUM_BY_ID.get('little-lanterns')).toBeTruthy();
+  });
+
+  it('is capped + fail-soft', () => {
+    // cap=1 → at most ONE album set regardless of how many are named.
+    const w = detectAlbumMentions('Panda Desiiignare, Mercy Drop, and Little Lanterns are all great.');
+    expect(w.filter(x => (x as { kind: string }).kind === 'album-card').length).toBe(1);
+    expect(detectAlbumMentions('')).toEqual([]);
+    // @ts-expect-error — defends against a non-string at runtime
+    expect(detectAlbumMentions(null)).toEqual([]);
   });
 });
