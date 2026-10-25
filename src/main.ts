@@ -18,7 +18,7 @@ import {
   NEXT_RELEASE
 } from './data';
 import { SUNO_META } from './suno-meta';
-import { TRACK_TAGS, getTrackTags } from './tags';
+import { TRACK_TAGS, getTrackTags, tracksByTag } from './tags';
 import { CONTENT_PAGE_BY_SLUG, CONTENT_PAGES } from './content-pages';
 import { fmtTime, fmtClock, fmtHz, fmtKeyCompact } from './format';
 import { TRACK_DURATIONS } from './durations';
@@ -2612,6 +2612,26 @@ async function hydrateTrackRowSpotifyBadges(root: HTMLElement | Document = docum
 
 type TagChip = { kind: 'mood' | 'theme' | 'genre' | 'place' | 'tempo' | 'energy'; label: string };
 
+// How many tracks carry each tag — memoized once. Mirrors the namespaces
+// `tracksByTag` scans so the count equals what an "explore" tap would return.
+let tagFreqMap: Map<string, number> | null = null;
+function tagCount(label: string): number {
+  if (!tagFreqMap) {
+    tagFreqMap = new Map();
+    for (const t of TRACK_TAGS.values())
+      for (const x of [...t.moods, ...t.themes, ...t.places, ...t.genres, ...t.contains])
+        tagFreqMap.set(x, (tagFreqMap.get(x) ?? 0) + 1);
+  }
+  return tagFreqMap.get(label) ?? 0;
+}
+// A tag is worth EXPLORING only if it's SELECTIVE — a near-universal tag (e.g.
+// "sacred" on 92% of a gospel catalog) would return ~everything, so tapping it
+// reads as a no-op; a singleton would return only this track. Keep 2..~45%.
+function tagExplorable(label: string): boolean {
+  const c = tagCount(label);
+  return c >= 2 && c <= TRACKS.length * 0.45;
+}
+
 function topTagsFor(tags: ReturnType<typeof getTrackTags>, max = 5): TagChip[] {
   if (!tags) return [];
   const chips: TagChip[] = [];
@@ -2670,8 +2690,18 @@ function renderNowPlaying(track: Track | null) {
     const tags = track ? getTrackTags(track.id) : undefined;
     const chips = tags ? topTagsFor(tags, 5) : [];
     if (chips.length) {
+      // A chip is EXPLORABLE when it maps to a real tag namespace (mood/genre/
+      // theme/place → `tracksByTag`) AND is SELECTIVE enough to be a useful
+      // filter (`tagExplorable`). Those become <button>s that open the search
+      // filtered to every track sharing that AI-derived tag; near-universal
+      // moods, singletons, and energy/tempo ("89 bpm") stay inert <span>s.
+      const TAG_KINDS = new Set(['mood', 'genre', 'theme', 'place']);
       heroTags.innerHTML = chips
-        .map(c => `<span class="viz__hero-tag viz__hero-tag--${c.kind}" title="${c.kind}">${c.label}</span>`)
+        .map(c =>
+          TAG_KINDS.has(c.kind) && tagExplorable(c.label)
+            ? `<button type="button" class="viz__hero-tag viz__hero-tag--${c.kind} viz__hero-tag--explore" data-explore-tag="${escapeHtml(c.label)}" title="Explore ${escapeHtml(c.kind)}: ${escapeHtml(c.label)}" aria-label="Explore tracks tagged ${escapeHtml(c.label)}">${escapeHtml(c.label)}</button>`
+            : `<span class="viz__hero-tag viz__hero-tag--${c.kind}" title="${escapeHtml(c.kind)}">${escapeHtml(c.label)}</span>`
+        )
         .join('');
       heroTags.hidden = false;
     } else {
@@ -6991,6 +7021,14 @@ function bindUi() {
 
   // Now-playing panel
   $('#transportNpCover')?.addEventListener('click', () => openNpPanel());
+
+  // Hero vibe tags → explore. Event-delegated since #heroTags re-renders on
+  // every track change; only the explorable (mood/genre/theme/place) chips are
+  // <button data-explore-tag>, so inert energy/tempo spans never match.
+  $('#heroTags')?.addEventListener('click', e => {
+    const btn = (e.target as Element | null)?.closest('[data-explore-tag]') as HTMLButtonElement | null;
+    if (btn?.dataset.exploreTag) exploreTag(btn.dataset.exploreTag);
+  });
   $('#npPanelClose')?.addEventListener('click', () => closeNpPanel());
   $('#npPanelBackdrop')?.addEventListener('click', () => closeNpPanel());
   $('#eqBass')?.addEventListener('input', e => {
@@ -8520,16 +8558,20 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
   results.innerHTML = suggestHtml + pagesHtml + tracksHtml + aiHtml;
 }
 
-function openSearch() {
+function openSearch(preset?: { query: string; tracks: Track[] }) {
   searchOpen = true;
   $('#cmdk')?.classList.add('is-open');
   searchActiveIdx = 0;
+  // A preset (e.g. tapping a vibe tag) opens the palette already showing a
+  // curated set — reflect it in the input so the user can refine by typing.
+  const presetInput = $('#cmdkInput') as HTMLInputElement | null;
+  if (preset && presetInput) presetInput.value = preset.query;
   // Defer the initial result render one frame so OPENING the palette is instant
   // — the overlay shows + animates in immediately; the list paints next frame,
   // off the open-click's INP critical path. (Measured ~184ms open → the render
   // was the cost.) Focus moves with it, imperceptibly (~16ms later).
   requestAnimationFrame(() => {
-    renderSearchResults(filterTracks(''));
+    renderSearchResults(preset ? preset.tracks : filterTracks(''));
     ($('#cmdkInput') as HTMLInputElement | null)?.focus();
   });
   // Warm the lowercased search blobs off the critical path (on idle, after focus)
@@ -8544,6 +8586,20 @@ function openSearch() {
     .requestIdleCallback;
   if (ric) ric(warmBlobs, { timeout: 500 });
   else setTimeout(warmBlobs, 50);
+}
+
+// Tap a vibe tag → open the search showing every track that shares that
+// AI-derived tag (grounded via tracksByTag — instant, no network, the AI's own
+// categorization made navigable). Turns the hero's decorative mood/genre/theme/
+// place chips into a real exploration tool. Fail-soft: no matches → no-op.
+function exploreTag(label: string) {
+  const tag = label.trim();
+  if (!tag) return;
+  const tracks = tracksByTag(tag)
+    .map(id => TRACK_BY_ID.get(id))
+    .filter((t): t is Track => !!t);
+  if (!tracks.length) return;
+  openSearch({ query: tag, tracks });
 }
 
 function closeSearch() {

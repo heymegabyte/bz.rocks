@@ -2093,6 +2093,48 @@ body[data-track-changing='1'] #bg {
   text-shadow: 0 1px 4px rgba(6, 6, 16, 0.85);
   white-space: nowrap;
 }
+/* Explorable chips are real <button>s — tap to open the search filtered to every
+   track sharing that AI-derived tag. `.viz__hero` is pointer-events:none, so the
+   button must opt back in; button-reset keeps it pixel-identical to the span. */
+button.viz__hero-tag--explore {
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    transform 0.14s ease,
+    background 0.14s ease,
+    border-color 0.14s ease,
+    box-shadow 0.14s ease;
+}
+button.viz__hero-tag--explore::after {
+  content: '↗';
+  font-size: 0.72em;
+  margin-inline-start: 5px;
+  opacity: 0.55;
+}
+@media (hover: hover) {
+  button.viz__hero-tag--explore:hover {
+    transform: translateY(-1px);
+    background: color-mix(in oklab, var(--accent, #00e5ff) 26%, rgba(255, 255, 255, 0.06));
+    border-color: color-mix(in oklab, var(--accent, #00e5ff) 55%, rgba(255, 255, 255, 0.16));
+    box-shadow: 0 6px 16px -8px color-mix(in oklab, var(--accent, #00e5ff) 60%, transparent);
+  }
+  button.viz__hero-tag--explore:hover::after {
+    opacity: 0.95;
+  }
+}
+button.viz__hero-tag--explore:focus-visible {
+  outline: 2px solid var(--accent, #00e5ff);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  button.viz__hero-tag--explore {
+    transition: none;
+  }
+}
 .viz__hero-tag--genre {
   background: color-mix(in oklab, var(--accent, #00e5ff) 22%, rgba(255, 255, 255, 0.04));
   border-color: color-mix(in oklab, var(--accent, #00e5ff) 48%, rgba(255, 255, 255, 0.14));
