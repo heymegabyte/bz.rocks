@@ -8526,10 +8526,18 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
   searchAiPicks = ai;
   searchRows = [...shownTracks, ...ai.map(p => p.track)];
   if (!totalTracks && !pages.length && !ai.length) {
-    results.innerHTML = '';
-    empty.hidden = false;
+    // No-match recovery launchpad — a dead-end query is NOT a dead end: offer the
+    // same clickable vibe/mood/lyric starters the empty state shows (first-time-
+    // excellence: every state orients + offers an obvious next action). The chips
+    // fill + run the query via the delegated .cmdk__suggest-chip handler. Richer
+    // than the bare "No tracks found", so hide that element.
+    empty.hidden = true;
     count.textContent = '0 results';
     searchActiveIdx = -1;
+    const q = escapeHtml((input?.value ?? '').trim());
+    results.innerHTML = `<div class="cmdk__suggest"><div class="cmdk__group">No match for &ldquo;${q}&rdquo; — try a vibe, mood, or lyric</div><div class="cmdk__suggest-chips">${SEARCH_SUGGESTIONS.map(
+      s => `<button type="button" class="cmdk__suggest-chip" data-suggest="${escapeHtml(s)}">${escapeHtml(s)}</button>`
+    ).join('')}</div></div>`;
     return;
   }
   empty.hidden = true;
