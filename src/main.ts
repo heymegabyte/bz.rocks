@@ -2634,11 +2634,29 @@ function tagExplorable(label: string): boolean {
 
 function topTagsFor(tags: ReturnType<typeof getTrackTags>, max = 5): TagChip[] {
   if (!tags) return [];
-  const chips: TagChip[] = [];
-  tags.moods.slice(0, 2).forEach(m => chips.push({ kind: 'mood', label: m }));
-  tags.genres.slice(0, 1).forEach(g => chips.push({ kind: 'genre', label: g }));
-  tags.themes.slice(0, 1).forEach(t => chips.push({ kind: 'theme', label: t }));
-  tags.places.slice(0, 1).forEach(p => chips.push({ kind: 'place', label: p }));
+  // Prefer DISTINCTIVE tags: a tag ~every track shares says nothing about THIS
+  // one (and makes a useless filter); a rarer one characterizes it (TF-IDF
+  // intuition). Pool the 4 display namespaces, dedupe, and rank SELECTIVE
+  // (explorable) tags first, rarest-first within — so chips read as
+  // this-track-specific AND lead with the ones worth tapping; near-universal
+  // identity tags (gospel/sacred) trail as inert context. The old first-2-moods
+  // +first-of-each buried the distinctive tags → 66/168 tracks showed 0
+  // explorable chip (the explore affordance was invisible on 39% of the catalog).
+  const seen = new Set<string>();
+  const chips: TagChip[] = [
+    ...tags.moods.map(label => ({ kind: 'mood' as const, label })),
+    ...tags.genres.map(label => ({ kind: 'genre' as const, label })),
+    ...tags.themes.map(label => ({ kind: 'theme' as const, label })),
+    ...tags.places.map(label => ({ kind: 'place' as const, label }))
+  ]
+    .filter(x => x.label && !seen.has(x.label) && seen.add(x.label))
+    .sort(
+      (a, b) =>
+        (tagExplorable(b.label) ? 1 : 0) - (tagExplorable(a.label) ? 1 : 0) ||
+        tagCount(a.label) - tagCount(b.label)
+    )
+    .slice(0, max)
+    .map(({ kind, label }) => ({ kind, label }));
   if (chips.length < max) chips.push({ kind: 'energy', label: tags.energy });
   if (chips.length < max) chips.push({ kind: 'tempo', label: `${tags.identifiers.bpmHint} bpm` });
   return chips.slice(0, max);

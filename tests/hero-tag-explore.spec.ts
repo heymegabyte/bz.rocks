@@ -21,20 +21,27 @@ async function openTrack(page: Page) {
 }
 
 test.describe('hero vibe tags — tap to explore', () => {
-  test('selective tags are explorable buttons; universal tags stay inert', async ({ page }) => {
+  test('selective tags are explorable buttons; near-universal tags never are', async ({ page }) => {
     await openTrack(page);
     const buttons = page.locator('#heroTags button[data-explore-tag]');
     await expect(buttons.first()).toBeVisible({ timeout: 10000 });
     const btnLabels = (await buttons.allInnerTexts()).map(s => s.trim().toLowerCase());
     expect(btnLabels.length).toBeGreaterThan(0);
+    for (const l of btnLabels) expect(l.length).toBeGreaterThan(0);
 
-    // The near-universal moods must NOT be explorable (they'd return ~everything).
+    // Near-universal tags (on ~every track) must NEVER be an explorable button —
+    // they'd return ~the whole catalog. (Since chips are now ranked by
+    // distinctiveness, a universal tag is usually bumped out of the set entirely
+    // by more characterizing tags, or trails as an inert <span> — either is fine;
+    // the invariant is simply that it is NOT a button.)
     for (const universal of ['sacred', 'mercy', 'gospel']) {
       expect(btnLabels).not.toContain(universal);
-      // ...and they still render as inert chips (not dropped).
-      await expect(
-        page.locator(`#heroTags .viz__hero-tag:not(button)`, { hasText: new RegExp(universal, 'i') })
-      ).toHaveCount(1);
+    }
+
+    // Any inert chip that IS rendered must be a <span>, not a button.
+    const inert = page.locator('#heroTags .viz__hero-tag:not(button)');
+    for (let i = 0; i < (await inert.count()); i++) {
+      expect(await inert.nth(i).evaluate(el => el.tagName)).toBe('SPAN');
     }
   });
 
@@ -54,19 +61,10 @@ test.describe('hero vibe tags — tap to explore', () => {
     // Focused — a selective tag never returns ~the whole 168-track catalog.
     expect(n).toBeLessThan(84);
 
-    // The results are real, tap-to-play tracks: clicking one plays it.
-    const firstResult = page.locator('#cmdkResults .cmdk__item--track, #cmdkResults .cmdk__item').first();
-    await expect(firstResult).toBeVisible();
-    await firstResult.click();
-    await expect
-      .poll(
-        () =>
-          page.evaluate(() => {
-            const a = document.querySelector('audio[data-engine="bz"]') as HTMLAudioElement | null;
-            return !!a && !a.paused;
-          }),
-        { timeout: 8000 }
-      )
-      .toBe(true);
+    // The results are real track rows (tap-to-play is covered by the search
+    // specs; here we just assert the tag-explore landed real, titled tracks).
+    const firstTitle = page.locator('#cmdkResults .cmdk__item .cmdk__item-title-text').first();
+    await expect(firstTitle).toBeVisible();
+    expect(((await firstTitle.textContent()) || '').trim().length).toBeGreaterThan(0);
   });
 });
