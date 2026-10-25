@@ -759,9 +759,185 @@
       ],
       "veoPrompt": "A battle-worn warrior stands atop a colossal fallen dragon on scorched rock, chest heaving, and slowly raises his sword overhead in triumph as cold grey dawn light breaks; the vast beast lies still beneath him, one great wing draped across the ground; grounded and epic, real scale and weight; thin smoke rising, minimal fire; a slow heroic push-in.",
       "useHeroAsFirstFrame": false
+    },
+    {
+      "id": "b1",
+      "sceneId": "s2",
+      "index": 6,
+      "durationSec": 8,
+      "subject": "The hero at the front of his massed army, still before the charge (cold open)",
+      "environment": "A vast army massed on a muddy ridge at cold grey dawn; drifting rain, heavy banners, overcast steel-grey, minimal fire — no dragon",
+      "action": "He grips his sword and fixes his gaze on the enemy line, utterly still before the storm",
+      "cameraFraming": "establishing",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, wide, deep focus",
+      "lighting": "cold grey dawn, overcast, naturalistic",
+      "emotionalIntention": "grim resolve; the held breath before battle (plot: cold open)",
+      "temporalProgression": "a slow wide push-in settles on the still hero as the army waits behind him",
+      "continuityConstraints": [
+        "same man (Darius), battered bronze scale armor, notched sword",
+        "grounded, epic scale",
+        "2.39 letterbox, teal+amber grade, NO dragon, minimal fire"
+      ],
+      "referenceAssets": ["darius", "notched-sword", "bronze-scale-mail"],
+      "startStateRef": "pre-charge",
+      "endStateRef": "pre-charge",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": false,
+        "sfx": ["cold wind", "distant war drums", "rain"],
+        "silence": false,
+        "note": "native audio discarded; score to the track"
+      },
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/text-to-video",
+        "rationale": "Seedance 2.5 for epic massed-army scale + atmospheric depth (its strength); no dragon (dodges its copyright checker), no gore (dodges its content checker)",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "epic grounded scale, real crowd + atmospheric depth",
+        "no dragon, no gore, minimal fire"
+      ],
+      "veoPrompt": "A lone battle-worn warrior in battered bronze scale armor stands at the front of a vast silent army massed on a muddy ridge at cold grey dawn; rain drifts, breath steams, heavy banners hang; he grips his notched sword and fixes his gaze on the enemy line across the field, utterly still before the storm; a slow wide push-in; grounded, epic scale, photoreal, overcast steel-grey, minimal fire.",
+      "useHeroAsFirstFrame": false
+    },
+    {
+      "id": "b2",
+      "sceneId": "s2",
+      "index": 7,
+      "durationSec": 8,
+      "subject": "The hero leads the army's charge across the battlefield",
+      "environment": "A wide muddy battlefield, cold grey dawn, rain and distant smoke, snapping banners — no dragon",
+      "action": "He raises his sword with a roar and the whole army surges forward behind him",
+      "cameraFraming": "wide",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, sweeping, slight low angle",
+      "lighting": "cold grey dawn, overcast, naturalistic",
+      "emotionalIntention": "surging fury and momentum (plot: escalation)",
+      "temporalProgression": "sword up, roar, the tide of soldiers breaks forward as the camera sweeps alongside",
+      "continuityConstraints": [
+        "same man (Darius), battered bronze scale armor, notched sword",
+        "massive grounded scale",
+        "2.39 letterbox, teal+amber grade, NO dragon, minimal fire"
+      ],
+      "referenceAssets": ["darius", "notched-sword", "bronze-scale-mail"],
+      "startStateRef": "charge",
+      "endStateRef": "charge",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": false,
+        "sfx": ["war cry", "thunder of boots", "snapping banners"],
+        "silence": false,
+        "note": "native audio discarded; score to the track"
+      },
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/text-to-video",
+        "rationale": "Seedance 2.5 for the massive charging-army scale (its strength)",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "huge grounded scale, a real tide of soldiers",
+        "no dragon, no gore, minimal fire"
+      ],
+      "veoPrompt": "A battle-worn warrior raises his sword with a roar and a vast army surges forward behind him across a muddy battlefield at cold grey dawn, a tide of shields and spears; mud flies, banners snap, rain streaks; a sweeping tracking shot alongside the charge; grounded, massive scale, photoreal, grey overcast, distant smoke, minimal fire.",
+      "useHeroAsFirstFrame": false
+    },
+    {
+      "id": "b3",
+      "sceneId": "s2",
+      "index": 8,
+      "durationSec": 8,
+      "subject": "The hero presses forward through the thick of the melee",
+      "environment": "The churning heart of the battle, soldiers all around, rain and mud, grey overcast — no dragon",
+      "action": "He pushes forward through a sea of soldiers, shields crashing and spears thrusting around him",
+      "cameraFraming": "medium",
+      "cameraMovement": "handheld",
+      "lensIntention": "anamorphic 35mm, handheld, visceral",
+      "lighting": "grey overcast, naturalistic, chaotic",
+      "emotionalIntention": "relentless struggle at the climax (plot: climax)",
+      "temporalProgression": "he shoulders through the crush, never stopping, the chaos readable around him",
+      "continuityConstraints": [
+        "same man (Darius), battered bronze scale armor, notched sword",
+        "visceral but readable combat, no gore",
+        "2.39 letterbox, teal+amber grade, NO dragon"
+      ],
+      "referenceAssets": ["darius", "notched-sword", "bronze-scale-mail"],
+      "startStateRef": "clash",
+      "endStateRef": "clash",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": false,
+        "sfx": ["clash of steel", "shields crashing", "battle roar"],
+        "silence": false,
+        "note": "native audio discarded; score to the track"
+      },
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/text-to-video",
+        "rationale": "Seedance 2.5 for dense, readable crowd combat",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "dense readable melee, real crowd",
+        "no dragon, no gore, minimal fire"
+      ],
+      "veoPrompt": "In the thick of the battle a battle-worn warrior presses forward through a churning sea of soldiers, shields crashing and spears thrusting around him, relentless and unstoppable; handheld, visceral, chaotic but readable; rain, mud, grit; grounded, photoreal, grey overcast, no fire.",
+      "useHeroAsFirstFrame": false
+    },
+    {
+      "id": "b4",
+      "sceneId": "s5",
+      "index": 9,
+      "durationSec": 8,
+      "subject": "The hero stands triumphant over the won battlefield",
+      "environment": "Atop a rise on the won battlefield at breaking dawn; tattered banners, thin smoke, his roaring army behind — no dragon",
+      "action": "He raises his sword overhead in triumph as his surviving army roars behind him",
+      "cameraFraming": "wide",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, heroic low angle",
+      "lighting": "breaking dawn, cool light warming, naturalistic",
+      "emotionalIntention": "hard-won triumph — the conquering (plot: earned payoff)",
+      "temporalProgression": "sword rises overhead, the army's roar swells, dawn breaks behind him",
+      "continuityConstraints": [
+        "same man (Darius), battered bronze scale armor, notched sword",
+        "grounded epic triumph",
+        "2.39 letterbox, teal+amber grade, NO dragon, thin smoke only"
+      ],
+      "referenceAssets": ["darius", "notched-sword", "bronze-scale-mail"],
+      "startStateRef": "victory",
+      "endStateRef": "victory",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": false,
+        "sfx": ["army roar", "wind", "distant horn"],
+        "silence": false,
+        "note": "native audio discarded; score to the track — lands on a triumphant lyric"
+      },
+      "model": {
+        "provider": "fal",
+        "modelId": "bytedance/seedance-2.5/text-to-video",
+        "rationale": "Seedance 2.5 for the epic triumph + crowd scale (payoff)",
+        "estCostUsd": 2.5,
+        "dryRun": false
+      },
+      "qualityConstraints": [
+        "epic grounded triumph, roaring crowd behind",
+        "no dragon, no gore, thin smoke only"
+      ],
+      "veoPrompt": "A battle-worn warrior stands atop a rise on the won battlefield, sword raised overhead in triumph, as his surviving army roars and raises their weapons behind him; tattered banners against a breaking dawn sky, thin smoke; a slow heroic low-angle push-in; grounded, epic, photoreal, hard-won victory.",
+      "useHeroAsFirstFrame": false
     }
   ],
-  "budget": { "maxUsd": 30, "spentUsd": 0, "requireApproval": false },
+  "budget": { "maxUsd": 40, "spentUsd": 0, "requireApproval": false },
   "qualityAcceptance": [
     "Hyper-real: convincing on a paused frame AND in motion",
     "HBO anamorphic 2.39, teal+amber grade, fine grain",

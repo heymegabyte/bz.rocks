@@ -168,7 +168,7 @@ async function veoClip(tok, shot, heroFrame) {
   }
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      const r = await falRun(tok, model, input, `veo ${shot.id}`, 10 * 60 * 1000);
+      const r = await falRun(tok, model, input, `gen ${shot.id}`, (SEEDANCE ? 20 : 10) * 60 * 1000);
       const vurl = r?.video?.url || r?.video_url || r?.videos?.[0]?.url;
       if (!vurl) throw new Error(`no video url ${JSON.stringify(r).slice(0, 180)}`);
       await writeFile(dest, Buffer.from(await (await fetch(vurl)).arrayBuffer()));
