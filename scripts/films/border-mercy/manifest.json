@@ -1,0 +1,1257 @@
+{
+  "id": "border-mercy",
+  "createdAtIso": "2026-10-25T00:00:00Z",
+  "brief": {
+    "concept": "Cinematic music film for bZ's 'Border Mercy' (album Mercy Drop), working title NO CREATURE LEFT IN FIRE. A mythic redemptive allegory from the lyrics as written — a burning pit, a condemned 'beast' chained in the flame, a world that closes the door, and a mercy-bearer who refuses the border and descends to free the one everyone condemned. Make the viewer FEEL the cost and courage of mercy. HBO-level, 100% photoreal, indistinguishable from real live-action; ARRI/35mm anamorphic 2.39 letterbox. Grade: ember-amber vs cold blue, muted-cyan accents used sparingly as the bZ signature. People GROUNDED always (walk/descend/reach — NEVER float or levitate). Fire appears ONLY where motivated (the pit). The condemned is shown OBLIQUELY with pathos, never horror — silhouette, shadow, chained hands, one anguished eye — no gore, human eyes. NO superimposed HUD/holograms/floating type in-scene. Action-forward redemption, not a mood montage. Beat-synced: every cut lands on a beat.",
+    "durationSec": 219.6,
+    "aspectRatio": "2.39:1",
+    "mood": "haunting, tender, redemptive; the cost and courage of mercy; ember-amber warmth against cold-blue indifference",
+    "format": "music-video",
+    "song": { "title": "Border Mercy", "bpm": 72 }
+  },
+  "logline": "When the whole world closes the door on a condemned beast burning in the pit, one mercy-bearer descends into the fire to drag him free — and mercy that refuses a border returns them both, equal, to the dawn.",
+  "synopsis": "A burning chasm opens beneath black smoke. Deep in the fire, a horned figure strains against molten chains — the condemned, the one the world calls fallen and leaves to burn. Faces in cold blue turn their backs; nobody takes the blame. A vast door of light swings shut over the pit: the whole world heard the thunder and closed the door. But at the threshold, the mercy-bearer stops. A radiant, dignified woman robed in white-and-gold, she turns back toward the fire everyone fled. She descends the stair into the smoke, grounded, step by step, because justice without mercy turns cold and compassion has to reach the monster too. Her face holds compassion and resolve; the condemned's single anguished eye reflects the firelight. She reaches her hands through the flame toward the chains. Then the hard, physical work of rescue: she drags the chains out, pours water and light over the coal until steam rises, washes the smoke from a ruined face with tenderness, and the iron cages swing open, empty — no more cages, no more screams. The freed figure rises from the ash, de-horned, human again. Together they walk out toward a seam of dawn as green and an olive branch return to the cooled pit. In the last light a human hand and a once-clawed hand clasp as equals. If mercy is real, it reaches the pit; if love is alive, it doesn't quit.",
+  "characters": [
+    {
+      "id": "mercy-bearer",
+      "name": "The Mercy-Bearer",
+      "description": "A radiant, dignified multicultural woman — an angel-of-mercy / saint figure, early 30s — robed in flowing white-and-gold, human eyes, calm resolve. Powerful and beautiful, hard-but-holy, never exploitative. Grounded always: she walks, descends, kneels, reaches — never floats or levitates. She is the emotional through-line of the film.",
+      "state": { "robe": "clean", "position": "threshold" },
+      "externalGoal": "Free the condemned from the fire — descend into the pit and drag the chained beast out of the flame",
+      "internalNeed": "To prove mercy has no border — that no one is beyond saving, and that compassion must reach even the one the world condemned",
+      "contradiction": "The world insists the beast deserves the fire; to show mercy she must defy everyone who closed the door and risk the flame herself",
+      "voice": "Silent, steady, tender; speaks only in action — a hand extended, a step down, a chain dragged",
+      "vulnerabilities": ["the pull to turn away with the rest of the world", "the real heat and danger of the pit"],
+      "blindSpots": ["how far the world will go to keep the door shut", "that reaching the condemned means touching the chain she hates"],
+      "relationships": {
+        "condemned": "the one everyone else abandoned, whom she refuses to leave in the fire",
+        "the-world": "the indifferent crowd whose closed door she defies"
+      }
+    },
+    {
+      "id": "condemned",
+      "name": "The Condemned",
+      "description": "The 'beast' — a horned, chained figure suffering in the fire, rendered with pathos, not horror. Revealed obliquely throughout (silhouette, shadow, chained/clawed hands, one anguished HUMAN eye) to honor the song and keep the imagery free of gore. By the end: de-horned, softened, human again — a person all along.",
+      "state": { "horns": "present", "chains": "molten-bound", "form": "beast" },
+      "externalGoal": "Survive the fire and the chains that bind him in the pit",
+      "internalNeed": "To be seen as worth saving — reached by mercy instead of left to burn, and restored to his own humanity",
+      "contradiction": "He has accepted the world's verdict that he is a monster beyond rescue, so he strains against the chain yet expects no one to come",
+      "voice": "Wordless anguish — a strained silhouette, a trembling clawed hand, one eye that finally meets another's",
+      "vulnerabilities": ["the molten chains", "the belief that he is beyond saving"],
+      "blindSpots": ["that someone would cross the closed door for him", "that he was human under the horns all along"],
+      "relationships": {
+        "mercy-bearer": "the one who refuses the border and reaches into the fire for him",
+        "the-world": "the crowd that named him fallen and turned away"
+      }
+    }
+  ],
+  "locations": [
+    {
+      "id": "the-pit",
+      "name": "The Pit",
+      "description": "A burning chasm — a deep volcanic fissure of real practical-looking fire, embers rising through black volumetric smoke, molten light low in the dark. The only place fire appears. Ember-amber core against cold-blue rim."
+    },
+    {
+      "id": "the-door",
+      "name": "The Door",
+      "description": "A vast gate of cold-white light suspended high above the pit — the threshold between the indifferent world and the fire. When it swings shut, the pit goes darker; it is the visual of 'the whole world closed the door.'"
+    },
+    {
+      "id": "the-stair",
+      "name": "The Stair",
+      "description": "The descent — a long stone/obsidian stair winding down from the door's threshold into the smoke and heat of the pit. Where the mercy-bearer's grounded descent plays out, warm rim light fighting cold shadow."
+    },
+    {
+      "id": "the-dawn",
+      "name": "The Dawn",
+      "description": "The cooled, washed surface above the quenched pit at daybreak — cold-blue night yielding to warm dawn, steam fading, green and a single olive branch returning as a universal peace sign, all in real grounded light."
+    }
+  ],
+  "props": [
+    {
+      "id": "molten-chains",
+      "name": "The Molten Chains",
+      "description": "Heavy iron chains with links glowing molten-orange, binding the condemned in the pit — dragged out and cooled by the end of the film.",
+      "state": { "temperature": "molten", "status": "binding" }
+    },
+    {
+      "id": "iron-cages",
+      "name": "The Iron Cages",
+      "description": "Rows of empty iron cages in the pit, bars rimmed in ember-light, that swing open and empty on the bridge — 'no more cages.'",
+      "state": { "status": "shut" }
+    },
+    {
+      "id": "olive-branch",
+      "name": "The Olive Branch",
+      "description": "A living green olive branch that returns to the cooled pit at dawn — the universal sign of peace and the payoff of the washed, redeemed ground.",
+      "state": { "status": "absent" }
+    }
+  ],
+  "wardrobe": [
+    {
+      "id": "white-gold-robe",
+      "name": "White-and-Gold Robe",
+      "description": "The mercy-bearer's flowing white-and-gold robe — luminous, dignified, fully covering; it gathers soot and ember-light as she descends and works, then catches the clean dawn light at the end.",
+      "state": { "condition": "clean" }
+    }
+  ],
+  "setupPayoffs": [
+    {
+      "id": "sp-fire",
+      "detail": "The burning pit the condemned is trapped in",
+      "setupSceneId": "s0",
+      "payoffSceneId": "s4",
+      "initialMeaning": "The fire that condemns and consumes — the pit no one will enter",
+      "finalMeaning": "The fire quenched and the ground washed — the pit cooled to dawn",
+      "isMotif": true
+    },
+    {
+      "id": "sp-door",
+      "detail": "The vast door of light over the pit",
+      "setupSceneId": "s1",
+      "payoffSceneId": "s2",
+      "initialMeaning": "The whole world closing the door and leaving the condemned to burn",
+      "finalMeaning": "The mercy-bearer refusing the closed door and crossing back through it into the fire",
+      "isMotif": true
+    },
+    {
+      "id": "sp-chains",
+      "detail": "The molten chains binding the condemned",
+      "setupSceneId": "s0",
+      "payoffSceneId": "s3",
+      "initialMeaning": "The bonds of a verdict that calls him beyond saving",
+      "finalMeaning": "Dragged out and cooled — the beast freed, the cages emptied",
+      "isMotif": true
+    },
+    {
+      "id": "sp-horns",
+      "detail": "The condemned's horns and beast-form",
+      "setupSceneId": "s0",
+      "payoffSceneId": "s4",
+      "initialMeaning": "The mark of the monster the world condemned",
+      "finalMeaning": "De-horned and human again — he was a person all along",
+      "isMotif": true
+    }
+  ],
+  "emotionalTrajectory": [
+    "dread and desolation",
+    "abandonment and cold indifference",
+    "a flicker of defiant compassion",
+    "resolved, grounded descent",
+    "tender, effortful rescue",
+    "quiet awe at restoration",
+    "earned, hard-won peace"
+  ],
+  "scenes": [
+    {
+      "id": "s0",
+      "index": 0,
+      "title": "The Pit",
+      "narrativePurpose": "Establish the burning pit, the condemned chained in the fire, and the world that turns its back — the cost-of-mercy problem the film answers.",
+      "protagonist": "condemned",
+      "objective": "The condemned strains to survive the fire and the molten chains that bind him in the pit.",
+      "opposition": "The inferno, the molten chains, and a crowd that turns away and takes no blame.",
+      "visibleActions": [
+        {
+          "subject": "condemned",
+          "action": "a horned silhouette strains against molten chains deep in the burning pit as embers rise",
+          "objectInteraction": "pulls at the glowing molten chains",
+          "subtext": "even the condemned fights to live — and no one is coming"
+        },
+        {
+          "subject": "mercy-bearer",
+          "action": "stands apart as a crowd of faces in cold blue turns their backs on the pit",
+          "subtext": "the world has decided he deserves the fire"
+        }
+      ],
+      "decision": "The condemned keeps straining against the chains rather than surrender to the fire.",
+      "change": "The pit, the chained beast, and the world's indifference are established; the condemned is revealed as suffering, not monstrous.",
+      "consequence": "Seen as beyond saving, the condemned is left to burn — and the world moves to shut the door on him.",
+      "audienceLearns": "A condemned 'beast' burns chained in a pit while the whole world turns away and takes no blame.",
+      "emotionalStateStart": "dread and desolation",
+      "emotionalStateEnd": "abandonment and cold indifference",
+      "startState": {
+        "pit": "burning",
+        "door": "open",
+        "condemned": "chained-beast",
+        "chains": "molten",
+        "world": "present-watching"
+      },
+      "endState": {
+        "pit": "burning",
+        "door": "open",
+        "condemned": "chained-beast",
+        "chains": "molten",
+        "world": "turning-away"
+      },
+      "causedByPreviousVia": null,
+      "setupPayoffRefs": ["sp-fire", "sp-chains", "sp-horns"],
+      "durationSec": 43
+    },
+    {
+      "id": "s1",
+      "index": 1,
+      "title": "The Door",
+      "narrativePurpose": "The turn — the world's indifference becomes an act: the vast door of light swings shut over the pit, condemning the beast to burn alone.",
+      "protagonist": "mercy-bearer",
+      "objective": "The world moves to seal the pit as the mercy-bearer approaches the threshold.",
+      "opposition": "The finality of the closing door — leaving pain forever framed as a cruel old song.",
+      "visibleActions": [
+        {
+          "subject": "mercy-bearer",
+          "action": "watches from inside the pit looking up as a vast door of light swings shut over the chasm",
+          "subtext": "the whole world heard the thunder and closed the door"
+        }
+      ],
+      "decision": "The world chooses to shut the door rather than reach into the fire.",
+      "change": "The door of light swings shut; the pit darkens and the condemned is sealed in to burn alone.",
+      "consequence": "With the door closed, the only hope left is someone willing to cross back through it.",
+      "audienceLearns": "The world doesn't merely ignore the condemned — it actively closes the door on him.",
+      "emotionalStateStart": "abandonment and cold indifference",
+      "emotionalStateEnd": "a flicker of defiant compassion",
+      "startState": {
+        "pit": "burning",
+        "door": "open",
+        "condemned": "chained-beast",
+        "chains": "molten",
+        "world": "turning-away"
+      },
+      "endState": {
+        "pit": "burning-darkened",
+        "door": "shut",
+        "condemned": "chained-beast",
+        "chains": "molten",
+        "world": "gone"
+      },
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-door"],
+      "durationSec": 15
+    },
+    {
+      "id": "s2",
+      "index": 2,
+      "title": "The Descent",
+      "narrativePurpose": "Mercy refuses the border — the mercy-bearer halts at the threshold, turns back, and grounded, descends the stair into the fire toward the condemned.",
+      "protagonist": "mercy-bearer",
+      "objective": "The mercy-bearer must cross back through the closed door and descend into the pit to reach the condemned.",
+      "opposition": "The heat and danger of the pit, and the whole world's verdict that the beast deserves to burn.",
+      "visibleActions": [
+        {
+          "subject": "mercy-bearer",
+          "action": "halts at the threshold in warm rim light, then turns back toward the fire everyone fled",
+          "subtext": "nobody burns alone — not if mercy is real"
+        },
+        {
+          "subject": "mercy-bearer",
+          "action": "descends the stair into the smoke on her own feet, grounded, toward the condemned",
+          "objectInteraction": "steadies a hand on the stone of the stair",
+          "subtext": "compassion has to reach the monster too"
+        },
+        {
+          "subject": "condemned",
+          "action": "a single anguished human eye turns up through the fire and finds her",
+          "subtext": "he was never beyond being seen"
+        }
+      ],
+      "decision": "She turns back toward the fire instead of away with the rest of the world.",
+      "change": "The mercy-bearer crosses the closed door and descends into the pit; the condemned, for the first time, is seen.",
+      "consequence": "She arrives at the chains, close enough to reach through the flame.",
+      "audienceLearns": "Mercy refuses the border — she descends into the fire everyone else fled, and the condemned is finally seen.",
+      "emotionalStateStart": "a flicker of defiant compassion",
+      "emotionalStateEnd": "resolved, grounded descent",
+      "startState": {
+        "pit": "burning-darkened",
+        "door": "shut",
+        "condemned": "chained-beast",
+        "chains": "molten",
+        "world": "gone"
+      },
+      "endState": {
+        "pit": "burning-darkened",
+        "door": "crossed",
+        "condemned": "chained-beast-seen",
+        "chains": "molten",
+        "world": "gone"
+      },
+      "justifiedStateChanges": ["door"],
+      "causedByPreviousVia": "but",
+      "setupPayoffRefs": ["sp-door"],
+      "durationSec": 65
+    },
+    {
+      "id": "s3",
+      "index": 3,
+      "title": "The Rescue",
+      "narrativePurpose": "The hard, physical work of mercy — she reaches through the flame, drags the chains out, cools the coal, washes the face, and empties the cages.",
+      "protagonist": "mercy-bearer",
+      "objective": "The mercy-bearer must free the condemned — reach the chains, drag them out, cool the fire, and open the cages.",
+      "opposition": "The molten chains, the heat of the coal, and the sheer weight of the bonds.",
+      "visibleActions": [
+        {
+          "subject": "mercy-bearer",
+          "action": "reaches her bare hands through the flame toward the molten chains",
+          "objectInteraction": "grips the glowing chains",
+          "subtext": "to free him she must touch the very chain she hates"
+        },
+        {
+          "subject": "mercy-bearer",
+          "action": "hauls the heavy chains up and out of the pit, effortful and grounded, then pours water and light over the coal until steam rises and washes the smoke from the condemned's ruined face",
+          "objectInteraction": "drags the chains and cups water over the coal and the face",
+          "subtext": "drag the chains out, cool the coal, wash the smoke — mercy is labor, not a word"
+        },
+        {
+          "subject": "condemned",
+          "action": "the iron cages around him swing open and empty as the chains fall away",
+          "subtext": "no more cages, no more screams"
+        }
+      ],
+      "decision": "She takes hold of the burning chains and does the labor of freeing him rather than merely pitying from the edge.",
+      "change": "The chains are dragged out and cooled, the coal quenched, the face washed, and the cages emptied — the condemned is freed.",
+      "consequence": "Unbound and cooled, the condemned can finally rise, and the pit begins to go quiet.",
+      "audienceLearns": "Mercy is physical labor — dragging chains out, cooling coal, washing a face, emptying the cages.",
+      "emotionalStateStart": "resolved, grounded descent",
+      "emotionalStateEnd": "tender, effortful rescue",
+      "startState": {
+        "pit": "burning-darkened",
+        "door": "crossed",
+        "condemned": "chained-beast-seen",
+        "chains": "molten",
+        "world": "gone"
+      },
+      "endState": {
+        "pit": "cooling",
+        "door": "crossed",
+        "condemned": "unbound-beast",
+        "chains": "cooled-out",
+        "world": "gone"
+      },
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-chains"],
+      "durationSec": 40
+    },
+    {
+      "id": "s4",
+      "index": 4,
+      "title": "The Dawn",
+      "narrativePurpose": "Earned peace — the freed figure rises human again, the two walk out toward dawn, green returns to the cooled pit, and a human hand clasps a once-clawed hand as equals.",
+      "protagonist": "condemned",
+      "objective": "The freed condemned must rise and walk out of the pit toward the dawn with the mercy-bearer.",
+      "opposition": "The lingering weight of who he was told he was — a monster beyond the door.",
+      "visibleActions": [
+        {
+          "subject": "condemned",
+          "action": "rises from the ash de-horned and human again, then walks with the mercy-bearer in silhouette toward a seam of dawn",
+          "subtext": "he was a person under the horns all along"
+        },
+        {
+          "subject": "mercy-bearer",
+          "action": "walks beside him, grounded, as green and a single olive branch return to the cooled pit and she clasps his once-clawed, now-human hand as an equal",
+          "objectInteraction": "clasps his hand and lifts the olive branch toward the dawn light",
+          "subtext": "if mercy is real it reaches the pit; if love is alive it doesn't quit"
+        }
+      ],
+      "decision": "He accepts the hand and rises to walk out rather than stay in the ash as the beast the world named him.",
+      "change": "The condemned is restored to his humanity; the two walk out together and the cooled pit greens into dawn.",
+      "consequence": "A new, hard-won peace — mercy without a border has returned them both, equal, to the light.",
+      "audienceLearns": "Mercy that refuses a border restores the condemned to his humanity and returns them both, equal, to the dawn.",
+      "emotionalStateStart": "tender, effortful rescue",
+      "emotionalStateEnd": "earned, hard-won peace",
+      "startState": {
+        "pit": "cooling",
+        "door": "crossed",
+        "condemned": "unbound-beast",
+        "chains": "cooled-out",
+        "world": "gone"
+      },
+      "endState": {
+        "pit": "dawn-green",
+        "door": "crossed",
+        "condemned": "human-restored",
+        "chains": "cooled-out",
+        "world": "gone"
+      },
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-fire", "sp-horns"],
+      "durationSec": 56
+    }
+  ],
+  "shots": [
+    {
+      "id": "p1",
+      "sceneId": "s0",
+      "index": 0,
+      "durationSec": 6,
+      "subject": "The burning pit — a volcanic chasm of fire and black smoke, no figure yet",
+      "environment": "A deep burning chasm, embers rising through rolling black volumetric smoke, molten light low in the dark; ember-amber core against cold-blue rim",
+      "action": "The camera descends into the burning chasm as embers rise past",
+      "cameraFraming": "establishing",
+      "cameraMovement": "drone",
+      "lensIntention": "anamorphic 35mm, wide, deep",
+      "lighting": "ember-amber firelight from below, cold-blue rim, volumetric smoke",
+      "emotionalIntention": "dread and desolation; a place of condemnation",
+      "temporalProgression": "the drone falls deeper into the chasm as embers stream upward past the lens",
+      "continuityConstraints": [
+        "fire ONLY in the pit, motivated",
+        "2.39 letterbox, ember-amber vs cold-blue grade, fine grain, no text",
+        "no HUD/holograms/floating type"
+      ],
+      "referenceAssets": ["the-pit"],
+      "startStateRef": "pit=burning",
+      "endStateRef": "pit=burning",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["deep fire roar", "ember crackle", "low sub rumble"],
+        "silence": false,
+        "note": "cold open on the instrumental; MiniMax native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the entire film (one model = character consistency); permissive for fire, 1080p, cap-compliant $0.25/s. Pure-landscape pit wide, no creature.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal practical-fire look + volumetric smoke",
+        "no warping, no CGI-plastic look",
+        "fire stays contained to the pit"
+      ],
+      "keyframePrompt": "A deep volcanic chasm filled with real raging fire and rolling black smoke, embers rising through the dark, molten orange light glowing low in the pit, cold blue rim light on the rock walls, HBO-grade cinematic, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "A real burning chasm deep in the earth, real flames and rolling black smoke, embers rising through the dark toward the lens; a slow cinematic drone descent down into the pit; ember-amber glow from below against cold-blue walls. Hyper-real, 35mm anamorphic, no people.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p2",
+      "sceneId": "s0",
+      "index": 1,
+      "durationSec": 6,
+      "subject": "The condemned — a horned silhouette straining against molten chains, oblique and backlit",
+      "environment": "Deep in the burning pit, backlit by fire, heavy smoke; the figure stays a silhouette",
+      "action": "The horned silhouette strains and pulls against the glowing molten chains",
+      "cameraFraming": "wide",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, wide-to-medium, shallow",
+      "lighting": "hard fire backlight, the figure in silhouette, cold-blue fill",
+      "emotionalIntention": "suffering with pathos, not horror; a being fighting to live",
+      "temporalProgression": "the camera pushes in as the silhouette strains harder against the chains",
+      "continuityConstraints": [
+        "the condemned is OBLIQUE — silhouette only, horns read as shape, never gore",
+        "if any eye shows it is HUMAN, never glowing",
+        "fire only in the pit, 2.39 ember-amber vs cold-blue grade"
+      ],
+      "referenceAssets": ["condemned", "molten-chains"],
+      "startStateRef": "condemned=chained-beast",
+      "endStateRef": "condemned=chained-beast",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["chain strain", "fire roar", "a low anguished breath"],
+        "silence": false,
+        "note": "Verse 1 'a beast down burning, chained in the flame'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 — the only safe rail for the horned condemned (Seedance's checker rejects beast/creature); permissive, 1080p, keeps the lead consistent via one model.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "oblique creature reveal, silhouette only, no gore",
+        "photoreal fire backlight + smoke",
+        "human-scale anatomy, no warping"
+      ],
+      "keyframePrompt": "A horned figure in hard silhouette deep in a burning pit, backlit by orange fire and smoke, straining against heavy chains with molten-glowing links, only the shape and horns readable, anguished posture, cold blue rim, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A real human-scale horned figure strains and pulls against heavy molten chains deep in a burning pit, seen only as a dark silhouette against real fire and smoke; a slow cinematic push-in; the chains' links glow orange-hot. Hyper-real, 35mm anamorphic, oblique and shadowed, pathos not horror.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p3",
+      "sceneId": "s0",
+      "index": 2,
+      "durationSec": 6,
+      "subject": "Macro insert — chained hands / clawed fingers, molten links glowing",
+      "environment": "Extreme close in the pit, firelight raking the chains, ember and ash in the air",
+      "action": "The clawed fingers clench around the glowing molten links of the chain",
+      "cameraFraming": "insert",
+      "cameraMovement": "tracking",
+      "lensIntention": "macro, anamorphic, very shallow",
+      "lighting": "raking firelight, molten specular on the links, cold shadow",
+      "emotionalIntention": "the physical cost of the chain; pathos held in a hand",
+      "temporalProgression": "the fingers tighten and the molten links flare as the camera tracks across them",
+      "continuityConstraints": [
+        "clawed-but-human-scale fingers (the condemned, oblique), no gore",
+        "molten chain links glowing orange",
+        "2.39 ember-amber vs cold-blue grade, fine grain"
+      ],
+      "referenceAssets": ["condemned", "molten-chains"],
+      "startStateRef": "chains=molten",
+      "endStateRef": "chains=molten",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["chain clink", "molten sizzle", "fire crackle"],
+        "silence": false,
+        "note": "Verse 1 'chained in the flame'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 macro insert; one-model consistency; permissive for the chained-hand pathos shot Seedance would reject.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal skin + metal, no extra fingers",
+        "molten links read as real hot iron",
+        "no gore, oblique"
+      ],
+      "keyframePrompt": "Extreme macro of weathered clawed-but-human fingers clenched around heavy iron chain links that glow molten orange, firelight raking the metal, ember and ash in the air, cold shadow behind, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A real weathered hand with clawed fingers clenches around heavy iron chain links that glow molten-hot, real firelight raking the metal, embers drifting; a slow macro tracking move across the chain; the links flare as the grip tightens. Hyper-real, 35mm anamorphic, shallow focus, no gore.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p4",
+      "sceneId": "s0",
+      "index": 3,
+      "durationSec": 6,
+      "subject": "A crowd of faces in cold blue turning their backs on the pit",
+      "environment": "The cold-blue rim of the pit above the fire; a crowd of indifferent faces on the lip of the chasm",
+      "action": "The crowd turns away from the pit one by one, backs to the fire",
+      "cameraFraming": "medium",
+      "cameraMovement": "pan",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "cold-blue key, the pit's amber glow behind them, naturalistic",
+      "emotionalIntention": "indifference; nobody takes the blame",
+      "temporalProgression": "the camera pans across the faces as they turn their backs and walk off",
+      "continuityConstraints": [
+        "real grounded people (the world), feet on the ground, never floating",
+        "cold-blue grade on the crowd vs ember-amber pit glow behind",
+        "2.39 letterbox, fine grain, no text"
+      ],
+      "referenceAssets": [],
+      "startStateRef": "world=present-watching",
+      "endStateRef": "world=turning-away",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["muffled crowd murmur", "footsteps receding", "distant fire"],
+        "silence": false,
+        "note": "Verse 1 'nobody took blame'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for a grounded photoreal crowd; one-model consistency across the film.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal grounded people, real faces, no floating",
+        "cold-blue vs amber separation reads clearly",
+        "no warping of faces or hands"
+      ],
+      "keyframePrompt": "A crowd of ordinary people standing on the rim of a burning chasm, lit cold blue, the amber glow of the pit behind them, their faces turning away from the fire, grounded and real, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "A real crowd of ordinary people stands on the cold-blue rim of a burning pit and one by one turns their backs on the fire and walks away, grounded, feet on the ground; a slow pan across their turning faces; the pit glows amber behind them. Hyper-real, 35mm anamorphic, cold-blue grade.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p5",
+      "sceneId": "s1",
+      "index": 4,
+      "durationSec": 6,
+      "subject": "A vast door of light swinging shut, seen from inside the pit looking up",
+      "environment": "From the floor of the pit looking up through smoke at a vast gate of cold-white light high above the chasm",
+      "action": "The vast door of light swings shut, narrowing the light down to a seam",
+      "cameraFraming": "wide",
+      "cameraMovement": "tilt",
+      "lensIntention": "anamorphic 35mm, wide, deep, low angle up",
+      "lighting": "cold-white light from the door above, ember-amber from the pit below, heavy smoke between",
+      "emotionalIntention": "finality; the whole world closes the door",
+      "temporalProgression": "the door swings shut above, the shaft of light narrowing to a seam as the pit darkens",
+      "continuityConstraints": [
+        "the door is cold-white light against the pit's amber; no text on it",
+        "fire stays in the pit below; smoke between",
+        "2.39 letterbox, ember-amber vs cold-blue grade, fine grain"
+      ],
+      "referenceAssets": ["the-door", "the-pit"],
+      "startStateRef": "door=open",
+      "endStateRef": "door=shut",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["vast stone door grinding shut", "low thunder", "fire below"],
+        "silence": false,
+        "note": "Verse 1 turn 'the whole world closed the door'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the architectural light-and-smoke beat; one-model consistency; no creature.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal volumetric light shaft + smoke",
+        "the door reads as vast and heavy, grounded architecture",
+        "no warping, no floating type"
+      ],
+      "keyframePrompt": "Looking up from the floor of a burning pit through heavy smoke at a vast gate of cold-white light high above, the gate swinging shut and narrowing the shaft of light to a seam, ember-amber glow below, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "From deep inside a burning pit the camera tilts up through smoke to a vast gate of cold-white light high above; the great door swings shut and the shaft of light narrows to a thin seam as the pit darkens; ember-amber glow below. Hyper-real, 35mm anamorphic, volumetric light.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p6",
+      "sceneId": "s2",
+      "index": 5,
+      "durationSec": 6,
+      "subject": "The mercy-bearer halts at the threshold, warm rim light, and turns back toward the fire",
+      "environment": "At the threshold of the closed door above the pit, warm rim light on her against the cold dark, smoke curling up",
+      "action": "She stops at the threshold, then turns back to face the fire below",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "warm amber rim light from the pit on her, cold-blue key behind, smoke",
+      "emotionalIntention": "a flicker of defiant compassion; the choice to turn back",
+      "temporalProgression": "she halts mid-step, breathes, and turns back toward the fire as the camera pushes in",
+      "continuityConstraints": [
+        "the mercy-bearer in her white-and-gold robe, human eyes, dignified, grounded (standing, never floating)",
+        "warm amber rim vs cold-blue, 2.39 letterbox, fine grain",
+        "no HUD/floating type, fire only in the pit below"
+      ],
+      "referenceAssets": ["mercy-bearer", "white-gold-robe", "the-door"],
+      "startStateRef": "door=shut",
+      "endStateRef": "door=crossed",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["soft footstep halt", "a held breath", "fire below"],
+        "silence": false,
+        "note": "Chorus 1 'nobody burns alone'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for photoreal human micro-expression; one-model consistency locks the mercy-bearer's identity across every shot via first-frame conditioning from one hero still.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal skin + true micro-expression",
+        "her eyes human, robe reads as real cloth",
+        "grounded stance, never floating"
+      ],
+      "keyframePrompt": "A radiant dignified multicultural woman in a flowing white-and-gold robe stands at the threshold above a burning pit, warm amber rim light from the fire on her, cold-blue dark behind, smoke curling up, human eyes, calm resolve, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A real woman in a flowing white-and-gold robe halts at the threshold above a burning pit, turns back toward the fire below with calm resolve; a slow cinematic push-in; warm amber rim light on her face against cold-blue dark, smoke curling up. Hyper-real, 35mm anamorphic, grounded, feet on the ground, human eyes.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p7",
+      "sceneId": "s2",
+      "index": 6,
+      "durationSec": 6,
+      "subject": "The mercy-bearer's grounded descent down the stair into the smoke",
+      "environment": "The long stone stair winding down from the door into the smoke and heat of the pit, warm light fighting cold shadow",
+      "action": "She descends the stair on her own feet, step by step, into the smoke",
+      "cameraFraming": "wide",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, wide, grounded tracking",
+      "lighting": "amber firelight rising to meet her, cold-blue above, volumetric smoke",
+      "emotionalIntention": "resolved, grounded descent; mercy walking into the fire",
+      "temporalProgression": "the camera tracks with her as she steps down the stair deeper into the smoke",
+      "continuityConstraints": [
+        "the same mercy-bearer, white-and-gold robe, GROUNDED — walking the stair on her feet, NEVER floating/levitating",
+        "fire only in the pit below, amber vs cold-blue grade",
+        "2.39 letterbox, fine grain, no floating type"
+      ],
+      "referenceAssets": ["mercy-bearer", "white-gold-robe", "the-stair"],
+      "startStateRef": "door=crossed",
+      "endStateRef": "condemned=chained-beast-seen",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["footsteps on stone", "rising fire", "smoke hiss"],
+        "silence": false,
+        "note": "Chorus 1 into Verse 2 'pull every lost thing out of the grave'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for a grounded photoreal descent; one-model consistency keeps her identity stable.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "grounded walking descent, feet on each step, never floating",
+        "photoreal cloth + smoke interaction",
+        "no warping, human proportions"
+      ],
+      "keyframePrompt": "A radiant woman in a flowing white-and-gold robe descends a long stone stair winding down into a smoky burning pit, amber firelight rising to meet her, cold-blue dark above, volumetric smoke, grounded, feet on the steps, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A real woman in a flowing white-and-gold robe walks down a long stone stair into the smoke and heat of a burning pit, grounded, step by step on her own feet, never floating; a slow tracking shot moving with her; amber firelight rising, cold-blue above, smoke curling. Hyper-real, 35mm anamorphic.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p8",
+      "sceneId": "s2",
+      "index": 7,
+      "durationSec": 6,
+      "subject": "The mercy-bearer's face — compassion, resolve, human eyes",
+      "environment": "In the smoke of the pit, firelight on her face, ember and ash drifting",
+      "action": "She holds her gaze on the condemned below, compassion and resolve, and takes one breath",
+      "cameraFraming": "close-up",
+      "cameraMovement": "push-in",
+      "lensIntention": "85mm-equivalent, anamorphic, very shallow",
+      "lighting": "warm firelight key on her face, cold-blue fill, smoke",
+      "emotionalIntention": "compassion and resolve; mercy made visible in a face",
+      "temporalProgression": "one slow breath as the camera pushes in; her eyes stay human and steady",
+      "continuityConstraints": [
+        "the same mercy-bearer, human eyes, dignified, white-and-gold robe",
+        "amber key vs cold-blue, 2.39 letterbox, fine grain",
+        "no glowing eyes, no floating type"
+      ],
+      "referenceAssets": ["mercy-bearer", "white-gold-robe"],
+      "startStateRef": "condemned=chained-beast-seen",
+      "endStateRef": "condemned=chained-beast-seen",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["soft fire", "a single slow breath", "distant ember"],
+        "silence": false,
+        "note": "Verse 2 'compassion gotta reach the monster too'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for photoreal micro-expression; one-model consistency from a dedicated close-up hero still of the mercy-bearer.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal skin + true micro-expression",
+        "her eyes human and steady",
+        "no warping"
+      ],
+      "keyframePrompt": "Close-up of a radiant dignified multicultural woman's face in the smoke of a burning pit, firelight warm on her skin, cold-blue fill behind, human eyes holding compassion and resolve, ember and ash drifting, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A slow push-in on a real woman's face in the smoke of a burning pit; firelight warm on her skin, cold-blue fill behind; she holds her gaze with compassion and resolve and takes one slow breath; her eyes stay human and steady. Hyper-real skin, true micro-expression, 35mm anamorphic.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p9",
+      "sceneId": "s2",
+      "index": 8,
+      "durationSec": 6,
+      "subject": "Extreme close-up — the condemned's single anguished eye reflecting fire",
+      "environment": "In shadow deep in the pit, a single eye lit by the fire's reflection, smoke around it",
+      "action": "The single human eye turns up through the fire and finds her",
+      "cameraFraming": "extreme-close-up",
+      "cameraMovement": "push-in",
+      "lensIntention": "macro, anamorphic, very shallow",
+      "lighting": "a single warm fire reflection in the eye, deep cold shadow around",
+      "emotionalIntention": "pathos; the condemned is seen for the first time",
+      "temporalProgression": "the eye turns up and fixes on her as the camera pushes in; a tear catches the firelight",
+      "continuityConstraints": [
+        "the condemned shown OBLIQUELY — ONE anguished HUMAN eye only, never glowing, no gore",
+        "fire reflected in the eye, pit grade (ember-amber vs cold-blue)",
+        "2.39 letterbox, fine grain, no text"
+      ],
+      "referenceAssets": ["condemned"],
+      "startStateRef": "condemned=chained-beast-seen",
+      "endStateRef": "condemned=chained-beast-seen",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a trembling breath", "soft fire", "a faint chain shift"],
+        "silence": false,
+        "note": "Verse 2 'reach the monster too'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 — the only safe rail for the condemned's anguished eye (oblique, pathos); Seedance would reject the creature; one-model consistency.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "ONE human eye only, oblique, no gore, never glowing",
+        "photoreal iris + skin + real tear",
+        "fire reflection reads real"
+      ],
+      "keyframePrompt": "Extreme macro of a single anguished human eye in deep shadow, lit only by a warm reflection of fire, a tear catching the firelight, smoke around it, the rest of the face in darkness, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "An extreme close-up of a single anguished human eye in deep shadow, firelight reflected in the wet iris; the eye turns up through the fire and fixes on someone, a tear catching the light; a slow macro push-in. Hyper-real, 35mm anamorphic, oblique, the rest of the face in darkness, no gore, a human eye.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p10",
+      "sceneId": "s3",
+      "index": 9,
+      "durationSec": 6,
+      "subject": "The mercy-bearer's hands reach through flame toward the chains",
+      "environment": "At the condemned in the pit, flame between her hands and the molten chains, ember and ash",
+      "action": "She reaches both hands through the flame toward the glowing molten chains",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "hot amber firelight on her hands, molten chain glow, cold-blue behind",
+      "emotionalIntention": "the courage of mercy; touching the chain she hates to free him",
+      "temporalProgression": "her hands pass into and through the flame toward the chains as the camera pushes in",
+      "continuityConstraints": [
+        "the same mercy-bearer's hands, white-and-gold sleeves, human",
+        "molten chains glowing, fire only in the pit",
+        "amber vs cold-blue, 2.39 letterbox, fine grain"
+      ],
+      "referenceAssets": ["mercy-bearer", "white-gold-robe", "molten-chains", "condemned"],
+      "startStateRef": "chains=molten",
+      "endStateRef": "chains=molten",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["flame whoosh", "chain clink", "a determined breath"],
+        "silence": false,
+        "note": "Chorus 2 'no creature left in fire'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for photoreal hands-through-fire; one-model consistency; permissive for the flame contact.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal hands + real fire interaction, no extra fingers",
+        "molten chains read as hot iron",
+        "no warping, grounded"
+      ],
+      "keyframePrompt": "A woman's hands in white-and-gold sleeves reaching through real flame toward heavy iron chains with molten-glowing links deep in a burning pit, hot amber firelight on her skin, cold-blue behind, ember and ash, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A real woman reaches both hands through real flame toward heavy molten chains in a burning pit; the fire licks around her white-and-gold sleeves as she closes on the glowing links; a slow push-in. Hyper-real, 35mm anamorphic, hot amber firelight, grounded, no gore.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p11",
+      "sceneId": "s3",
+      "index": 10,
+      "durationSec": 6,
+      "subject": "Dragging the chains out — effortful, grounded, low-angle",
+      "environment": "On the floor of the pit, the mercy-bearer hauling the heavy chains up and out, fire and smoke around",
+      "action": "She hauls the heavy molten chains up and out of the pit with her whole body",
+      "cameraFraming": "wide",
+      "cameraMovement": "crane",
+      "lensIntention": "anamorphic 35mm, wide, heroic low angle",
+      "lighting": "amber firelight, cooling blue where the chains leave the fire, smoke",
+      "emotionalIntention": "mercy as hard physical labor; grounded effort",
+      "temporalProgression": "she drags the chains upward and out, straining, the links cooling as they clear the fire, camera craning up with the effort",
+      "continuityConstraints": [
+        "the same mercy-bearer, white-and-gold robe, GROUNDED, feet planted, real effort — NEVER floating",
+        "chains cooling as they leave the pit (molten -> dulling)",
+        "amber vs cold-blue, 2.39 letterbox, fine grain"
+      ],
+      "referenceAssets": ["mercy-bearer", "white-gold-robe", "molten-chains"],
+      "startStateRef": "chains=molten",
+      "endStateRef": "chains=cooled-out",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["heavy chain dragging", "strained effort", "fire and smoke"],
+        "silence": false,
+        "note": "Bridge 'drag the chains out'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for a grounded, effortful action beat; one-model consistency.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "grounded real effort + weight, feet planted, never floating",
+        "photoreal chain + fire + cooling metal",
+        "no warping, real body mechanics"
+      ],
+      "keyframePrompt": "Low-angle wide of a woman in a white-and-gold robe hauling heavy iron chains up and out of a burning pit with her whole body, straining, the molten links cooling as they clear the fire, amber light below and cool blue above, smoke, grounded, feet planted, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A real woman in a white-and-gold robe hauls heavy molten chains up and out of a burning pit with her whole body, straining with real effort, feet planted on the ground, never floating; the links dull and cool as they clear the fire; a heroic low-angle crane rising with her effort. Hyper-real, 35mm anamorphic.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p12",
+      "sceneId": "s3",
+      "index": 11,
+      "durationSec": 6,
+      "subject": "Insert — water and light over coal, steam rising",
+      "environment": "Close on the quenching coal in the pit, water and cool light pouring over the embers, steam rising",
+      "action": "Water and light pour over the glowing coal and it steams and cools",
+      "cameraFraming": "insert",
+      "cameraMovement": "tilt",
+      "lensIntention": "macro, anamorphic, shallow",
+      "lighting": "amber coal dimming to cool steam-lit blue, specular on water",
+      "emotionalIntention": "relief; the fire beginning to yield to mercy",
+      "temporalProgression": "water hits the glowing coal, it hisses and steams, the amber dimming to cool blue as the camera tilts up through the steam",
+      "continuityConstraints": [
+        "the pit fire being quenched (motivated), coal dimming amber -> cool",
+        "photoreal steam + water, grade shifting ember-amber toward cold-blue",
+        "2.39 letterbox, fine grain, no text"
+      ],
+      "referenceAssets": ["the-pit"],
+      "startStateRef": "pit=burning-darkened",
+      "endStateRef": "pit=cooling",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["water hiss on coal", "steam rising", "fire dying down"],
+        "silence": false,
+        "note": "Bridge 'cool the coal'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the photoreal water-on-coal / steam insert; one-model consistency; no creature.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal water + steam + cooling coal",
+        "real physics of quenching, no CGI look",
+        "grade shifts amber toward cool"
+      ],
+      "keyframePrompt": "Macro insert of water and cool light pouring over glowing orange coal, the coal hissing and steaming as it cools, amber dimming to cool steam-lit blue, specular highlights on the water, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "Real water and cool light pour over glowing coal in a dying pit fire; the coal hisses, steams, and dims from orange to cool grey; the camera tilts up through the rising steam. Hyper-real, 35mm anamorphic, true quenching physics, no CGI.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p13",
+      "sceneId": "s3",
+      "index": 12,
+      "durationSec": 6,
+      "subject": "Close-up — washing smoke from a face, tenderness",
+      "environment": "In the cooling pit, the mercy-bearer washing soot and smoke from the condemned's ruined face, oblique",
+      "action": "She wipes the smoke and soot from the condemned's face with gentle hands",
+      "cameraFraming": "close-up",
+      "cameraMovement": "push-in",
+      "lensIntention": "85mm-equivalent, anamorphic, very shallow",
+      "lighting": "soft cooling light, last amber warmth, cold-blue fill",
+      "emotionalIntention": "tenderness; mercy as a human touch",
+      "temporalProgression": "her hand wipes the soot away revealing clean skin as the camera pushes in; the condemned's face stays partly in shadow",
+      "continuityConstraints": [
+        "the condemned shown OBLIQUELY — profile/partial, soot clearing to human skin, horns NOT emphasized, no gore",
+        "the same mercy-bearer's gentle hands, human",
+        "cooling grade (amber fading to cool), 2.39 letterbox, fine grain"
+      ],
+      "referenceAssets": ["mercy-bearer", "condemned"],
+      "startStateRef": "condemned=unbound-beast",
+      "endStateRef": "condemned=unbound-beast",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["soft cloth on skin", "water drip", "a shaky exhale"],
+        "silence": false,
+        "note": "Bridge 'wash the smoke'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the tender oblique face-washing beat (the condemned, pathos); one-model consistency; Seedance would reject the creature.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "oblique condemned, soot clearing to human skin, no gore, horns de-emphasized",
+        "photoreal tender hands + skin",
+        "no warping, grounded"
+      ],
+      "keyframePrompt": "Close-up of gentle hands wiping soot and smoke from a ruined face in a cooling pit, clean human skin emerging under the soot, the face partly in shadow, soft cooling light with the last amber warmth and cold-blue fill, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "Real gentle hands wipe soot and smoke from a ruined face in a cooling pit, clean human skin emerging under the grime; a slow tender push-in; the face stays partly in shadow, soft cooling light, last amber warmth against cold-blue. Hyper-real, 35mm anamorphic, oblique, no gore.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p14",
+      "sceneId": "s3",
+      "index": 13,
+      "durationSec": 6,
+      "subject": "Iron cages swinging open, empty",
+      "environment": "Rows of iron cages in the cooling pit, bars rimmed in fading ember-light, now standing open and empty",
+      "action": "The iron cage doors swing open and the cages stand empty",
+      "cameraFraming": "wide",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, wide, slow tracking",
+      "lighting": "fading ember-light on the bars, cool blue filling in, thin smoke",
+      "emotionalIntention": "liberation; no more cages, no more screams",
+      "temporalProgression": "the cage doors swing open one after another as the camera tracks past the emptying rows",
+      "continuityConstraints": [
+        "empty iron cages, bars rimmed in fading ember-light — no figure caged",
+        "pit cooling (amber fading to cool-blue), 2.39 letterbox, fine grain",
+        "no HUD/floating type"
+      ],
+      "referenceAssets": ["iron-cages", "the-pit"],
+      "startStateRef": "pit=cooling",
+      "endStateRef": "pit=cooling",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["iron doors swinging open", "chain slack", "thin wind"],
+        "silence": false,
+        "note": "Bridge 'no more cages, no more screams'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the empty-cages liberation beat; one-model consistency; no creature.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal iron cages + real door swing physics",
+        "cages empty, no caged figure",
+        "cooling grade, no warping"
+      ],
+      "keyframePrompt": "Rows of heavy iron cages in a cooling pit, bar doors swinging open and the cages standing empty, fading ember-light rimming the bars and cool blue filling in, thin smoke, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "Rows of heavy iron cages in a cooling pit swing open one after another and stand empty; the camera tracks slowly past the emptying rows; fading ember-light rims the bars as cool blue fills in, thin smoke drifting. Hyper-real, 35mm anamorphic, real door-swing physics, no figure caged.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p15",
+      "sceneId": "s4",
+      "index": 14,
+      "durationSec": 6,
+      "subject": "The freed figure rising from ash — de-horned, human again",
+      "environment": "On the floor of the quenched pit at the edge of dawn, ash and thin steam, cold-blue warming toward amber",
+      "action": "The freed figure rises from the ash, de-horned, standing human again",
+      "cameraFraming": "medium",
+      "cameraMovement": "crane",
+      "lensIntention": "anamorphic 35mm, medium, rising",
+      "lighting": "first warm dawn light meeting cool pit-blue, thin steam",
+      "emotionalIntention": "quiet awe at restoration; he was human all along",
+      "temporalProgression": "he pushes up from the ash and rises to his feet, human and de-horned, as the camera cranes up and dawn warmth grows",
+      "continuityConstraints": [
+        "the condemned now HUMAN and de-horned (payoff), grounded on his feet, dignified, no gore",
+        "fire is OUT (quenched pit), grade warming cold-blue toward amber dawn",
+        "2.39 letterbox, fine grain, no floating type"
+      ],
+      "referenceAssets": ["condemned"],
+      "startStateRef": "condemned=unbound-beast",
+      "endStateRef": "condemned=human-restored",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["ash shifting", "a first full breath", "soft dawn wind"],
+        "silence": false,
+        "note": "Final chorus 'if mercy is real, it reaches the pit'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the human-restoration beat (de-horned payoff); one-model consistency keeps the restored figure recognizably the same being; Seedance would reject the arc.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal restored HUMAN, de-horned, grounded on his feet",
+        "no gore, dignified",
+        "no warping, real body mechanics"
+      ],
+      "keyframePrompt": "A figure rising from grey ash on the floor of a quenched pit at the edge of dawn, now fully human and de-horned, standing on his own feet, dignified, first warm dawn light meeting cool pit-blue, thin steam, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "A real man rises from grey ash on the floor of a quenched pit, now fully human and de-horned, pushing up to stand on his own feet; a slow crane rising with him as the first warm dawn light grows against cool pit-blue, thin steam drifting. Hyper-real, 35mm anamorphic, grounded, dignified, no gore.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p16",
+      "sceneId": "s4",
+      "index": 15,
+      "durationSec": 6,
+      "subject": "The two walking out toward a seam of dawn, in silhouette, grounded",
+      "environment": "Walking up out of the cooled pit toward a bright seam of dawn on the horizon, both in silhouette",
+      "action": "The two walk out of the pit together toward the seam of dawn",
+      "cameraFraming": "wide",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, wide, grounded tracking",
+      "lighting": "bright warm dawn seam ahead, cool dark pit behind, both in silhouette",
+      "emotionalIntention": "earned peace; two walking out of the fire together",
+      "temporalProgression": "the camera tracks behind them as they walk up and out toward the widening seam of dawn light",
+      "continuityConstraints": [
+        "the mercy-bearer (white-and-gold) and the restored human man, both GROUNDED, walking on the ground, NEVER floating",
+        "fire OUT, warm dawn vs cool pit, both in silhouette",
+        "2.39 letterbox, fine grain, no floating type"
+      ],
+      "referenceAssets": ["mercy-bearer", "condemned", "the-dawn"],
+      "startStateRef": "condemned=human-restored",
+      "endStateRef": "pit=dawn-green",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["two sets of footsteps", "soft dawn wind", "distant birdsong"],
+        "silence": false,
+        "note": "Final chorus 'if love is alive, it doesn't quit'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the grounded two-shot walk-out; one-model consistency keeps both leads stable.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "two grounded figures walking, feet on the ground, never floating",
+        "photoreal silhouettes against real dawn light",
+        "no warping, human proportions"
+      ],
+      "keyframePrompt": "Two figures in silhouette — a woman in a flowing robe and a man — walking up out of a cooled dark pit toward a bright warm seam of dawn on the horizon, grounded, feet on the ground, HBO-grade, 2.39 letterbox, fine grain",
+      "veoPrompt": "Two real figures in silhouette, a robed woman and a man, walk up out of a cooled dark pit toward a widening seam of warm dawn light on the horizon; a slow tracking shot behind them, grounded, feet on the ground, never floating. Hyper-real, 35mm anamorphic, warm dawn against cool pit.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p17",
+      "sceneId": "s4",
+      "index": 16,
+      "durationSec": 6,
+      "subject": "Wide vista — dawn over the cooled pit, green and olive returning",
+      "environment": "A wide vista of the cooled, washed pit at dawn, warm light flooding in, green and a single olive branch returning to the ground",
+      "action": "Dawn light floods the cooled pit and green returns across the washed ground",
+      "cameraFraming": "establishing",
+      "cameraMovement": "drone",
+      "lensIntention": "anamorphic 35mm, wide vista, high",
+      "lighting": "full warm dawn light, the last cold-blue lifting, clean air",
+      "emotionalIntention": "earned, hard-won peace; the pit redeemed",
+      "temporalProgression": "the drone rises over the cooled pit as dawn floods in and green returns across the ground",
+      "continuityConstraints": [
+        "fire OUT, the pit cooled and washed, green + a single olive branch returning (payoff)",
+        "warm dawn grade, the cold-blue lifting, grounded natural light",
+        "2.39 letterbox, fine grain, no text"
+      ],
+      "referenceAssets": ["the-dawn", "the-pit", "olive-branch"],
+      "startStateRef": "pit=cooling",
+      "endStateRef": "pit=dawn-green",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["dawn wind", "distant birdsong", "quiet calm"],
+        "silence": false,
+        "note": "Final chorus / outro; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the pure-landscape dawn vista (treatment allows Seedance here, but keeping one model for whole-film consistency); no creature.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal dawn landscape + real green returning",
+        "fire fully out, clean air",
+        "grounded natural light, no CGI look"
+      ],
+      "keyframePrompt": "A wide aerial vista of a cooled, washed volcanic pit at dawn, warm golden light flooding in, the cold blue lifting, green grass and a single living olive branch returning across the washed ground, clean air, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "A sweeping aerial vista rises over a cooled, washed pit at dawn; warm golden light floods in as the cold blue lifts, and green and a single living olive branch return across the ground; a slow drone climb. Hyper-real, 35mm anamorphic, real dawn light, fire fully out.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "p18",
+      "sceneId": "s4",
+      "index": 17,
+      "durationSec": 6,
+      "subject": "Insert/close — a human hand and a once-clawed hand clasped, equal, in dawn light",
+      "environment": "Close on two clasped hands in warm dawn light, the cooled pit soft behind, thin steam gone",
+      "action": "A human hand and a once-clawed, now-human hand clasp together as equals",
+      "cameraFraming": "insert",
+      "cameraMovement": "push-in",
+      "lensIntention": "macro, anamorphic, very shallow",
+      "lighting": "warm golden dawn light on the clasped hands, soft and clean",
+      "emotionalIntention": "equality and peace; mercy without a border, hands as equals",
+      "temporalProgression": "the two hands come together and clasp, holding, as the camera pushes in and dawn light warms them",
+      "continuityConstraints": [
+        "a human hand and a once-clawed-now-HUMAN hand, both restored, equal, grounded — no gore",
+        "warm dawn grade, fire fully out, the olive/green soft behind",
+        "2.39 letterbox, fine grain, no text"
+      ],
+      "referenceAssets": ["mercy-bearer", "condemned", "olive-branch"],
+      "startStateRef": "condemned=human-restored",
+      "endStateRef": "pit=dawn-green",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["soft skin contact", "a settled breath", "dawn birdsong"],
+        "silence": false,
+        "note": "Final chorus close 'it doesn't quit'; native audio discarded, score to the track — final beat"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the final clasped-hands equality insert; one-model consistency; permissive, no creature.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal two human hands clasped, no extra fingers, no gore",
+        "warm clean dawn light",
+        "no warping, grounded"
+      ],
+      "keyframePrompt": "Macro close-up of two hands clasped together in warm golden dawn light — one an ordinary human hand, the other a once-clawed hand now fully human — held as equals, the cooled green pit soft behind, HBO-grade, 2.39 letterbox, fine grain, no text",
+      "veoPrompt": "A real human hand and a once-clawed, now fully human hand come together and clasp as equals in warm golden dawn light; a slow macro push-in holding on the clasp; the cooled green pit soft behind. Hyper-real, 35mm anamorphic, clean warm light, two human hands, no gore.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, supernatural eyes, CGI, 3D render, video game, plastic skin, fake fire, cartoon, anime, floating people, levitating, superimposed text, HUD, watermark"
+    }
+  ],
+  "budget": { "maxUsd": 40, "spentUsd": 0, "requireApproval": true },
+  "qualityAcceptance": [
+    "Hyper-real: convincing on a paused frame AND in motion — ARRI/35mm anamorphic look",
+    "HBO 2.39 letterbox, ember-amber vs cold-blue grade, muted-cyan accents sparingly, fine grain",
+    "ONE model (MiniMax Hailuo-02) across the whole film for character consistency — mercy-bearer + condemned stable shot-to-shot",
+    "People GROUNDED always (walk/descend/kneel/reach, NEVER floating or levitating)",
+    "Fire ONLY in the pit, motivated — never fire for no reason",
+    "The condemned shown OBLIQUELY with pathos (silhouette / shadow / chained hands / one HUMAN eye) — no gore, no glowing eyes, de-horned + human by the end",
+    "NO superimposed HUD / holograms / floating type in-scene",
+    "Theme reads: mercy has no border, nobody left behind, the condemned restored",
+    "Beat-synced: every cut lands on a beat; cut-pace dense on choruses, longer holds in verses",
+    "Score to the original 3:39 (219.6s) 'Border Mercy' master; MiniMax native audio discarded"
+  ]
+}
