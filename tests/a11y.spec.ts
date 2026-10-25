@@ -4,7 +4,20 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-const SURFACES = ['/', '/about', '/credits', '/press', '/merch', '/privacy', '/terms'];
+// Worker-rendered pages carry their OWN inline CSS (separate from the SPA shell),
+// so they're the risk class for page-scoped a11y drift — `/stats` shipped a
+// color-only footer link (link-in-text-block, WCAG 1.4.1) because it wasn't here.
+const SURFACES = [
+  '/',
+  '/about',
+  '/credits',
+  '/press',
+  '/merch',
+  '/privacy',
+  '/terms',
+  '/stats',
+  '/watch/border-mercy'
+];
 
 for (const path of SURFACES) {
   test(`a11y: ${path} has no serious/critical axe violations`, async ({ page }, info) => {

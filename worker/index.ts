@@ -1329,7 +1329,7 @@ async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext):
   td.num { text-align:right; font-variant-numeric:tabular-nums; font-family:'JetBrains Mono',monospace; }
   td.empty { color:var(--mute); text-align:center; padding:32px; }
   .foot { margin-top:56px; color:var(--mute); font-size:.82rem; text-align:center; }
-  .foot a { color:var(--accent); text-decoration:none; }
+  .foot a { color:var(--accent); text-decoration:underline; text-underline-offset:2px; }
 </style>
 </head><body>
   <div class="top">
