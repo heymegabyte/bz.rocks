@@ -7075,6 +7075,20 @@ html.is-playing .np-panel.is-open .np-panel__stat strong {
 .np-panel__more > .np-panel__section-label:first-of-type {
   margin-top: 14px;
 }
+/* Screen-reader-only live region (clip, NOT display:none, so it stays in the
+   a11y tree and reliably announces async AI content). */
+.np-panel__sr-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .np-panel__wisdom {
   font-family: var(--font-body);
   font-size: 0.88rem;

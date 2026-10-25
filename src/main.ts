@@ -1808,6 +1808,11 @@ function setupShell(root: HTMLElement) {
         <!-- Wisdom: track tagline / artist note -->
         <blockquote class="np-panel__wisdom" id="npPanelWisdom">Play a track to see its wisdom.</blockquote>
 
+        <!-- Polite SR live region: announces when the async AI reads (liner/meaning/
+             wisdom) load, so screen-reader users learn the insights arrived (WCAG 2.1
+             SC 4.1.3). sr-only (clip, NOT display:none) so it stays in the a11y tree. -->
+        <p id="npPanelAiStatus" class="np-panel__sr-status" role="status" aria-live="polite"></p>
+
         <!-- AI "how this song lives its wisdom" — one grounded line tying the law/scripture to the song. -->
         <div class="np-panel__wisdom-how" id="npPanelWisdomHow" hidden>
           <span class="np-panel__liner-eyebrow">How this song lives it <em>· AI</em></span>
@@ -8935,6 +8940,21 @@ function showWisdomToast(track: Track) {
 }
 
 // ── AI "story behind the song" liner note ────────────────────────────────────
+// ── Screen-reader notification for async AI content (WCAG 2.1 SC 4.1.3) ───────
+// The np-panel's grounded AI reads (liner / meaning / wisdom) land ~1-3s AFTER
+// the panel opens, so a screen-reader user who already explored the panel never
+// learns the insights arrived. Announce ONCE per track (the first async read to
+// land fires it) via the always-present polite live region #npPanelAiStatus
+// (sr-only, NOT display:none — a display:none live region isn't in the a11y tree
+// so revealed content wouldn't announce reliably).
+let aiInsightsAnnouncedId = '';
+function announceAiInsights(trackId: string | null): void {
+  if (!trackId || trackId !== currentTrackId || trackId === aiInsightsAnnouncedId) return;
+  aiInsightsAnnouncedId = trackId;
+  const el = $('#npPanelAiStatus') as HTMLElement | null;
+  if (el) el.textContent = 'AI insights for this track have loaded below.';
+}
+
 // Lazily fetched per track from /api/liner (Workers AI, KV-cached server-side),
 // memoized client-side, and fail-soft — if generation errors the panel simply
 // shows no liner. Rendered below the wisdom line in the now-playing panel.
@@ -8963,6 +8983,7 @@ async function loadLinerNote(trackId: string | null): Promise<void> {
     if (currentTrackId === trackId && liner) {
       bodyEl.textContent = liner;
       wrap.hidden = false;
+      announceAiInsights(trackId);
     }
   } catch {
     /* fail-soft — no liner shown */
@@ -9000,6 +9021,7 @@ async function loadWisdomHow(trackId: string | null): Promise<void> {
     if (currentTrackId === trackId && how) {
       bodyEl.textContent = how;
       wrap.hidden = false;
+      announceAiInsights(trackId);
     }
   } catch {
     /* fail-soft — no "how" line shown */
@@ -9055,6 +9077,7 @@ async function loadMeaning(trackId: string | null): Promise<void> {
   if (currentTrackId === trackId && points.length) {
     renderMeaningList(listEl, points);
     wrap.hidden = false;
+    announceAiInsights(trackId);
   }
 }
 // Surface the same grounded "what it's really saying" beats in the fullscreen
