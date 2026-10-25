@@ -151,4 +151,49 @@ test.describe('AI chat — widget renderer', () => {
     expect(html).not.toMatch(/href=["']data:/i);
     expect(html).not.toContain('<script');
   });
+
+  test('a PROSE track recommendation is auto-carded tap-to-play (grounded backstop)', async ({
+    page
+  }) => {
+    await gotoHome(page);
+    await page
+      .locator('#apClose')
+      .click({ timeout: 2000 })
+      .catch(() => {}); // clear autoplay prompt so the tap-to-play play() isn't blocked
+    await openChat(page);
+    // Free-text (NOT a slash command): the fast model answers in prose with no
+    // ```aiwidgets``` block, so the pick would be a dead-end sentence. The grounded
+    // backstop must still surface a tap-to-play card for the verbatim catalog title.
+    await sendSlash(page, 'Tell me about the song One Stop Higher.');
+    const reply = page.locator('.aichat__msg.aichat__msg--ai').last();
+    await expect(reply).toBeAttached({ timeout: 10000 });
+    // Let the stream finish + the backstop attach (poll up to ~34s for the live model).
+    let replyText = '';
+    for (let i = 0; i < 24; i++) {
+      await page.waitForTimeout(1400);
+      replyText = (await reply.textContent()) || '';
+      if (/one stop higher/i.test(replyText)) break;
+      if (/throttl|could not|unavailable|rate.?limit|try again/i.test(replyText)) break;
+    }
+    // AI threw/throttled this run → nothing to assert about the backstop; skip.
+    test.skip(
+      !/one stop higher/i.test(replyText),
+      'model did not name the track this run (throttled or rephrased)'
+    );
+    // The title IS in the reply → the backstop MUST have carded it (deterministic).
+    const card = page.locator('.aichat__widget--track[data-track-id="one-stop-higher"]');
+    await expect(card).toBeAttached({ timeout: 8000 });
+    // And it's genuinely actionable: tapping plays it in the persistent player.
+    await card.first().click();
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() => {
+            const a = document.querySelector('audio[data-engine="bz"]') as HTMLAudioElement | null;
+            return !!a && !a.paused && (a.currentSrc || '').includes('one-stop-higher');
+          }),
+        { timeout: 8000 }
+      )
+      .toBe(true);
+  });
 });

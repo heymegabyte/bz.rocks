@@ -182,6 +182,58 @@ interface MountOpts {
 
 let mounted = false;
 
+/**
+ * Grounded actionability backstop for prose recommendations.
+ *
+ * The chat's fast model usually names tracks in plain prose with NO
+ * ```aiwidgets``` block, so a pick like "listen to One Stop Higher" renders as a
+ * dead-end sentence — the user reads a title but can't act on it. This scans a
+ * finished reply for VERBATIM catalog track titles and returns tap-to-play
+ * `track-card` widgets for them. Pure client-side match against the real
+ * catalog → zero AI cost, grounded (only real titles ever match — never a
+ * hallucinated card), fail-soft. Titles match longest-first + boundary-delimited
+ * (a matched title's text is consumed so a shorter title can't match its
+ * fragment); single-word titles must be ≥8 chars so a common word in ordinary
+ * prose can't false-trigger a card.
+ */
+let trackTitleIdx: { id: string; title: string; lc: string }[] | null = null;
+function trackTitleIndex() {
+  if (!trackTitleIdx) {
+    trackTitleIdx = TRACKS.map(t => ({ id: t.id, title: t.title, lc: t.title.toLowerCase() })).sort(
+      (a, b) => b.lc.length - a.lc.length
+    );
+  }
+  return trackTitleIdx;
+}
+
+export function detectTrackMentions(text: string, cap = 4): AiChatWidget[] {
+  if (typeof text !== 'string' || text.length < 3) return [];
+  let hay = text;
+  const out: AiChatWidget[] = [];
+  for (const { id, title, lc } of trackTitleIndex()) {
+    if (out.length >= cap) break;
+    const multiWord = lc.includes(' ');
+    if (lc.length < 5 || (!multiWord && lc.length < 8)) continue;
+    const esc = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (!new RegExp(`(^|[^a-z0-9])${esc}([^a-z0-9]|$)`, 'i').test(hay)) continue;
+    const t = TRACK_BY_ID.get(id);
+    if (!t) continue;
+    const album = ALBUM_BY_ID.get(t.album);
+    out.push({
+      kind: 'track-card',
+      trackId: t.id,
+      title: t.title,
+      album: album?.name ?? t.album,
+      vibe: t.vibe,
+      cover: t.cover,
+      href: album ? `/${album.id}/${t.id}` : `/${t.id}`
+    });
+    // Consume this title's text so a shorter title can't match its fragment.
+    hay = hay.replace(new RegExp(esc, 'gi'), ' ');
+  }
+  return out;
+}
+
 export function mountAIChat(opts: MountOpts = {}) {
   if (mounted) return;
   mounted = true;
@@ -1444,6 +1496,19 @@ export function mountAIChat(opts: MountOpts = {}) {
           aiMsg.widgets = parsed.widgets;
           renderMessages();
         }
+      }
+      // Grounded actionability backstop: when the model recommended tracks in
+      // PROSE (no aiwidgets block — the common fast-model case), auto-attach
+      // tap-to-play cards for any verbatim catalog titles so every pick is one
+      // tap from the persistent player. Zero AI cost, grounded, fail-soft.
+      if (!aiMsg.widgets?.length && aiMsg.content) {
+        try {
+          const auto = detectTrackMentions(aiMsg.content);
+          if (auto.length) {
+            aiMsg.widgets = auto;
+            renderMessages();
+          }
+        } catch {}
       }
       sess.updatedAt = Date.now();
       saveState();
