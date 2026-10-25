@@ -9016,6 +9016,9 @@ function openVideoCinema(track: Track) {
   requestAnimationFrame(() => overlay.classList.add('is-open'));
   document.documentElement.classList.add('cinema-open');
   videoCinemaOpen = true;
+  // The fullscreen film (z-index 9000) fully covers the canvas — pause the
+  // visualizer so it isn't rendering an invisible frame behind the video.
+  visualizer?.setOccluded(true);
   void player.play().catch(() => {
     /* autoplay may defer to the visible controls */
   });
@@ -9045,6 +9048,7 @@ function closeVideoCinema() {
   overlay?.classList.remove('is-open');
   document.documentElement.classList.remove('cinema-open');
   videoCinemaOpen = false;
+  visualizer?.setOccluded(false);
   // Hand the position back to the audio engine so the song continues seamlessly.
   try {
     if (pos > 0 && pos < (engine.audio.duration || Infinity)) engine.audio.currentTime = pos;
