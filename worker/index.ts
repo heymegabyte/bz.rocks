@@ -3094,7 +3094,7 @@ export default {
         const trackId = (url.searchParams.get('track') || '').trim();
         if (!VALID_TRACK_ID.test(trackId) || !TRACK_BY_ID.has(trackId))
           return jsonResponse({ error: 'unknown_track' }, 404, {}, request);
-        const cacheK = `similar:${trackId}#v5`;
+        const cacheK = `similar:${trackId}#v8`;
         const cached = await env.COUNTERS.get(cacheK);
         if (cached)
           return jsonResponse(
@@ -3108,12 +3108,33 @@ export default {
           return jsonResponse({ similar: [], throttled: true }, 200, {}, request);
         const track = TRACK_BY_ID.get(trackId)!;
         const trackAlbum = ALBUM_BY_ID.get(track.album);
+        // "More like this" should surface DIFFERENT songs — not 3 near-identical
+        // MIXES of the same track (which ALSO force the reasons to cluster, since
+        // there's nothing distinct to say). Collapse each base song to ONE
+        // representative (strip a trailing "(… Mix/Version/…)" suffix) and exclude
+        // every mix of the CURRENT song's base.
+        const baseTitle = (s: string): string =>
+          s
+            .toLowerCase()
+            .replace(
+              /\s*[([][^)\]]*\b(?:mix|remix|version|edit|instrumental|reprise|acoustic|live|demo|radio|extended|club|vip|flip|bootleg|rework|dub)\b[^)\]]*[)\]]\s*$/i,
+              ''
+            )
+            .replace(/\s+/g, ' ')
+            .trim();
+        const seenBase = new Set<string>([baseTitle(track.title)]);
         const catalog = [...TRACK_BY_ID.values()]
-          .filter(t => t.id !== trackId)
+          .filter(t => {
+            if (t.id === trackId) return false;
+            const b = baseTitle(t.title);
+            if (seenBase.has(b)) return false; // collapse same-song mixes + dup base songs
+            seenBase.add(b);
+            return true;
+          })
           .map(t => `${t.id} | ${t.title} | ${t.vibe} | ${t.wisdom ?? ''}`)
           .join('\n');
         const system =
-          "You are bZ's music matchmaker. Given the CURRENT track and the CATALOG (each line `id | title | vibe | wisdom`), pick the 5 BEST-matching tracks, best first. EVERY track here is gospel-rap, so the GENRE is NEVER a valid reason — do NOT say 'gospel trap', 'gospel-trap vibe', 'similar vibe', 'same sound', 'same genre', or 'epic gospel'. Instead name the CONCRETE thing they share: a specific image, a character or place, a scripture or spiritual theme, a story beat, or an emotional turn. CRITICAL: every reason must be DIFFERENT from the others — never repeat a phrase; make each reason about what the current track shares with THAT candidate specifically, drawn from that candidate's OWN title + wisdom. Output ONLY lines formatted `id | reason` — the id copied EXACTLY from the catalog, the reason a SPECIFIC phrase (max ~10 words) naming that shared thing. No preamble, no markdown, no numbering, NEVER the current track, NEVER a track absent from the catalog. Christian-gangster ethic; zero drug references.";
+          "You are bZ's music matchmaker. Given the CURRENT track and the CATALOG (each line `id | title | vibe | wisdom`), pick the 5 BEST-matching tracks, best first. EVERY track here is gospel-rap, so the GENRE is NEVER a valid reason — do NOT say 'gospel trap', 'gospel-trap vibe', 'similar vibe', 'same sound', 'same genre', or 'epic gospel'. Instead name the CONCRETE thing they share: a specific image, a character or place, a scripture or spiritual theme, a story beat, or an emotional turn. A bare 'X theme' or 'Shared/Common/Identical X' label is ALSO forbidden — it merely restates that they match without naming anything concrete; give the SPECIFIC shared detail instead. GOOD reasons: 'Both feed strangers at the soup line', 'Checkpoint mercy on a cardboard sign', 'Noah builds before the flood'. BAD reasons: 'Shared awakening theme', 'escape theme', 'dragon-slaying theme', 'similar vibe', 'St. John's reference'. CRITICAL: every reason must be DIFFERENT from the others — never repeat a phrase; make each reason about what the current track shares with THAT candidate specifically, drawn from that candidate's OWN title + wisdom. Output ONLY lines formatted `id | reason` — the id copied EXACTLY from the catalog, the reason a SPECIFIC phrase (max ~10 words) naming that shared thing. No preamble, no markdown, no numbering, NEVER the current track, NEVER a track absent from the catalog. Christian-gangster ethic; zero drug references.";
         const user = `CURRENT: "${track.title}" (${trackAlbum?.name ?? 'bZ'}) — vibe: ${track.vibe}; wisdom: ${track.wisdom}\n\nCATALOG:\n${catalog}`;
         let similar: Array<{ id: string; why: string }> = [];
         try {
@@ -3125,13 +3146,38 @@ export default {
             max_tokens: 280,
             temperature: 0.5
           })) as { response?: string };
-          // Reasons that are ENTIRELY a genre label are meaningless — every track
-          // is gospel-rap (the #1 generic-prose tell). Anchored so a SPECIFIC
-          // reason that merely mentions the genre survives; only bare labels die.
-          const genreOnly =
-            /^(?:(?:epic|latin|hard|holy|dark|raw)\s+)?gospel[\s-]?trap(?:\s+(?:vibe|sound|energy))?$|^(?:same|similar)\s+(?:vibe|sound|genre|energy)$|^(?:same|shared)\s+genre$/i;
+          // A reason that's ENTIRELY a genre label, a bare "X theme" / "Shared X"
+          // restatement, or an "X reference" is meaningless — it says WHY they match
+          // without a concrete distinguisher (the #1 generic-prose tell). Anchored so
+          // a SPECIFIC reason that merely mentions a theme word survives; only bare
+          // labels die. Flagged picks are KEPT but re-reasoned from grounding below.
+          const nonReason =
+            /^(?:(?:epic|latin|hard|holy|dark|raw)\s+)?gospel[\s-]?trap\b.*$|^(?:same|similar|shared|common|identical)\s+(?:vibe|sound|genre|energy|theme|mood|message|feel|tone|spirit)\b.*$|\b(?:theme|reference|mention)$/i;
           const seen = new Set<string>([trackId]);
           const whySeen = new Set<string>();
+          // Strip punctuation AND filler words so semantically-identical reasons
+          // normalize the same — "Win through actions" and "Win through YOUR actions
+          // never through argument" both → "win through actions …" so the prefix test
+          // below catches them (the inserted "your" no longer breaks the match).
+          const STOP = new Set([
+            'the', 'a', 'an', 'to', 'of', 'your', 'my', 'our', 'their', 'his', 'her',
+            'and', 'or', 'in', 'on', 'at', 'for', 'with', 'is', 'are', 'be', 'that', 'this'
+          ]);
+          const normed = (w: string): string =>
+            w
+              .toLowerCase()
+              .replace(/[^a-z0-9 ]/g, ' ')
+              .split(/\s+/)
+              .filter(x => x && !STOP.has(x))
+              .join(' ');
+          // Dup if identical OR one normalized reason is a prefix of another (both
+          // Law 9, etc.) — collapse instead of shipping two restatements.
+          const isDupWhy = (w: string): boolean => {
+            const n = normed(w);
+            if (!n) return true;
+            for (const s of whySeen) if (n === s || n.startsWith(s + ' ') || s.startsWith(n + ' ')) return true;
+            return false;
+          };
           const dupes: Array<{ id: string; why: string }> = [];
           for (const line of (out.response || '').split(/\r?\n+/)) {
             const parts = line.split('|');
@@ -3139,37 +3185,48 @@ export default {
             if (parts.length < 2 || !rawId) continue;
             const id = rawId.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '').trim();
             const why = parts.slice(1).join('|').trim().replace(/"/g, '');
-            if (!TRACK_BY_ID.has(id) || seen.has(id) || why.length < 3 || genreOnly.test(why))
-              continue;
+            if (!TRACK_BY_ID.has(id) || seen.has(id) || why.length < 3) continue;
             seen.add(id);
-            // Defer a repeated reason — a tightly-themed cluster makes the model
-            // echo one phrase for every pick; we keep the pick but give it a
-            // distinct, grounded reason below so 3 picks carry 3 real reasons.
-            if (whySeen.has(why.toLowerCase())) {
+            // A bare genre/theme label OR a (near-)repeated reason isn't a
+            // distinguisher — KEEP the pick but re-reason it from the candidate's
+            // own grounding below, so the picks carry distinct, grounded reasons.
+            if (nonReason.test(why) || isDupWhy(why)) {
               dupes.push({ id, why });
               continue;
             }
-            whySeen.add(why.toLowerCase());
+            whySeen.add(normed(why));
             similar.push({ id, why });
             if (similar.length >= 3) break;
           }
           // Backfill from deferred duplicate-reason picks using the candidate's
           // OWN vibe (genre words stripped) — per-track, so it's distinct + still
           // grounded in real catalog data, never invented.
-          for (const d of dupes) {
-            if (similar.length >= 3) break;
-            const cand = TRACK_BY_ID.get(d.id)!;
-            const alt = (cand.vibe || '')
+          // Re-reason each flagged pick from its OWN grounding — wisdom (a concrete
+          // line) first, then vibe, genre stripped — keeping it only if DISTINCT from
+          // the others (prefix-aware). Better 2 distinct, grounded reasons than 3 with
+          // a near-duplicate or a bare label.
+          const ground = (s: string): string =>
+            s
               .replace(/gospel[\s-]?trap|\b(?:trap|gospel)\b/gi, '')
               .replace(/[^a-z0-9 ]/gi, ' ')
               .replace(/\s+/g, ' ')
               .trim()
               .split(' ')
-              .slice(0, 6)
+              .slice(0, 7)
               .join(' ');
-            const why = alt.length >= 4 ? alt : d.why;
-            if (whySeen.has(why.toLowerCase())) continue;
-            whySeen.add(why.toLowerCase());
+          for (const d of dupes) {
+            if (similar.length >= 3) break;
+            const cand = TRACK_BY_ID.get(d.id)!;
+            const fromWisdom = ground(cand.wisdom || '');
+            const fromVibe = ground(cand.vibe || '');
+            let why = '';
+            if (fromWisdom.length >= 4 && !nonReason.test(fromWisdom) && !isDupWhy(fromWisdom))
+              why = fromWisdom;
+            else if (fromVibe.length >= 4 && !nonReason.test(fromVibe) && !isDupWhy(fromVibe))
+              why = fromVibe;
+            else if (d.why.length >= 4 && !nonReason.test(d.why) && !isDupWhy(d.why)) why = d.why;
+            if (!why) continue;
+            whySeen.add(normed(why));
             similar.push({ id: d.id, why });
           }
         } catch {
