@@ -222,6 +222,134 @@ export const CONTENT_PAGES: ContentPage[] = [
     }
   },
 
+  // ═══ TODAY'S WORD (devotional) ═════════════════════════════════════════
+  // A daily-rotating devotional. The "word" is a REAL track's `wisdom` line (a
+  // Robert Greene law or a scripture — every one of the 168 tracks carries one).
+  // Deterministic daily pick (UTC day index) so everyone sees the same word today
+  // and a new one tomorrow. The track's grounded AI reflection (/api/wisdom, "how
+  // this song lives its wisdom", KV-cached) is surfaced client-side via the
+  // slug==='word' hook in main.ts doSwap() — reused, not generated anew.
+  {
+    slug: 'word',
+    title: "Today's Word",
+    eyebrow: 'daily wisdom',
+    description:
+      'A daily word from the catalog — a Robert Greene law, a scripture, or a hard-won line of wisdom drawn from one of the songs, with the track it lives in. A new one every day.',
+    metaTitle: "Today's Word — daily wisdom from the bZ catalog",
+    metaDescription:
+      'One line of wisdom a day — a Robert Greene law, a scripture, or a hard-won truth pulled from a real bZ track, paired with the song it lives in and why. Come back tomorrow for the next word.',
+    jsonLdType: 'WebPage',
+    render: () => {
+      const withWisdom = TRACKS.filter(t => t.wisdom && t.wisdom.trim());
+      if (!withWisdom.length) {
+        return `<article class="contentpage__article"><p>No word today — check back soon.</p></article>`;
+      }
+      const dayIdx = Math.floor(Date.now() / 86400000) % withWisdom.length;
+      const t = withWisdom[dayIdx] ?? withWisdom[0]!;
+      const album = ALBUMS.find(a => a.id === t.album);
+      const albumName = album?.name ?? '';
+      return `
+      <article class="contentpage__article contentpage__article--word">
+        <p class="contentpage__lead">
+          Every song in the catalog carries a line of wisdom — a law, a scripture, or a hard-won
+          truth tied to the move it makes. One surfaces here each day. Here's today's.
+        </p>
+
+        <blockquote class="word__verse">${esc(t.wisdom ?? '')}</blockquote>
+
+        <div class="word__track">
+          <img class="word__track-cover" src="${esc(t.cover)}" alt="${esc(t.title)} cover" width="72" height="72" loading="lazy" decoding="async" />
+          <div class="word__track-meta">
+            <span class="word__track-eyebrow">drawn from</span>
+            <strong>${esc(t.title)}</strong>
+            ${albumName ? `<span class="word__track-album">${esc(albumName)}</span>` : ''}
+            <a class="word__play" data-track="${esc(t.id)}" href="/${esc(t.album)}">▶ Play “${esc(t.title)}”</a>
+          </div>
+        </div>
+
+        <div class="word__reflection" id="wordReflection" data-wisdom-track="${esc(t.id)}" aria-live="polite">
+          <span class="word__reflection-loading">Reading how the song lives this…</span>
+        </div>
+
+        ${divider('why a word?')}
+        <p>
+          Robert Greene and Proverbs and Psalms on the same shelf — ${withWisdom.length} tracks, each
+          with its own line of wisdom tied to a concrete move in the song. This page rotates through
+          them one day at a time. Tap play to hear today's in full, then come back tomorrow.
+        </p>
+      </article>`;
+    }
+  },
+
+  // ═══ LISTEN EVERYWHERE (smart-link hub) ════════════════════════════════
+  // A share-friendly "link in bio" hub — every album with its VERIFIED direct
+  // streaming links (album.links, resolved by scripts/resolve-album-links.ts) plus
+  // on-site play. Grounded: only real, verified platform URLs render (no fabricated
+  // or search-fallback links). Cards derive from the live ALBUMS array.
+  {
+    slug: 'links',
+    title: 'Listen Everywhere',
+    eyebrow: 'all platforms',
+    description:
+      'Every bZ album on every platform it is distributed to — Spotify, Apple Music, and more — plus instant play right here. One page to share anywhere.',
+    metaTitle: 'Listen Everywhere — every bZ album on every platform',
+    metaDescription:
+      'The one link to share: every bZ album with direct Spotify, Apple Music, YouTube Music, Tidal, and Amazon Music links where available, plus instant in-browser play.',
+    jsonLdType: 'CollectionPage',
+    render: () => {
+      const PLAT: ReadonlyArray<readonly [string, string]> = [
+        ['spotify', 'Spotify'],
+        ['appleMusic', 'Apple Music'],
+        ['youtubeMusic', 'YouTube Music'],
+        ['tidal', 'Tidal'],
+        ['amazonMusic', 'Amazon Music']
+      ];
+      // Build per-album entries, then lead with the albums that actually HAVE
+      // verified platform links (newest-first within each group) — the streaming
+      // links are the whole point of a smart-link hub, so they must not sit below
+      // the fold behind not-yet-distributed newer drops.
+      const entries = ALBUMS.map(a => {
+        const links = (a.links ?? {}) as Record<string, string | undefined>;
+        const plats = PLAT.filter(([k]) => links[k]);
+        return { a, plats, links };
+      }).sort(
+        (x, y) =>
+          (y.plats.length ? 1 : 0) - (x.plats.length ? 1 : 0) ||
+          (y.a.releasedAt ?? '').localeCompare(x.a.releasedAt ?? '')
+      );
+      const cards = entries
+        .map(({ a, plats, links }) => {
+          const platformLinks = plats
+            .map(
+              ([k, label]) =>
+                `<a class="links__platform" href="${esc(links[k] ?? '')}" target="_blank" rel="noopener noreferrer">${esc(label)}</a>`
+            )
+            .join('');
+          return `<article class="links__card">
+          ${albumChip(a)}
+          <div class="links__body">
+            <h4>${esc(a.name)}</h4>
+            <p>${esc(a.tagline)}</p>
+            <div class="links__actions">
+              <a class="links__play" href="/${esc(a.id)}">▶ Play on bz.rocks</a>
+              ${platformLinks}
+            </div>
+          </div>
+        </article>`;
+        })
+        .join('');
+      return `
+      <article class="contentpage__article">
+        <p class="contentpage__lead">
+          Every bZ album, on every platform it's distributed to — plus instant play right here.
+          ${ALBUMS.length} albums, one page. Bookmark it, share it anywhere.
+        </p>
+        ${divider('the albums')}
+        <div class="links__grid">${cards}</div>
+      </article>`;
+    }
+  },
+
   // ═══ ABOUT ════════════════════════════════════════════════════════════
   {
     slug: 'about',

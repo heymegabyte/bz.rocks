@@ -1368,6 +1368,14 @@ function setupShell(root: HTMLElement) {
               <strong>The World of bZ</strong>
               <span>The lore — chapters + recurring motifs</span>
             </a>
+            <a href="/word" data-content-page="word" role="menuitem">
+              <strong>Today's Word</strong>
+              <span>A daily line of wisdom from the catalog</span>
+            </a>
+            <a href="/links" data-content-page="links" role="menuitem">
+              <strong>Listen Everywhere</strong>
+              <span>Every album · every platform · one page</span>
+            </a>
             <a id="lnkAppeal" href="/ashton/" role="menuitem">
               <strong>Appeal</strong>
               <span>Open letter to Ashton + Mila</span>
@@ -1391,6 +1399,8 @@ function setupShell(root: HTMLElement) {
             <a href="/press" data-content-page="press">Press</a>
             <a href="/merch" data-content-page="merch">Merch</a>
             <a href="/world" data-content-page="world">World</a>
+            <a href="/word" data-content-page="word">Word</a>
+            <a href="/links" data-content-page="links">Listen</a>
             <a href="/ashton/">Appeal</a>
             <a href="/stats" title="Live listening stats — by the numbers">Stats</a>
             <a href="/privacy" data-content-page="privacy">Privacy</a>
@@ -5435,6 +5445,9 @@ function openContentPage(slug: string, { pushHistory = true }: { pushHistory?: b
     // it's ~464 lines (cart, Stripe checkout, suite fetch) that the ~95% of
     // visitors who never open /merch shouldn't pay for in the initial bundle.
     if (slug === 'merch') void import('./merch-cart').then(m => m.bootIfMerchPage(slug));
+    // Today's Word: surface the grounded AI reflection for today's track (reuses
+    // the same /api/wisdom artifact + memo as the now-playing panel). Fail-soft.
+    if (slug === 'word') void enhanceWordPage();
   };
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const dialogAlreadyOpen = dialog.open;
@@ -9038,6 +9051,50 @@ async function loadWisdomHow(trackId: string | null): Promise<void> {
     }
   } catch {
     /* fail-soft — no "how" line shown */
+  }
+}
+
+// Surface the grounded /api/wisdom reflection ("how the song lives its wisdom")
+// on the Today's Word content page (#wordReflection). Reuses the SAME KV-cached
+// artifact + client memo as the now-playing panel — zero extra model cost. Writes
+// via textContent/createElement (Trusted-Types safe). Fail-soft: the loading line
+// is removed on error or empty so no orphan placeholder lingers.
+async function enhanceWordPage(): Promise<void> {
+  const wrap = document.getElementById('wordReflection');
+  if (!wrap) return;
+  const trackId = wrap.getAttribute('data-wisdom-track');
+  if (!trackId) {
+    wrap.remove();
+    return;
+  }
+  const fill = (how: string): void => {
+    if (!how) {
+      wrap.remove();
+      return;
+    }
+    wrap.replaceChildren();
+    const label = document.createElement('span');
+    label.className = 'word__reflection-eyebrow';
+    label.textContent = 'how the song lives it';
+    const body = document.createElement('p');
+    body.className = 'word__reflection-body';
+    body.textContent = how;
+    wrap.appendChild(label);
+    wrap.appendChild(body);
+  };
+  const memo = wisdomHowCache.get(trackId);
+  if (memo !== undefined) {
+    fill(memo);
+    return;
+  }
+  try {
+    const r = await fetch(`/api/wisdom?track=${encodeURIComponent(trackId)}`);
+    const d = (await r.json()) as { how?: string | null };
+    const how = (d.how || '').trim();
+    wisdomHowCache.set(trackId, how);
+    fill(how);
+  } catch {
+    wrap.remove();
   }
 }
 

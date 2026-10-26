@@ -541,6 +541,20 @@ const CONTENT_PAGES_SEO: Array<{ slug: string; title: string; description: strin
     og: FALLBACK_OG
   },
   {
+    slug: 'word',
+    title: "Today's Word — daily wisdom from the catalog",
+    description:
+      'One line of wisdom a day — a Robert Greene law, a scripture, or a hard-won truth pulled from a real bZ track, paired with the song it lives in and why. A new word every day.',
+    og: FALLBACK_OG
+  },
+  {
+    slug: 'links',
+    title: 'Listen Everywhere — every bZ album on every platform',
+    description:
+      'The one link to share: every bZ album with direct Spotify, Apple Music, YouTube Music, Tidal, and Amazon Music links where available, plus instant in-browser play.',
+    og: FALLBACK_OG
+  },
+  {
     slug: 'credits',
     title: 'Tracks — per-track Suno DNA, BPM/key sources, licensing',
     description:

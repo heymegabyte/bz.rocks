@@ -15741,6 +15741,190 @@ a.aichat__widget:hover {
   color: var(--ink-album-accent-neon, var(--ink-accent-neon, var(--ink)));
 }
 
+/* ── Today's Word (devotional) ─────────────────────────────────────────── */
+.word__verse {
+  margin: 18px 0 26px;
+  padding: 22px 26px;
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 9%, transparent),
+    rgba(6, 6, 16, 0.3)
+  );
+  font-size: clamp(1.25rem, 1rem + 1.6vw, 1.85rem);
+  line-height: 1.4;
+  font-style: italic;
+  text-wrap: balance;
+  color: var(--ink);
+}
+.word__track {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(244, 244, 255, 0.025);
+}
+.word__track-cover {
+  width: 72px;
+  height: 72px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.word__track-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.word__track-eyebrow,
+.word__reflection-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.word__track-meta strong {
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.word__track-album {
+  font-size: 0.82rem;
+  color: var(--ink-mute);
+}
+.word__play {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin-top: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--ink);
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+}
+.word__play:hover {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+  transform: translateY(-1px);
+}
+.word__reflection {
+  margin: 0 0 22px;
+  padding: 14px 16px;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 8px;
+  background: rgba(6, 6, 16, 0.4);
+}
+.word__reflection-loading {
+  font-size: 0.85rem;
+  color: var(--ink-mute);
+  font-style: italic;
+}
+.word__reflection-body {
+  margin: 4px 0 0;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+/* ── Listen Everywhere (smart-link hub) ────────────────────────────────── */
+.links__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+  margin: 12px 0 20px;
+}
+.links__card {
+  display: flex;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(244, 244, 255, 0.025);
+  transition:
+    border-color 200ms ease,
+    transform 200ms cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+.links__card:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  transform: translateY(-2px);
+}
+.links__card .contentpage__album-chip {
+  flex: 0 0 84px;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.links__card .contentpage__album-chip span {
+  display: none;
+}
+.links__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.links__body h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--ink);
+}
+.links__body p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ink-mute);
+  text-wrap: pretty;
+}
+.links__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.links__play,
+.links__platform {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  transition:
+    border-color 180ms ease,
+    background 180ms ease;
+}
+.links__play {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.links__platform:hover,
+.links__play:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.links__soon {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
 /* Code blocks for embed snippets */
 .contentpage__code {
   margin: 10px 0 20px;

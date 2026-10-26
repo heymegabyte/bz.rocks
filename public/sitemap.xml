@@ -1111,6 +1111,18 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://bz.rocks/word</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bz.rocks/links</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://bz.rocks/about</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>weekly</changefreq>
