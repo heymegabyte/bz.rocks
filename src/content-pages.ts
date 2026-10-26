@@ -113,10 +113,11 @@ type ContactChannel = {
 
 const CONTACT_ICONS: Record<ContactChannel['kind'], string> = {
   email: '<path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/>',
-  press: '<path d="M4 5h13a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2z"/><path d="M19 9h1v10h-2"/><path d="M8 9h7M8 13h7"/>',
+  press:
+    '<path d="M4 5h13a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2z"/><path d="M19 9h1v10h-2"/><path d="M8 9h7M8 13h7"/>',
   booking: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>',
   call: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>',
-  studio: '<path d="M3 20h18"/><path d="M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/>',
+  studio: '<path d="M3 20h18"/><path d="M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/>'
 };
 
 const contactChannel = (c: ContactChannel) => `
@@ -132,7 +133,10 @@ const contactChannel = (c: ContactChannel) => `
     </span>
   </a>`;
 
-const contactCard = (channels: ContactChannel[], note = 'A real human reads every message · replies within 48 hours') => `
+const contactCard = (
+  channels: ContactChannel[],
+  note = 'A real human reads every message · replies within 48 hours'
+) => `
   <div class="contact-card">
     <div class="contact-card__who">
       <span class="contact-card__avatar" aria-hidden="true">bZ</span>
@@ -215,10 +219,7 @@ export const CONTENT_PAGES: ContentPage[] = [
           that run beneath all of them.
         </p>
 
-        ${pullquote(
-          `The prayer and the punchline can share a bar.`,
-          'the working thesis of every bZ drop'
-        )}
+        ${pullquote(`The prayer and the punchline can share a bar.`, 'the working thesis of every bZ drop')}
 
         ${divider('the chapters')}
         <p>
@@ -765,13 +766,16 @@ export const CONTENT_PAGES: ContentPage[] = [
 
         ${divider('connect · best path by intent')}
         <p>Pick the closest door. Each one opens a pre-filled note — add the specifics and send. One well-formed email beats three fragments.</p>
-        ${contactCard([
-          { kind: 'email', label: 'Say hello', hint: 'anything else', href: MAILTO },
-          { kind: 'press', label: 'Press', hint: 'interviews · EPK', href: PRESS },
-          { kind: 'booking', label: 'Booking', hint: 'shows · sync', href: BOOKING },
-          { kind: 'call', label: 'Call', hint: '+1 469 694 3696', href: TEL },
-          { kind: 'studio', label: 'Tech', hint: 'hire the studio', href: STUDIO, external: true },
-        ], 'Replies within 48h · voicemail returned within 24h on weekdays · prayer requests handled privately, never published')}
+        ${contactCard(
+          [
+            { kind: 'email', label: 'Say hello', hint: 'anything else', href: MAILTO },
+            { kind: 'press', label: 'Press', hint: 'interviews · EPK', href: PRESS },
+            { kind: 'booking', label: 'Booking', hint: 'shows · sync', href: BOOKING },
+            { kind: 'call', label: 'Call', hint: '+1 469 694 3696', href: TEL },
+            { kind: 'studio', label: 'Tech', hint: 'hire the studio', href: STUDIO, external: true }
+          ],
+          'Replies within 48h · voicemail returned within 24h on weekdays · prayer requests handled privately, never published'
+        )}
         <details class="contact-tips">
           <summary>Faster replies — 4 things to include</summary>
           <ol>
@@ -1103,11 +1107,14 @@ export const CONTENT_PAGES: ContentPage[] = [
           </ul>
 
           ${divider('booking + licensing')}
-          ${contactCard([
-            { kind: 'booking', label: 'Booking', hint: 'shows · licensing', href: BOOKING },
-            { kind: 'press', label: 'Press', hint: 'interviews · EPK', href: PRESS },
-            { kind: 'call', label: 'Call', hint: 'time-sensitive', href: TEL },
-          ], 'Reply within 48h · NDA on request · phone for time-sensitive press')}
+          ${contactCard(
+            [
+              { kind: 'booking', label: 'Booking', hint: 'shows · licensing', href: BOOKING },
+              { kind: 'press', label: 'Press', hint: 'interviews · EPK', href: PRESS },
+              { kind: 'call', label: 'Call', hint: 'time-sensitive', href: TEL }
+            ],
+            'Reply within 48h · NDA on request · phone for time-sensitive press'
+          )}
 
           ${divider('also for tech press')}
           <p>
@@ -1388,10 +1395,18 @@ export const CONTENT_PAGES: ContentPage[] = [
         </p>
 
         ${divider('contact')}
-        ${contactCard([
-          { kind: 'email', label: 'Privacy question', hint: 'data · delete', href: `${MAILTO}?subject=privacy` },
-          { kind: 'call', label: 'Call', hint: '+1 469 694 3696', href: TEL },
-        ], 'Full story on the <a href="/about" data-content-page="about">About</a> page · a real human answers within 48 hours')}
+        ${contactCard(
+          [
+            {
+              kind: 'email',
+              label: 'Privacy question',
+              hint: 'data · delete',
+              href: `${MAILTO}?subject=privacy`
+            },
+            { kind: 'call', label: 'Call', hint: '+1 469 694 3696', href: TEL }
+          ],
+          'Full story on the <a href="/about" data-content-page="about">About</a> page · a real human answers within 48 hours'
+        )}
       </article>
     `
   },
@@ -1445,10 +1460,13 @@ export const CONTENT_PAGES: ContentPage[] = [
         </p>
 
         ${divider('contact')}
-        ${contactCard([
-          { kind: 'booking', label: 'Licensing', hint: 'sync · sample', href: BOOKING },
-          { kind: 'email', label: 'Takedown or terms', hint: 'legal', href: `${MAILTO}?subject=terms` },
-        ], 'Reply within 48 hours · NDAs signed on request')}
+        ${contactCard(
+          [
+            { kind: 'booking', label: 'Licensing', hint: 'sync · sample', href: BOOKING },
+            { kind: 'email', label: 'Takedown or terms', hint: 'legal', href: `${MAILTO}?subject=terms` }
+          ],
+          'Reply within 48 hours · NDAs signed on request'
+        )}
       </article>
     `
   }
