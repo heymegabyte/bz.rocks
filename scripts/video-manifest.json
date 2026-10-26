@@ -59,10 +59,10 @@
     "the-last-soldier-refused": {
       "status": "done",
       "duration": "4:52",
-      "file": "~/Desktop/the-last-soldier-refused.mp4 (142.6 MB, 292.2s) — CINEMA MIND, MiniMax Hailuo-02, beat-cut 102 cuts",
+      "file": "~/Desktop/the-last-soldier-refused.mp4 (142 MB, 4:52) — CINEMA MIND, 50 UNIQUE beats (NO repeat footage), Hailuo-02 (22 native MiniMax + 28 via Fal when the token plan ran out)",
       "published": false,
-      "features_woman_lead": false,
-      "note": "Fully-plotted parallel-lives anti-war film (Eli refuses -> home alive; Marcus fights -> falls; the war machine's power vanishes). 10 scenes / 20 shots, manifest at scripts/films/the-last-soldier-refused/manifest.json. Rail = MiniMax (permissive battlefield + one-model consistency), NOT Fal. NOT yet on @bzbloom — ready to publish."
+      "features_woman_lead": true,
+      "note": "REDO 2026-10-25: epic women-led + cosmic-framed 'The Women Who Stopped the War' — Amara the multicultural mercy-bearer + a global chorus of beautiful multicultural women who walk onto the battlefields and end the war, framed by the same stars (open/mid/close). 10 acts / 50 UNIQUE clips each used once (no repeats), full 4:52. Built via scripts/films/the-last-soldier-refused/build-manifest.mjs; MINIMAX_FAL rail finished it. NOT yet on @bzbloom — ready to publish."
     }
   },
   "preexisting_unmapped": [
