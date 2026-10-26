@@ -47,6 +47,8 @@ const T2V = process.env.T2V === '1'; // T2V=1 → pure Veo text-to-video (max re
 const MINIMAX = process.env.MINIMAX === '1'; // MINIMAX=1 → native MiniMax Hailuo-02 via Brian's subscription key (cap-compliant $0.25/s)
 const MINIMAX_MODEL = 'MiniMax-Hailuo-02';
 const MINIMAX_BASE = 'https://api.minimax.io/v1';
+const MINIMAX_FAL = process.env.MINIMAX_FAL === '1'; // MINIMAX_FAL=1 → SAME MiniMax Hailuo-02 model, but billed via Fal (when the native token plan is exhausted; keeps the lead consistent with native-MiniMax clips)
+const MINIMAX_FAL_MODEL = 'fal-ai/minimax/hailuo-02/pro/text-to-video'; // 1080p, 6s t2v
 const SEEDANCE = process.env.SEEDANCE === '1'; // SEEDANCE=1 → ByteDance Seedance 2.5 via Fal (top-tier model, 4-30s, 720p native)
 const SEEDANCE_MODEL = 'bytedance/seedance-2.5/text-to-video';
 const SEEDANCE_REF_MODEL = 'bytedance/seedance-2.5/reference-to-video'; // character consistency via a hero reference pack
@@ -140,7 +142,11 @@ async function veoClip(tok, shot, heroFrame, heroPack) {
   const negative_prompt = [NEG, shot.negativePrompt].filter(Boolean).join(', ');
   // Seedance 2.5 (top-tier, no keyframe) · Veo T2V · or Veo image-to-video from a photoreal keyframe.
   let model, input;
-  if (SEEDANCE) {
+  if (MINIMAX_FAL) {
+    // SAME Hailuo-02 model as the native rail, via Fal billing — consistent look, no negative_prompt param.
+    model = MINIMAX_FAL_MODEL;
+    input = { prompt, prompt_optimizer: true };
+  } else if (SEEDANCE) {
     if (shot.seedanceRef && heroPack && heroPack.length) {
       // reference-to-video: lock the lead's exact face + armor to the hero pack across every shot
       model = SEEDANCE_REF_MODEL;
@@ -486,7 +492,7 @@ async function run() {
     // Hero reference still — i2v identity continuity only; skipped in T2V (no keyframe).
     const lead = m.characters?.[0];
     const heroFrame =
-      !T2V && !SEEDANCE && lead
+      !T2V && !SEEDANCE && !MINIMAX_FAL && lead
         ? await flux(
             tok,
             `${lead.description} Full-body hero portrait, standing resolute, bronze scale-mail, one notched sword, rain and distant firelight, cinematic key light`,
@@ -497,7 +503,7 @@ async function run() {
     const heroPack =
       SEEDANCE && shots.some(s => s.seedanceRef) ? await makeHeroPack(tok, m.characters?.[0]) : null;
     log(
-      `generating ${shots.length} ${SEEDANCE ? 'Seedance 2.5 (8s, 720p)' : `Veo 3.1 ${T2V ? 'text-to-video' : 'image-to-video'} (8s, 1080p)`} clips, audio off, concurrency ${CONCURRENCY}…`
+      `generating ${shots.length} ${MINIMAX_FAL ? 'MiniMax Hailuo-02 via Fal (6s, 1080p)' : SEEDANCE ? 'Seedance 2.5 (8s, 720p)' : `Veo 3.1 ${T2V ? 'text-to-video' : 'image-to-video'} (8s, 1080p)`} clips, audio off, concurrency ${CONCURRENCY}…`
     );
     clips = await pool(shots, CONCURRENCY, shot => veoClip(tok, shot, heroFrame, heroPack));
   }
