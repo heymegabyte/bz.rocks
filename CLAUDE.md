@@ -50,7 +50,7 @@ The app is a single-page experience. The audio element is created once and persi
 1. **Audio persistence.** `<audio data-engine="bz">` is created in `src/audio.ts` and owned by the top-level document. Any change that tears it down on navigation is a regression.
 2. **SPA-only routing.** Routes like `/canopy/<track>`, `/halo/...`, `/appeal`, `/ashton` are served by `env.ASSETS.fetch(new URL('/', ...))` so the same shell boots. Don't add a real HTML file at those paths.
 3. **Per-route metadata is server-rendered.** Add metadata in `src/track-meta.ts` so `MetaRewriter` in `worker/index.ts` rewrites `<head>` at the edge. Never inject `<title>`/`<meta>` from client-side JS for crawlable content.
-4. **TypeScript strict is on.** `tsc -b` runs in `npm run build`. Don't disable strict; add types instead.
+4. **TypeScript strict is on.** `tsc -b` runs in `npm run build`. Don't disable strict; add types instead. Gotcha: in DOM code use `el.appendChild(node)` one node at a time — NOT multi-arg `el.append(a, b)`; this repo's TS resolves `.append(…)` to a wrong overload (expects `string | ReadableStream | Response`) and fails `tsc -b`.
 5. **Tests start at the homepage.** Real-user flows — click through to the feature; don't `page.goto` an internal route unless the test specifically asserts per-route SEO.
 
 ## Workflow
