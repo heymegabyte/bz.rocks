@@ -8710,6 +8710,14 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
     : `<div class="cmdk__suggest"><div class="cmdk__group">✦ Try a vibe, mood, or lyric</div><div class="cmdk__suggest-chips">${SEARCH_SUGGESTIONS.map(
         q => `<button type="button" class="cmdk__suggest-chip" data-suggest="${escapeHtml(q)}">${escapeHtml(q)}</button>`
       ).join('')}</div></div>`;
+  // TODO(a11y): #cmdkResults is role="listbox" but this mixes NON-option interactive
+  // content into it — the suggest-chip <button>s (suggestHtml, fresh open) and the
+  // "▶ Play as a set" <button> (aiHtml) — which trips a serious axe aria-required-children
+  // (a listbox may only own option/group children). Dedicated fix: render the suggest block
+  // + the "play as a set" action OUTSIDE the listbox (a sibling element), and move their
+  // click handlers off the #cmdkResults-scoped delegate (make them document-delegated), so
+  // #cmdkResults holds ONLY option rows (+ group-heading divs, which axe tolerates). Kept as
+  // a dedicated task — a rushed move risks breaking the suggest/AI-set handlers. (2026-10-26)
   results.innerHTML = suggestHtml + pagesHtml + tracksHtml + aiHtml;
 }
 
