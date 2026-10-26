@@ -99,6 +99,59 @@ const cards = (items: Array<{ title: string; meta?: string; body: string }>) =>
       .join('')}
   </div>`;
 
+// Contact card — one compact, gorgeous surface for "how to reach a human".
+// Rendered on /about, /press and the privacy + terms tails so every path to a
+// real reply looks identical. Each channel is a 1-tap icon tile (email / press /
+// booking / call / tech) with a mailto or tel behind it — never a dead label.
+type ContactChannel = {
+  kind: 'email' | 'press' | 'booking' | 'call' | 'studio';
+  label: string;
+  hint: string;
+  href: string;
+  external?: boolean;
+};
+
+const CONTACT_ICONS: Record<ContactChannel['kind'], string> = {
+  email: '<path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/>',
+  press: '<path d="M4 5h13a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2z"/><path d="M19 9h1v10h-2"/><path d="M8 9h7M8 13h7"/>',
+  booking: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>',
+  call: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>',
+  studio: '<path d="M3 20h18"/><path d="M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/>',
+};
+
+const contactChannel = (c: ContactChannel) => `
+  <a class="contact-card__chan" data-kind="${esc(c.kind)}" href="${esc(c.href)}"${
+    c.external ? ' target="_blank" rel="noopener"' : ''
+  }>
+    <span class="contact-card__ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${CONTACT_ICONS[c.kind]}</svg>
+    </span>
+    <span class="contact-card__txt">
+      <span class="contact-card__label">${esc(c.label)}${c.external ? ' ↗' : ''}</span>
+      <span class="contact-card__hint">${esc(c.hint)}</span>
+    </span>
+  </a>`;
+
+const contactCard = (channels: ContactChannel[], note = 'A real human reads every message · replies within 48 hours') => `
+  <div class="contact-card">
+    <div class="contact-card__who">
+      <span class="contact-card__avatar" aria-hidden="true">bZ</span>
+      <span class="contact-card__id">
+        <strong>Brian Zalewski</strong>
+        <span>solo artist · Newark, NJ</span>
+      </span>
+      <span class="contact-card__badge" aria-hidden="true"><i></i>open</span>
+    </div>
+    <div class="contact-card__grid">${channels.map(contactChannel).join('')}</div>
+    <p class="contact-card__note">${note}</p>
+  </div>`;
+
+const MAILTO = 'mailto:brian@megabyte.space';
+const TEL = 'tel:+14696943696';
+const BOOKING = `${MAILTO}?subject=bZ%20booking%20or%20licensing&body=Hi%20bZ%20%E2%80%94%0A%0AWhat%3A%20(venue%20%2F%20project)%0AWhen%3A%20(date)%0AUse%3A%20(sync%20%2F%20sample%2F%20cover%2F%20performance)%0ABudget%3A%20%0A%0AThanks!`;
+const PRESS = `${MAILTO}?subject=bZ%20press`;
+const STUDIO = 'https://megabyte.space/connect/';
+
 // Inline album thumbnail row — clickable cover chips
 const albumChip = (a: (typeof ALBUMS)[number]) =>
   `<a class="contentpage__album-chip" href="/${esc(a.id)}">
@@ -711,23 +764,23 @@ export const CONTENT_PAGES: ContentPage[] = [
         )}
 
         ${divider('connect · best path by intent')}
-        <p>A real human reads every message. Replies within 48 hours unless travelling.</p>
-        <ul class="contentpage__connect">
-          <li><strong>Booking + licensing</strong> — <a href="mailto:brian@megabyte.space?subject=bZ%20booking">brian@megabyte.space</a></li>
-          <li><strong>Press + interviews</strong> — <a href="mailto:brian@megabyte.space?subject=bZ%20press">brian@megabyte.space</a> with "press" in the subject · full kit at <a href="/press" data-content-page="press">/press</a></li>
-          <li><strong>Time-sensitive</strong> — <a href="tel:+14696943696">+1 (469) 694-3696</a> (voicemail returned within 24h weekdays)</li>
-          <li><strong>Prayer requests</strong> — DM any social or email; handled privately, never published</li>
-          <li><strong>Tech consulting</strong> — via <a href="https://megabyte.space/connect/" target="_blank" rel="noopener">megabyte.space/connect ↗</a></li>
-        </ul>
-        ${highlight(
-          'Faster replies if you do these first',
-          `
-          <strong>1.</strong> Skim this page — many answers live here.<br>
-          <strong>2.</strong> Include specifics (venue date, capacity, project link) instead of "let's hop on a call."<br>
-          <strong>3.</strong> For licensing, name the use case (sync, sample, cover, performance).<br>
-          <strong>4.</strong> Send one well-formed email instead of three fragments. NDAs signed on request.
-        `
-        )}
+        <p>Pick the closest door. Each one opens a pre-filled note — add the specifics and send. One well-formed email beats three fragments.</p>
+        ${contactCard([
+          { kind: 'email', label: 'Say hello', hint: 'anything else', href: MAILTO },
+          { kind: 'press', label: 'Press', hint: 'interviews · EPK', href: PRESS },
+          { kind: 'booking', label: 'Booking', hint: 'shows · sync', href: BOOKING },
+          { kind: 'call', label: 'Call', hint: '+1 469 694 3696', href: TEL },
+          { kind: 'studio', label: 'Tech', hint: 'hire the studio', href: STUDIO, external: true },
+        ], 'Replies within 48h · voicemail returned within 24h on weekdays · prayer requests handled privately, never published')}
+        <details class="contact-tips">
+          <summary>Faster replies — 4 things to include</summary>
+          <ol>
+            <li>Skim this page — many answers live here.</li>
+            <li>Include specifics (venue date, capacity, project link), not "let's hop on a call."</li>
+            <li>For licensing, name the use — sync, sample, cover, or performance.</li>
+            <li>Send one well-formed email, not three fragments. NDAs signed on request.</li>
+          </ol>
+        </details>
 
         ${minorDivider('social + studio')}
         <ul class="contentpage__connect">
@@ -1050,11 +1103,11 @@ export const CONTENT_PAGES: ContentPage[] = [
           </ul>
 
           ${divider('booking + licensing')}
-          <p>
-            Email <a href="mailto:brian@megabyte.space?subject=bZ%20booking">brian@megabyte.space</a>
-            with subject line "bZ booking" or "bZ licensing" — reply within 48 hours.
-            Phone <a href="tel:+14696943696">+1 (469) 694-3696</a> for time-sensitive press.
-          </p>
+          ${contactCard([
+            { kind: 'booking', label: 'Booking', hint: 'shows · licensing', href: BOOKING },
+            { kind: 'press', label: 'Press', hint: 'interviews · EPK', href: PRESS },
+            { kind: 'call', label: 'Call', hint: 'time-sensitive', href: TEL },
+          ], 'Reply within 48h · NDA on request · phone for time-sensitive press')}
 
           ${divider('also for tech press')}
           <p>
@@ -1335,10 +1388,10 @@ export const CONTENT_PAGES: ContentPage[] = [
         </p>
 
         ${divider('contact')}
-        <p>
-          Questions about privacy? <a href="mailto:brian@megabyte.space?subject=privacy">brian@megabyte.space</a>.
-          Full story on the <a href="/about" data-content-page="about">About</a> page.
-        </p>
+        ${contactCard([
+          { kind: 'email', label: 'Privacy question', hint: 'data · delete', href: `${MAILTO}?subject=privacy` },
+          { kind: 'call', label: 'Call', hint: '+1 469 694 3696', href: TEL },
+        ], 'Full story on the <a href="/about" data-content-page="about">About</a> page · a real human answers within 48 hours')}
       </article>
     `
   },
@@ -1392,10 +1445,10 @@ export const CONTENT_PAGES: ContentPage[] = [
         </p>
 
         ${divider('contact')}
-        <p>
-          Licensing, takedown, or terms questions:
-          <a href="mailto:brian@megabyte.space?subject=terms">brian@megabyte.space</a>.
-        </p>
+        ${contactCard([
+          { kind: 'booking', label: 'Licensing', hint: 'sync · sample', href: BOOKING },
+          { kind: 'email', label: 'Takedown or terms', hint: 'legal', href: `${MAILTO}?subject=terms` },
+        ], 'Reply within 48 hours · NDAs signed on request')}
       </article>
     `
   }
