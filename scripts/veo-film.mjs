@@ -56,6 +56,23 @@ const BEATCUT = process.env.BEATCUT === '1'; // BEATCUT=1 → cut on the song's 
 const CONCURRENCY = 3;
 const AUDIO_REL = `public/audio/${FILM_ID}.mp3`;
 
+// ⛔ Veo is BANNED (Brian directive 2026-10-25). This script's legacy DEFAULT rail
+// (no flags) is Veo image-to-video, and T2V=1 is Veo text-to-video — both are off the
+// menu. Refuse to run a Veo path: require SEEDANCE=1 (the quality rail) or
+// MINIMAX=1 / MINIMAX_FAL=1 (cap-compliant). ALLOW_VEO=1 is a loud, discouraged escape
+// hatch. SSOT: CLAUDE.md "Cinematic music video" row + the music-video-production rule.
+if (!MINIMAX && !MINIMAX_FAL && !SEEDANCE && process.env.ALLOW_VEO !== '1') {
+  console.error(
+    '\n⛔ Veo is BANNED (Brian 2026-10-25) — refusing to run the Veo default.\n' +
+      '   Re-run with SEEDANCE=1 (quality rail) or MINIMAX=1 (fast, permissive, cap-compliant).\n' +
+      '   e.g.  SEEDANCE=1 FILM_ID=' +
+      FILM_ID +
+      ' node scripts/veo-film.mjs\n' +
+      '   (ALLOW_VEO=1 forces Veo — strongly discouraged; prefer adopting OpenMontage.)\n'
+  );
+  process.exit(1);
+}
+
 // Shared keyframe look (the standing brief: hyper-real, HBO, no overlays).
 const STYLE =
   ' — hyper-realistic, HBO-level cinematic, anamorphic 35mm, teal-and-amber color grade, volumetric light, fine film grain, ultra-detailed, dignified, no text, no watermark, no overlays.';
