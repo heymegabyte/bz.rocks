@@ -12,6 +12,11 @@ const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const AUDIO_CACHE = `${VERSION}-audio`;
 const IMAGE_CACHE = `${VERSION}-image`;
+// Persistent offline-download cache for explicitly-saved tracks (#49). NOT
+// version-prefixed, so it SURVIVES service-worker updates — the activate handler
+// below preserves it by name while wiping every other (versioned) cache on each
+// deploy. Written by the client (src/offline-audio.ts); served Range-aware here.
+const OFFLINE_AUDIO_CACHE = 'bz-offline-audio';
 
 const PRECACHE = [
   '/',
@@ -53,7 +58,13 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches
       .keys()
-      .then(keys => Promise.all(keys.filter(k => !k.startsWith(VERSION)).map(k => caches.delete(k))))
+      .then(keys =>
+        Promise.all(
+          keys
+            .filter(k => !k.startsWith(VERSION) && k !== OFFLINE_AUDIO_CACHE)
+            .map(k => caches.delete(k))
+        )
+      )
       .then(() => self.clients.claim())
   );
 });
@@ -119,6 +130,62 @@ async function cacheFirst(request, cacheName, maxEntries = 60) {
   return network;
 }
 
+// Serve a full cached response while honoring an HTTP Range request (#49). The
+// <audio> element streams via Range, so a 200 full body cached offline must be
+// sliced into a 206 Partial — otherwise seeking/streaming misbehaves. No Range
+// header → return the full body. Supports normal, open-ended, and suffix ranges.
+async function serveRange(request, cached) {
+  const rangeHeader = request.headers.get('range');
+  if (!rangeHeader) return cached.clone();
+  const buf = await cached.clone().arrayBuffer();
+  const total = buf.byteLength;
+  const m = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
+  if (!m) return cached.clone();
+  let start = m[1] === '' ? NaN : parseInt(m[1], 10);
+  let end = m[2] === '' ? NaN : parseInt(m[2], 10);
+  if (Number.isNaN(start)) {
+    if (Number.isNaN(end)) return cached.clone();
+    start = Math.max(0, total - end); // suffix range: bytes=-N
+    end = total - 1;
+  } else if (Number.isNaN(end)) {
+    end = total - 1;
+  }
+  end = Math.min(end, total - 1);
+  if (start > end || start >= total) {
+    return new Response(null, {
+      status: 416,
+      headers: { 'Content-Range': `bytes */${total}`, 'Accept-Ranges': 'bytes' }
+    });
+  }
+  const chunk = buf.slice(start, end + 1);
+  return new Response(chunk, {
+    status: 206,
+    headers: {
+      'Content-Type': cached.headers.get('content-type') || 'audio/mpeg',
+      'Content-Range': `bytes ${start}-${end}/${total}`,
+      'Content-Length': String(chunk.byteLength),
+      'Accept-Ranges': 'bytes',
+      'Cache-Control': 'public, max-age=31536000'
+    }
+  });
+}
+
+// Audio strategy (#49): a DOWNLOADED track is served Range-aware from the
+// persistent offline cache (works online AND offline, instant). Everything else
+// streams from the network exactly as before — this is purely additive, so
+// non-downloaded playback is unchanged. Offline + not-downloaded surfaces the
+// browser's normal media network error (nothing to serve).
+async function audioOffline(request) {
+  try {
+    const cache = await caches.open(OFFLINE_AUDIO_CACHE);
+    const cached = await cache.match(request, { ignoreVary: true });
+    if (cached) return serveRange(request, cached);
+  } catch {
+    /* fall through to network */
+  }
+  return fetch(request);
+}
+
 async function staleWhileRevalidate(request, cacheName, maxEntries = 80) {
   const cache = await caches.open(cacheName);
   // Check this cache first, then ALL caches — the precached critical JS/CSS live
@@ -153,7 +220,7 @@ self.addEventListener('fetch', event => {
 
   if (url.pathname === '/health' || url.pathname.startsWith('/api/')) return;
 
-  if (isAudio(url)) return event.respondWith(cacheFirst(req, AUDIO_CACHE, 40));
+  if (isAudio(url)) return event.respondWith(audioOffline(req));
   if (isImage(url)) return event.respondWith(staleWhileRevalidate(req, IMAGE_CACHE, 80));
   if (isHTML(req) || url.pathname === '/' || url.pathname.endsWith('.html'))
     return event.respondWith(networkFirst(req, SHELL_CACHE));

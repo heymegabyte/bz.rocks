@@ -20,6 +20,7 @@ import {
 import { SUNO_META } from './suno-meta';
 import { TRACK_TAGS, getTrackTags, tracksByTag } from './tags';
 import { CONTENT_PAGE_BY_SLUG, CONTENT_PAGES } from './content-pages';
+import { isDownloaded, downloadForOffline, removeDownload } from './offline-audio';
 import { fmtTime, fmtClock, fmtHz, fmtKeyCompact } from './format';
 import { TRACK_DURATIONS } from './durations';
 import type { Track, Album } from './types';
@@ -1988,6 +1989,10 @@ function setupShell(root: HTMLElement) {
       <button class="more-menu__item" data-action="smart-link" type="button" role="menuitem">
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         <span>Smart link · all platforms</span>
+      </button>
+      <button class="more-menu__item" data-action="offline-download" id="btnOffline" type="button" role="menuitem">
+        <svg id="offlineIcon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span id="offlineLabel">Download for offline</span>
       </button>
       <div class="more-menu__item more-menu__item--newsletter" role="menuitem" aria-label="Subscribe to bZ drops">
         ${renderInlineNewsletter('more-menu')}
@@ -6574,6 +6579,41 @@ function bindUi() {
     moreMenu.hidden = true;
     moreBtn?.setAttribute('aria-expanded', 'false');
   };
+  // Offline download (#49): reflect + toggle the current track's offline state.
+  async function updateOfflineLabel(): Promise<void> {
+    const label = $('#offlineLabel');
+    const btn = $('#btnOffline');
+    if (!label || !btn) return;
+    const t = currentTrackId ? TRACK_BY_ID.get(currentTrackId) : null;
+    if (!t) {
+      label.textContent = 'Download for offline';
+      btn.classList.remove('is-downloaded');
+      return;
+    }
+    const have = await isDownloaded(t.file);
+    label.textContent = have ? 'Downloaded ✓ · tap to remove' : 'Download for offline';
+    btn.classList.toggle('is-downloaded', have);
+  }
+  let offlineBusy = false;
+  async function toggleOfflineDownload(): Promise<void> {
+    const t = currentTrackId ? TRACK_BY_ID.get(currentTrackId) : null;
+    if (!t || offlineBusy) return;
+    offlineBusy = true;
+    const label = $('#offlineLabel');
+    try {
+      if (await isDownloaded(t.file)) {
+        await removeDownload(t.file);
+        showToast(`Removed “${t.title}” from offline`);
+      } else {
+        if (label) label.textContent = 'Downloading…';
+        const ok = await downloadForOffline(t.file);
+        showToast(ok ? `“${t.title}” saved for offline` : `Couldn't download “${t.title}”`);
+      }
+    } finally {
+      offlineBusy = false;
+      void updateOfflineLabel();
+    }
+  }
   const openMoreMenu = () => {
     if (!moreMenu || !moreBtn) return;
     const r = moreBtn.getBoundingClientRect();
@@ -6583,12 +6623,15 @@ function bindUi() {
     // (with a hint) until one is playing/loaded.
     const canShare = !!currentTrackId;
     moreMenu
-      .querySelectorAll<HTMLButtonElement>('[data-action="share"],[data-action="smart-link"]')
+      .querySelectorAll<HTMLButtonElement>(
+        '[data-action="share"],[data-action="smart-link"],[data-action="offline-download"]'
+      )
       .forEach(el => {
         el.disabled = !canShare;
         el.setAttribute('aria-disabled', String(!canShare));
         el.title = canShare ? '' : 'Play a track first';
       });
+    void updateOfflineLabel();
     moreMenu.hidden = false;
     moreBtn.setAttribute('aria-expanded', 'true');
   };
@@ -6618,8 +6661,13 @@ function bindUi() {
     else if (action === 'smart-link') {
       const t = currentTrackId ? TRACK_BY_ID.get(currentTrackId) : null;
       if (t) openSmartLinkModal(t);
+    } else if (action === 'offline-download') {
+      void toggleOfflineDownload();
     }
-    if (action !== 'spotify') closeMoreMenu();
+    // Keep the menu open for the offline toggle so its label transitions
+    // (Download → Downloading… → Downloaded ✓) stay visible; the Spotify link
+    // opens a new tab, so it stays open too.
+    if (action !== 'spotify' && action !== 'offline-download') closeMoreMenu();
   });
   document.addEventListener('click', e => {
     if (!moreMenu || moreMenu.hidden) return;

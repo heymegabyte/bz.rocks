@@ -7602,6 +7602,11 @@ button:not(:disabled):active {
   flex: 1;
   min-width: 0;
 }
+/* Offline-download (#49): tint the item its accent once the track is saved, so
+   the "Downloaded ✓" state reads at a glance. */
+.more-menu__item.is-downloaded {
+  color: var(--accent);
+}
 /* The newsletter row inside the more-menu hosts an inline widget instead
    of a button-with-icon — disable the hover background since the widget
    handles its own focus/hover treatment. */
