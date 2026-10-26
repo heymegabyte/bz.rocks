@@ -1552,7 +1552,7 @@ function setupShell(root: HTMLElement) {
             <span class="transport__cast-text">Cast</span>
             <span id="btnCastLabel" class="transport__cast-device" hidden></span>
           </button>
-          <google-cast-launcher id="castLauncher" aria-label="Cast to a device" tabindex="-1" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;cursor:pointer;"></google-cast-launcher>
+          <google-cast-launcher id="castLauncher" aria-hidden="true" tabindex="-1" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;cursor:pointer;"></google-cast-launcher>
         </span>
         <button id="btnAirplay" class="link-btn link-btn--icon transport__airplay" type="button" aria-label="AirPlay" title="AirPlay (Safari/macOS)" hidden>
           <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h-1a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-1"/><polygon points="12 15 17 21 7 21 12 15"/></svg>
@@ -5456,7 +5456,21 @@ function openContentPage(slug: string, { pushHistory = true }: { pushHistory?: b
   const scrollInner = $('#contentpageScroll');
   const scrollOuter = dialog;
   const doSwap = () => {
-    if (body) body.innerHTML = page.render();
+    if (body) {
+      body.innerHTML = page.render();
+      // Scrollable code blocks must be keyboard-accessible: at narrow widths the
+      // embed-snippet <pre>s overflow horizontally, so without focusability a
+      // keyboard user can't scroll them (axe scrollable-region-focusable, WCAG
+      // 2.1.1). Make every code block a focusable, NAMED region — role=region so
+      // the name is permitted (a bare <pre> is roleless → aria-label would be
+      // prohibited), unique labels so they don't trip landmark-unique. Generic =
+      // every content page's code is covered, no per-page drift.
+      body.querySelectorAll<HTMLElement>('.contentpage__code').forEach((pre, i) => {
+        pre.tabIndex = 0;
+        pre.setAttribute('role', 'region');
+        pre.setAttribute('aria-label', `Code example ${i + 1}`);
+      });
+    }
     if (scrollOuter) scrollOuter.scrollTop = 0;
     renderContentPageTOC();
     setupContentPageScrollIn();
