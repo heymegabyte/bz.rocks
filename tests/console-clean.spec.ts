@@ -170,30 +170,43 @@ test.describe('console hygiene — production sweep', () => {
     assertClean(captured, '/appeal');
   });
 
-  test('CSP — no Google Fonts violations (style-src/font-src/connect-src), SW active', async ({
-    page
-  }) => {
-    // Visit once so the service worker installs, THEN reload — with the SW active it
-    // INTERCEPTS the Google Fonts requests and re-fetches them (connect-src!), which is
-    // exactly how the font CSS/woff2 fetch surfaces a missing connect-src allowance. The
-    // original test only matched style-src|font-src, so this connect-src class slipped
-    // through (fixed by adding fonts.googleapis.com/gstatic to connect-src, 2026-10-25).
-    await page.goto('/', { waitUntil: 'networkidle' });
-    await page.waitForTimeout(1500);
-    const cspViolations: string[] = [];
-    page.on('console', msg => {
-      const t = msg.text();
-      if (
-        /Content Security Policy/i.test(t) &&
-        /style-src|font-src|connect-src/i.test(t) &&
-        /fonts\.(googleapis|gstatic)/i.test(t)
-      ) {
-        cspViolations.push(t);
-      }
+  // This test's PREMISE is an ACTIVE service worker: with the SW controlling the
+  // page it re-fetches the Google Fonts assets (a connect-src op) — the only way a
+  // missing connect-src allowance surfaces. The suite globally sets
+  // serviceWorkers:'block', so WITHOUT this override the SW never installs and the
+  // test passes VACUOUSLY (never exercising connect-src) — a false-green SECURITY
+  // gate. Allow the SW here, ASSERT it activated (so it can never be silently
+  // vacuous again), then reload so it controls the page. domcontentloaded + explicit
+  // waits, NOT networkidle (never settles on this streaming page → repeated 45s
+  // navigation timeouts, the former ~8-min hang).
+  test.describe('with active service worker', () => {
+    test.use({ serviceWorkers: 'allow' });
+    test('CSP — no Google Fonts violations (style-src/font-src/connect-src), SW active', async ({
+      page
+    }) => {
+      const cspViolations: string[] = [];
+      page.on('console', msg => {
+        const t = msg.text();
+        if (
+          /Content Security Policy/i.test(t) &&
+          /style-src|font-src|connect-src/i.test(t) &&
+          /fonts\.(googleapis|gstatic)/i.test(t)
+        ) {
+          cspViolations.push(t);
+        }
+      });
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      const swActive = await page
+        .waitForFunction(async () => !!(await navigator.serviceWorker?.getRegistration())?.active, {
+          timeout: 15000
+        })
+        .then(() => true)
+        .catch(() => false);
+      expect(swActive, 'service worker must activate for this CSP gate to be meaningful').toBe(true);
+      await page.reload({ waitUntil: 'domcontentloaded' }); // now SW-controlled → it re-fetches fonts
+      await page.waitForTimeout(2500); // let the SW-intercepted font fetches run
+      expect(cspViolations, `Google Fonts CSP violations: ${cspViolations.join('\n')}`).toEqual([]);
     });
-    await page.reload({ waitUntil: 'networkidle' });
-    await page.waitForTimeout(2000);
-    expect(cspViolations, `Google Fonts CSP violations: ${cspViolations.join('\n')}`).toEqual([]);
   });
 
   test('Trusted Types — no TrustedHTML / TrustedScriptURL violations from our code', async ({ page }) => {
