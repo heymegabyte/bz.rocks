@@ -332,6 +332,7 @@ export const CONTENT_PAGES: ContentPage[] = [
             <p>${esc(a.tagline)}</p>
             <div class="links__actions">
               <a class="links__play" href="/${esc(a.id)}">▶ Play on bz.rocks</a>
+              <button type="button" class="links__download" data-download-album="${esc(a.id)}">⬇ Download</button>
               ${platformLinks}
             </div>
           </div>
@@ -348,6 +349,38 @@ export const CONTENT_PAGES: ContentPage[] = [
         <div class="links__grid">${cards}</div>
       </article>`;
     }
+  },
+
+  // ═══ DOWNLOADS (offline library manager) ══════════════════════════════
+  // Device-specific view of tracks saved for offline (#49). The list is filled
+  // CLIENT-SIDE from the Cache API via the slug==='downloads' hook in main.ts
+  // doSwap() (enhanceDownloadsPage) — the render() here is just the shell + how-to.
+  {
+    slug: 'downloads',
+    title: 'Your Downloads',
+    eyebrow: 'offline library',
+    description:
+      "Tracks you've saved for offline listening — manage your offline library, see storage used, and remove downloads.",
+    metaTitle: 'Your Downloads — offline library',
+    metaDescription:
+      "Manage the tracks you've saved to this device for offline listening: see storage used, remove individual downloads, or clear them all.",
+    jsonLdType: 'WebPage',
+    render: () => `
+      <article class="contentpage__article">
+        <p class="contentpage__lead">
+          Tracks you've saved to this device play with no connection — on a flight, the subway,
+          anywhere. Downloads live only on this device and survive app updates; manage them here.
+        </p>
+        <div id="downloadsRoot" class="downloads" aria-live="polite">
+          <p class="downloads__loading">Checking your offline library…</p>
+        </div>
+        ${divider('how to download')}
+        <p>
+          Open any track's <strong>⋮ more menu</strong> and tap <strong>“Download for offline”</strong>,
+          or save a whole album from <a href="/links" data-content-page="links">Listen Everywhere</a>.
+          Saved tracks appear above the moment they finish.
+        </p>
+      </article>`
   },
 
   // ═══ ABOUT ════════════════════════════════════════════════════════════

@@ -555,6 +555,13 @@ const CONTENT_PAGES_SEO: Array<{ slug: string; title: string; description: strin
     og: FALLBACK_OG
   },
   {
+    slug: 'downloads',
+    title: 'Your Downloads — offline library',
+    description:
+      'Manage the tracks saved to this device for offline listening: storage used, remove individual downloads, or clear them all. Downloads survive app updates.',
+    og: FALLBACK_OG
+  },
+  {
     slug: 'credits',
     title: 'Tracks — per-track Suno DNA, BPM/key sources, licensing',
     description:

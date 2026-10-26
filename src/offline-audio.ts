@@ -90,3 +90,53 @@ export async function offlineUsage(): Promise<{ count: number; bytes: number }> 
     return { count: 0, bytes: 0 };
   }
 }
+
+/** List every downloaded track: its URL + stored byte length. Fail-soft → []. */
+export async function listOfflineDownloads(): Promise<Array<{ url: string; bytes: number }>> {
+  if (!supported()) return [];
+  try {
+    const cache = await caches.open(OFFLINE_AUDIO_CACHE);
+    const keys = await cache.keys();
+    const out: Array<{ url: string; bytes: number }> = [];
+    for (const req of keys) {
+      const res = await cache.match(req);
+      out.push({ url: req.url, bytes: Number(res?.headers.get('content-length') || 0) });
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
+
+/** Remove ALL offline downloads at once (drops the whole cache). Fail-soft. */
+export async function clearAllOffline(): Promise<void> {
+  if (!supported()) return;
+  try {
+    await caches.delete(OFFLINE_AUDIO_CACHE);
+  } catch {
+    /* ignore */
+  }
+}
+
+/**
+ * Download several tracks for offline (e.g. a whole album). Sequential so we never
+ * hammer the worker with parallel full-file fetches. Skips already-downloaded URLs.
+ * Reports progress after each. Fail-soft per track — one failure doesn't abort the rest.
+ */
+export async function downloadMany(
+  urls: string[],
+  onProgress?: (done: number, total: number, ok: number) => void
+): Promise<{ ok: number; fail: number }> {
+  let ok = 0;
+  let fail = 0;
+  const total = urls.length;
+  for (let i = 0; i < total; i++) {
+    const url = urls[i]!;
+    const already = await isDownloaded(url);
+    const done = already || (await downloadForOffline(url));
+    if (done) ok++;
+    else fail++;
+    onProgress?.(i + 1, total, ok);
+  }
+  return { ok, fail };
+}

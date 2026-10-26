@@ -20,7 +20,14 @@ import {
 import { SUNO_META } from './suno-meta';
 import { TRACK_TAGS, getTrackTags, tracksByTag } from './tags';
 import { CONTENT_PAGE_BY_SLUG, CONTENT_PAGES } from './content-pages';
-import { isDownloaded, downloadForOffline, removeDownload } from './offline-audio';
+import {
+  isDownloaded,
+  downloadForOffline,
+  removeDownload,
+  listOfflineDownloads,
+  clearAllOffline,
+  downloadMany
+} from './offline-audio';
 import { fmtTime, fmtClock, fmtHz, fmtKeyCompact } from './format';
 import { TRACK_DURATIONS } from './durations';
 import type { Track, Album } from './types';
@@ -1377,6 +1384,10 @@ function setupShell(root: HTMLElement) {
               <strong>Listen Everywhere</strong>
               <span>Every album · every platform · one page</span>
             </a>
+            <a href="/downloads" data-content-page="downloads" role="menuitem">
+              <strong>Your Downloads</strong>
+              <span>Offline library — manage saved tracks</span>
+            </a>
             <a id="lnkAppeal" href="/ashton/" role="menuitem">
               <strong>Appeal</strong>
               <span>Open letter to Ashton + Mila</span>
@@ -1402,6 +1413,7 @@ function setupShell(root: HTMLElement) {
             <a href="/world" data-content-page="world">World</a>
             <a href="/word" data-content-page="word">Word</a>
             <a href="/links" data-content-page="links">Listen</a>
+            <a href="/downloads" data-content-page="downloads">Offline</a>
             <a href="/ashton/">Appeal</a>
             <a href="/stats" title="Live listening stats — by the numbers">Stats</a>
             <a href="/privacy" data-content-page="privacy">Privacy</a>
@@ -5453,6 +5465,11 @@ function openContentPage(slug: string, { pushHistory = true }: { pushHistory?: b
     // Today's Word: surface the grounded AI reflection for today's track (reuses
     // the same /api/wisdom artifact + memo as the now-playing panel). Fail-soft.
     if (slug === 'word') void enhanceWordPage();
+    // Downloads: fill the offline-library manager from the Cache API. Fail-soft.
+    if (slug === 'downloads') void enhanceDownloadsPage();
+    // Listen Everywhere: wire each album's "Download" button (saves the whole album
+    // for offline via the same persistent cache). Fail-soft.
+    if (slug === 'links') void enhanceLinksPage();
   };
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const dialogAlreadyOpen = dialog.open;
@@ -9144,6 +9161,161 @@ async function enhanceWordPage(): Promise<void> {
   } catch {
     wrap.remove();
   }
+}
+
+// Offline library manager (#49): fill the /downloads page from the Cache API.
+// Lists each saved track (cover + title + album + size) with a remove button, a
+// total-storage summary, and a two-tap clear-all. Trusted-Types safe (createElement
+// + textContent, never innerHTML). Re-renders after any remove/clear. Fail-soft.
+function fmtMB(n: number): string {
+  if (n <= 0) return '0 MB';
+  const mb = n / (1024 * 1024);
+  return mb >= 100 ? `${Math.round(mb)} MB` : `${mb.toFixed(1)} MB`;
+}
+async function enhanceDownloadsPage(): Promise<void> {
+  const root = document.getElementById('downloadsRoot');
+  if (!root) return;
+  const pathOf = (u: string): string => {
+    try {
+      return new URL(u).pathname;
+    } catch {
+      return u;
+    }
+  };
+  const render = async (): Promise<void> => {
+    const items = await listOfflineDownloads();
+    root.replaceChildren();
+    if (!items.length) {
+      const p = document.createElement('p');
+      p.className = 'downloads__empty';
+      p.textContent =
+        'No downloads yet. Open any track’s ⋮ menu and tap “Download for offline” to save it here for offline listening.';
+      root.appendChild(p);
+      return;
+    }
+    const byFile = new Map(Array.from(TRACK_BY_ID.values(), t => [t.file, t] as const));
+    const rows = items
+      .map(it => ({ url: it.url, bytes: it.bytes, t: byFile.get(pathOf(it.url)) }))
+      .sort((a, b) => (a.t?.title ?? a.url).localeCompare(b.t?.title ?? b.url));
+    const total = items.reduce((n, it) => n + it.bytes, 0);
+
+    const summary = document.createElement('div');
+    summary.className = 'downloads__summary';
+    const stat = document.createElement('span');
+    stat.className = 'downloads__stat';
+    stat.textContent = `${items.length} track${items.length === 1 ? '' : 's'} · ${fmtMB(total)} on this device`;
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.className = 'downloads__clear';
+    clearBtn.textContent = 'Clear all';
+    let clearArmed = false;
+    let clearTimer: ReturnType<typeof setTimeout> | undefined;
+    clearBtn.addEventListener('click', () => {
+      void (async () => {
+        if (!clearArmed) {
+          clearArmed = true;
+          clearBtn.textContent = `Tap again to clear ${items.length}`;
+          clearBtn.classList.add('is-armed');
+          clearTimer = setTimeout(() => {
+            clearArmed = false;
+            clearBtn.textContent = 'Clear all';
+            clearBtn.classList.remove('is-armed');
+          }, 3000);
+          return;
+        }
+        if (clearTimer) clearTimeout(clearTimer);
+        clearBtn.disabled = true;
+        await clearAllOffline();
+        showToast('Offline downloads cleared');
+        void render();
+      })();
+    });
+    summary.appendChild(stat);
+    summary.appendChild(clearBtn);
+    root.appendChild(summary);
+
+    const list = document.createElement('ul');
+    list.className = 'downloads__list';
+    for (const row of rows) {
+      const li = document.createElement('li');
+      li.className = 'downloads__item';
+      if (row.t) {
+        const img = document.createElement('img');
+        img.className = 'downloads__cover';
+        img.src = row.t.cover;
+        img.alt = '';
+        img.width = 44;
+        img.height = 44;
+        img.loading = 'lazy';
+        li.appendChild(img);
+      }
+      const meta = document.createElement('div');
+      meta.className = 'downloads__meta';
+      const title = document.createElement('strong');
+      title.textContent = row.t?.title ?? pathOf(row.url);
+      const sub = document.createElement('span');
+      sub.className = 'downloads__sub';
+      const albumName = row.t ? (ALBUMS.find(a => a.id === row.t!.album)?.name ?? '') : '';
+      sub.textContent = [albumName, fmtMB(row.bytes)].filter(Boolean).join(' · ');
+      meta.appendChild(title);
+      meta.appendChild(sub);
+      li.appendChild(meta);
+      const rm = document.createElement('button');
+      rm.type = 'button';
+      rm.className = 'downloads__remove';
+      rm.setAttribute('aria-label', `Remove ${row.t?.title ?? 'download'} from offline`);
+      rm.textContent = '✕';
+      rm.addEventListener('click', () => {
+        void (async () => {
+          rm.disabled = true;
+          await removeDownload(row.url);
+          showToast(`Removed “${row.t?.title ?? 'track'}” from offline`);
+          void render();
+        })();
+      });
+      li.appendChild(rm);
+      list.appendChild(li);
+    }
+    root.appendChild(list);
+  };
+  await render();
+}
+
+// Listen Everywhere (#49): wire each album card's "Download" button to save the
+// whole album for offline (sequential, progress in the button label). Buttons are
+// re-created on every page open, so per-button listeners never duplicate. Fail-soft.
+async function enhanceLinksPage(): Promise<void> {
+  const btns = document.querySelectorAll<HTMLButtonElement>('[data-download-album]');
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      void (async () => {
+        const albumId = btn.dataset.downloadAlbum;
+        const album = albumId ? ALBUMS.find(a => a.id === albumId) : null;
+        if (!album) return;
+        const files = album.trackIds
+          .map(id => TRACK_BY_ID.get(id)?.file)
+          .filter((f): f is string => !!f);
+        if (!files.length) return;
+        const original = btn.textContent;
+        btn.disabled = true;
+        const { ok, fail } = await downloadMany(files, (done, totalN) => {
+          btn.textContent = `⬇ ${done}/${totalN}…`;
+        });
+        if (fail) {
+          btn.textContent = `⬇ ${ok}/${files.length} saved`;
+          showToast(`Saved ${ok}/${files.length} from “${album.name}” — ${fail} failed, tap to retry`);
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.textContent = original ?? '⬇ Download';
+          }, 2500);
+        } else {
+          btn.textContent = '✓ Downloaded';
+          btn.classList.add('is-downloaded');
+          showToast(`“${album.name}” saved for offline — ${ok} tracks`);
+        }
+      })();
+    });
+  });
 }
 
 // ── AI lyric deep-dive — "what it's really saying" ───────────────────────────
