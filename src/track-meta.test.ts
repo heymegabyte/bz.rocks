@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ALBUMS, TRACKS } from './data';
+import { CONTENT_PAGES } from './content-pages';
 import { SEO_INDEX, albumSeo, buildSeoIndex, trackOgImage, trackSeo, type RouteSeo } from './track-meta';
 
 const SITE_ORIGIN = 'https://bz.rocks';
@@ -128,10 +129,11 @@ describe('SEO_INDEX uniqueness', () => {
   const entries = Object.values(SEO_INDEX);
 
   it('has one entry per album + per track (+ content pages)', () => {
-    // SEO_INDEX = albums + tracks + the 6 static content pages
-    // (about/credits/press/merch/privacy/terms) added in buildSeoIndex.
-    const CONTENT_PAGE_COUNT = 6;
-    expect(entries.length).toBe(ALBUMS.length + TRACKS.length + CONTENT_PAGE_COUNT);
+    // SEO_INDEX = albums + tracks + every static content page rendered by
+    // content-pages.ts (world/word/links/downloads/about/credits/press/merch/
+    // privacy/terms). Derive the count from the real source so adding a page
+    // can never silently break this gate again.
+    expect(entries.length).toBe(ALBUMS.length + TRACKS.length + CONTENT_PAGES.length);
   });
 
   it('keys every entry by a leading-slash path matching seo.path', () => {
