@@ -22,7 +22,13 @@ const SURFACES = [
 for (const path of SURFACES) {
   test(`a11y: ${path} has no serious/critical axe violations`, async ({ page }, info) => {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(2500);
+    // Wait for the page to ACTUALLY render (deterministic) rather than a fixed 2.5s:
+    // the SPA boots async after domcontentloaded, so every surface shows its <h1>
+    // once rendered. This de-flakes the suite (a fixed wait + heavy parallel load
+    // caused a 60s test timeout on /press) and is faster when the page loads quickly.
+    // A missing <h1> here would itself be an a11y defect (page-has-heading-one), so
+    // the wait doubles as a sanity gate.
+    await page.locator('h1').first().waitFor({ state: 'visible', timeout: 20000 });
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze();
