@@ -1839,6 +1839,36 @@ html.is-playing .brand__logo {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* Offline-download badge (#49) — a small cyan ⬇ shown only on rows whose track is
+   saved offline, so the offline library is visible while browsing. */
+.trackrow__offline {
+  display: none;
+}
+.trackrow.is-downloaded .trackrow__offline {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 5px;
+  font-size: 0.78em;
+  line-height: 1;
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+/* On the narrow Aeon's-Choice rows, overlay the ⬇ in the top-right corner (out of
+   flex flow) so it never pushes the score onto a second line. */
+.ai-pick {
+  position: relative;
+}
+.ai-pick.is-downloaded .trackrow__offline {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72em;
+  line-height: 1;
+  color: var(--accent);
+  pointer-events: none;
+}
 .trackrow__vibe {
   display: block;
   margin-top: 2px;

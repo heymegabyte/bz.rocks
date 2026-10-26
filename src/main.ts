@@ -494,6 +494,7 @@ function refreshAiPlaylist() {
         <span class="ai-pick__title">${t.title}</span>
         <span class="ai-pick__album">${album?.name ?? 'bZ'}</span>
       </span>
+      <span class="trackrow__offline" role="img" aria-label="Available offline" title="Available offline">⬇</span>
       <span class="ai-pick__score" aria-hidden="true">${pct}</span>
     </button>`;
     })
@@ -2591,6 +2592,7 @@ function renderAlbums(host: HTMLElement) {
                 <span class="trackrow__title">${t.title}</span>
                 <span class="trackrow__vibe">${t.vibe}</span>
                 <span class="trackrow__stats" aria-label="${plays} plays">
+                  <span class="trackrow__offline" role="img" aria-label="Available offline" title="Available offline">⬇</span>
                   <span class="trackrow__plays" data-plays="${t.id}"${plays === 0 ? ' hidden' : ''}>
                     <svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
                     <span data-plays-num="${t.id}">${plays}</span>
@@ -6629,6 +6631,7 @@ function bindUi() {
     } finally {
       offlineBusy = false;
       void updateOfflineLabel();
+      void refreshDownloadedBadges();
     }
   }
   const openMoreMenu = () => {
@@ -6657,6 +6660,23 @@ function bindUi() {
     if (moreMenu?.hidden) openMoreMenu();
     else closeMoreMenu();
   });
+  // Offline-download badges (#49): re-apply on every album-grid / Aeon's-Choice
+  // (re)render via a rAF-debounced observer, and populate the set once at startup.
+  if ('MutationObserver' in window) {
+    let badgeRaf = 0;
+    const obs = new MutationObserver(() => {
+      if (badgeRaf) return;
+      badgeRaf = requestAnimationFrame(() => {
+        badgeRaf = 0;
+        applyDownloadedBadges();
+      });
+    });
+    for (const sel of ['#albums', '#aiPlaylist']) {
+      const h = $(sel);
+      if (h) obs.observe(h, { childList: true, subtree: true });
+    }
+  }
+  void refreshDownloadedBadges();
   moreMenu?.addEventListener('click', e => {
     const item = (e.target as HTMLElement).closest<HTMLElement>('[data-action], [data-sleep]');
     if (!item) return;
@@ -9228,6 +9248,7 @@ async function enhanceDownloadsPage(): Promise<void> {
         await clearAllOffline();
         showToast('Offline downloads cleared');
         void render();
+        void refreshDownloadedBadges();
       })();
     });
     summary.appendChild(stat);
@@ -9284,6 +9305,7 @@ async function enhanceDownloadsPage(): Promise<void> {
           await removeDownload(row.url);
           showToast(`Removed “${row.t?.title ?? 'track'}” from offline`);
           void render();
+          void refreshDownloadedBadges();
         })();
       });
       li.appendChild(rm);
@@ -9314,6 +9336,7 @@ async function enhanceLinksPage(): Promise<void> {
         const { ok, fail } = await downloadMany(files, (done, totalN) => {
           btn.textContent = `⬇ ${done}/${totalN}…`;
         });
+        void refreshDownloadedBadges();
         if (fail) {
           btn.textContent = `⬇ ${ok}/${files.length} saved`;
           showToast(`Saved ${ok}/${files.length} from “${album.name}” — ${fail} failed, tap to retry`);
@@ -9329,6 +9352,40 @@ async function enhanceLinksPage(): Promise<void> {
       })();
     });
   });
+}
+
+// Downloaded-for-offline badges on the main track rows (#49). A small cyan ⬇ on any
+// row whose track is saved offline, so the offline library is visible WHILE browsing,
+// not only on /downloads. `downloadedFiles` holds the saved track file paths;
+// applyDownloadedBadges() toggles `.is-downloaded` on the current DOM rows (sync,
+// fast); refreshDownloadedBadges() re-reads the cache then applies. Called from
+// renderAlbums (every grid render) + boot + after any download add/remove/clear.
+const downloadedFiles = new Set<string>();
+function applyDownloadedBadges(): void {
+  const mark = (el: HTMLElement, id: string | undefined): void => {
+    const file = id ? TRACK_BY_ID.get(id)?.file : undefined;
+    el.classList.toggle('is-downloaded', !!file && downloadedFiles.has(file));
+  };
+  document.querySelectorAll<HTMLElement>('.trackrow[data-track]').forEach(r => mark(r, r.dataset.track));
+  document.querySelectorAll<HTMLElement>('.ai-pick[data-ai-pick]').forEach(el => mark(el, el.dataset.aiPick));
+}
+async function refreshDownloadedBadges(): Promise<void> {
+  try {
+    const items = await listOfflineDownloads();
+    downloadedFiles.clear();
+    for (const it of items) {
+      let p = it.url;
+      try {
+        p = new URL(it.url).pathname;
+      } catch {
+        /* keep raw */
+      }
+      downloadedFiles.add(p);
+    }
+  } catch {
+    /* ignore — badges just stay as-is */
+  }
+  applyDownloadedBadges();
 }
 
 // ── AI lyric deep-dive — "what it's really saying" ───────────────────────────
