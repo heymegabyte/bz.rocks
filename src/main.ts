@@ -1767,10 +1767,10 @@ function setupShell(root: HTMLElement) {
       <div class="cmdk__dialog">
         <div class="cmdk__head">
           <svg class="cmdk__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input class="cmdk__input" id="cmdkInput" type="search" placeholder="Search a title, lyric, or vibe…" autocomplete="off" spellcheck="false" aria-label="Search by title, lyric, or vibe" aria-controls="cmdkResults" aria-autocomplete="list" />
+          <input class="cmdk__input" id="cmdkInput" type="search" placeholder="Search a title, lyric, or vibe…" autocomplete="off" spellcheck="false" aria-label="Search by title, lyric, or vibe" aria-controls="cmdkListbox" aria-autocomplete="list" />
           <kbd class="cmdk__kbd">Esc</kbd>
         </div>
-        <div class="cmdk__results" id="cmdkResults" role="listbox" aria-label="Search results" tabindex="0"></div>
+        <div class="cmdk__results" id="cmdkResults" tabindex="0"></div>
         <p class="cmdk__empty" id="cmdkEmpty" hidden>No tracks found</p>
         <footer class="cmdk__footer">
           <kbd class="cmdk__kbd">↑↓</kbd> navigate &nbsp;
@@ -8689,8 +8689,12 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
       return trackRowHtml(t, i, sub, badge);
     })
     .join('');
-  const aiHtml = ai.length
-    ? `<div class="cmdk__group cmdk__group--ai">AI vibe picks<button type="button" class="cmdk__set-btn" aria-label="Play these ${ai.length} tracks as a set">▶ Play as a set</button></div>` +
+  // AI group: heading + option rows live INSIDE the listbox; the "Play as a set"
+  // BUTTON must live OUTSIDE it (a listbox may only own option/group children), so
+  // it's rendered after the listbox as a separate action (a11y: no non-option
+  // interactive content inside role=listbox).
+  const aiGroupHtml = ai.length
+    ? `<div class="cmdk__group cmdk__group--ai">AI vibe picks</div>` +
       ai
         .map((p, j) =>
           trackRowHtml(
@@ -8702,6 +8706,9 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
         )
         .join('')
     : '';
+  const aiSetBtnHtml = ai.length
+    ? `<div class="cmdk__ai-action"><button type="button" class="cmdk__set-btn" aria-label="Play these ${ai.length} tracks as a set">▶ Play as a set</button></div>`
+    : '';
   // Empty-state launchpad: when nothing's typed, surface the search's SUPER-powers —
   // NL vibe/mood + lyric search (otherwise invisible; users just type a title). Clicking
   // a chip fills + runs the query (incl. the /api/vibe AI augmentation), demonstrating it.
@@ -8710,15 +8717,14 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
     : `<div class="cmdk__suggest"><div class="cmdk__group">✦ Try a vibe, mood, or lyric</div><div class="cmdk__suggest-chips">${SEARCH_SUGGESTIONS.map(
         q => `<button type="button" class="cmdk__suggest-chip" data-suggest="${escapeHtml(q)}">${escapeHtml(q)}</button>`
       ).join('')}</div></div>`;
-  // TODO(a11y): #cmdkResults is role="listbox" but this mixes NON-option interactive
-  // content into it — the suggest-chip <button>s (suggestHtml, fresh open) and the
-  // "▶ Play as a set" <button> (aiHtml) — which trips a serious axe aria-required-children
-  // (a listbox may only own option/group children). Dedicated fix: render the suggest block
-  // + the "play as a set" action OUTSIDE the listbox (a sibling element), and move their
-  // click handlers off the #cmdkResults-scoped delegate (make them document-delegated), so
-  // #cmdkResults holds ONLY option rows (+ group-heading divs, which axe tolerates). Kept as
-  // a dedicated task — a rushed move risks breaking the suggest/AI-set handlers. (2026-10-26)
-  results.innerHTML = suggestHtml + pagesHtml + tracksHtml + aiHtml;
+  // Option rows live in an INNER listbox so the suggest chips (above) + the AI
+  // "Play as a set" action (below) stay OUT of the listbox — a listbox may only own
+  // option/group children (fixes a serious axe aria-required-children). The
+  // #cmdkResults click delegate is unchanged: everything is still inside #cmdkResults.
+  results.innerHTML =
+    suggestHtml +
+    `<div id="cmdkListbox" role="listbox" aria-label="Search results">${pagesHtml}${tracksHtml}${aiGroupHtml}</div>` +
+    aiSetBtnHtml;
 }
 
 function openSearch(preset?: { query: string; tracks: Track[] }) {

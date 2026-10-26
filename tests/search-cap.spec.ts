@@ -32,18 +32,23 @@ test.describe('Cmd+K search — capped render', () => {
     const input = page.locator('#cmdkInput');
     await input.fill('mercy');
     await page.waitForTimeout(500);
-    const rows = page.locator('#cmdkResults .cmdk__item');
+    // The 24-row cap applies to the TRACK group only. A query can also surface a
+    // "pages" match (.cmdk__item--page) and an async "AI vibe picks" group
+    // (/api/vibe) — both are deliberate, bounded, SEPARATE groups. Count only the
+    // track rows (exclude page + AI-badged rows) so this measures the track cap.
+    const rows = page.locator(
+      '#cmdkResults .cmdk__item:not(.cmdk__item--page):not(:has(.cmdk__item-badge--ai))'
+    );
     const n = await rows.count();
     expect(n).toBeGreaterThan(0);
     expect(n).toBeLessThanOrEqual(24);
-    // Relevance-ranked: the capped results lead with TITLE matches, not just the
-    // first catalog-order matches — the first result's title contains "mercy".
-    const firstTitle = (
-      await page.locator('#cmdkResults .cmdk__item-title-text').first().innerText()
-    )
+    // Relevance-ranked: the capped TRACK results lead with TITLE matches, not just
+    // the first catalog-order matches — the first track's title contains "mercy".
+    // (Scope to track rows: a "pages" match can render first, before the tracks.)
+    const firstTitle = (await rows.first().locator('.cmdk__item-title-text').innerText())
       .trim()
       .toLowerCase();
-    expect(firstTitle, `first result "${firstTitle}" should be a title match`).toContain('mercy');
+    expect(firstTitle, `first track "${firstTitle}" should be a title match`).toContain('mercy');
     await input.press('ArrowDown');
     await input.press('Enter');
     await expect

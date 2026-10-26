@@ -6240,6 +6240,13 @@ html.is-appeal-open {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 229, 255, 0.3) transparent;
 }
+/* The AI "Play as a set" action lives OUTSIDE the inner listbox (a11y) — render it
+   as a right-aligned action row under the results. */
+.cmdk__ai-action {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 14px 8px;
+}
 .cmdk__empty {
   padding: 32px 20px;
   text-align: center;
