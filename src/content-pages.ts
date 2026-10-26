@@ -107,6 +107,121 @@ const albumChip = (a: (typeof ALBUMS)[number]) =>
   </a>`;
 
 export const CONTENT_PAGES: ContentPage[] = [
+  // ═══ WORLD OF BZ (the lore) ════════════════════════════════════════════
+  // The connected universe behind the catalog. The "chapters" timeline is
+  // DERIVED from the live ALBUMS array (sorted by release) so it auto-grows as
+  // albums ship — never hand-maintained. The recurring-motifs cards are grounded
+  // strictly in real album taglines/descriptions + real track ids (no fabrication).
+  {
+    slug: 'world',
+    title: 'The World of bZ',
+    eyebrow: 'the lore',
+    description:
+      'The connected universe behind the catalog — every album a chapter, and the recurring motifs that thread them: hard-but-holy hustle-gospel, the appeal to Ashton + Mila, mercy at the border, the throne of AI, the soup line, and scripture beside strategy.',
+    metaTitle: 'The World of bZ — the lore connecting the albums',
+    metaDescription:
+      'A guided tour of the bZ universe: the albums as chapters in release order, plus the recurring motifs that run through every drop — hustle-gospel, the Appeal to Ashton + Mila, border mercy, the throne of AI, the soup line, and Robert Greene beside Proverbs.',
+    jsonLdType: 'CollectionPage',
+    render: () => {
+      const MONTHS = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ];
+      const fmtDate = (iso: string): string => {
+        const parts = iso.split('-');
+        const y = parts[0] ?? '';
+        const mi = Number(parts[1] ?? '0') - 1;
+        const month = MONTHS[mi] ?? '';
+        return month ? `${month} ${y}` : y;
+      };
+      // Chapters = every album, in release order, derived from live data.
+      const chapters = [...ALBUMS]
+        .sort((a, b) => (a.releasedAt ?? '').localeCompare(b.releasedAt ?? ''))
+        .map((a, i) => ({
+          date: fmtDate(a.releasedAt ?? ''),
+          title: `Chapter ${i + 1} · ${a.name}`,
+          body: `<em>${esc(a.tagline)}.</em> ${esc(a.description)} <a href="/${esc(a.id)}">Enter ${esc(a.name)} · ${a.trackIds.length} tracks →</a>`
+        }));
+      const trackCount = ALBUMS.reduce((n, a) => n + a.trackIds.length, 0);
+      return `
+      <article class="contentpage__article">
+        <p class="contentpage__lead">
+          The catalog isn't a playlist — it's a <strong>world</strong>. ${ALBUMS.length} albums,
+          ${trackCount} tracks, one Newark studio, and a handful of motifs that keep returning like
+          scripture read in a new light. This is the map: the albums as chapters, and the threads
+          that run beneath all of them.
+        </p>
+
+        ${pullquote(
+          `The prayer and the punchline can share a bar.`,
+          'the working thesis of every bZ drop'
+        )}
+
+        ${divider('the chapters')}
+        <p>
+          Each album is a chapter in the same book — read in the order it dropped. Open any one to
+          play it in the browser without leaving this page.
+        </p>
+        ${timeline(chapters)}
+
+        ${divider('recurring motifs')}
+        <p>
+          Six threads surface again and again across the catalog. None of them are branding — they're
+          the actual preoccupations of the record: faith lived hard, family named with reverence,
+          mercy carried to the margins, and strategy read beside scripture.
+        </p>
+        ${cards([
+          {
+            title: 'Hard but holy',
+            meta: 'every album',
+            body: `The founding register — a lit, JC-inspired <em>hustle gospel</em> built one prompt at a time. Christian-gangster ethic: street-smart and faith-rooted, reverent around family, zero drug references. The whole canon lives here.`
+          },
+          {
+            title: 'The appeal — Ashton + Mila',
+            meta: 'The Appeal',
+            body: `An open letter in six movements — petitions, prophecies, and white-flag prayers, the case for clemency set to drum machines. The family names recur across the catalog, always with reverence.`
+          },
+          {
+            title: 'Mercy at the border',
+            meta: 'Mercy Drop',
+            body: `Border-line gospel for the chrome-saint hour — checkpoints, soup lines, paper-cup parishes, chrome saints in armored prayer. <em>border-mercy</em>, <em>mercy-border</em>, and <em>afghanistan-mercy</em> carry the thread.`
+          },
+          {
+            title: 'The throne of AI',
+            meta: 'Wormhole Tape · Canopy Dispatch',
+            body: `Cosmic-tunnel prophecies for the orbital coup — gray-alien gospel, pineal crowns, the syllabus that slings us home — landing in Nicene creeds read against AI terms of service (<em>homoousios-stone</em>, <em>terms-updated</em>).`
+          },
+          {
+            title: 'The soup line',
+            meta: 'across the catalog',
+            body: `Service of the poor and needy, cooked into the songs themselves — <em>chef-lu-stew</em>, <em>soupe-saint-jean</em>, <em>paper-cup-gospel</em>. The kitchen and the sanctuary are the same room.`
+          },
+          {
+            title: 'Scripture beside strategy',
+            meta: 'the wisdom line',
+            body: `Robert Greene and Proverbs and Psalms on the same shelf — every track carries a line of wisdom, a law or a scripture, tied to the move the song actually makes. Tap any now-playing track to read it.`
+          }
+        ])}
+
+        ${divider('enter a chapter')}
+        <p>${ALBUMS.length} albums and counting. Click any cover to open it in the player and start the tour.</p>
+        <div class="contentpage__album-grid">
+          ${ALBUMS.map(albumChip).join('')}
+        </div>
+      </article>`;
+    }
+  },
+
   // ═══ ABOUT ════════════════════════════════════════════════════════════
   {
     slug: 'about',
@@ -138,8 +253,8 @@ export const CONTENT_PAGES: ContentPage[] = [
 
         ${divider('the artist')}
         <p>
-          The catalog stitches together six albums (Panda Desiiignare, The Appeal, Halo,
-          Wormhole Tape, Mercy Drop, St. John's Canon) spanning more than 50 tracks. Lyrics
+          The catalog spans ${ALBUMS.length} albums and ${TRACKS.length} tracks, including Panda
+          Desiiignare, The Appeal, Halo, Wormhole Tape, Mercy Drop, and St. John's Canon. Lyrics
           handwritten and refined with Suno. Audio production, mixing, visualizer engineering,
           and every line of this website ship from a one-person operation.
         </p>

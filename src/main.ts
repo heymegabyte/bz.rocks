@@ -1364,6 +1364,10 @@ function setupShell(root: HTMLElement) {
               <strong>Merch</strong>
               <span>FREE SATAN apparel suite</span>
             </a>
+            <a href="/world" data-content-page="world" role="menuitem">
+              <strong>The World of bZ</strong>
+              <span>The lore — chapters + recurring motifs</span>
+            </a>
             <a id="lnkAppeal" href="/ashton/" role="menuitem">
               <strong>Appeal</strong>
               <span>Open letter to Ashton + Mila</span>
@@ -1386,6 +1390,7 @@ function setupShell(root: HTMLElement) {
             <a href="/credits" data-content-page="credits">Tracks</a>
             <a href="/press" data-content-page="press">Press</a>
             <a href="/merch" data-content-page="merch">Merch</a>
+            <a href="/world" data-content-page="world">World</a>
             <a href="/ashton/">Appeal</a>
             <a href="/stats" title="Live listening stats — by the numbers">Stats</a>
             <a href="/privacy" data-content-page="privacy">Privacy</a>

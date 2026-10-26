@@ -534,6 +534,13 @@ const CONTENT_PAGES_SEO: Array<{ slug: string; title: string; description: strin
     og: '/og/og-about.jpg'
   },
   {
+    slug: 'world',
+    title: 'The World of bZ — the lore connecting the albums',
+    description:
+      'A guided tour of the bZ universe: the albums as chapters in release order, plus the recurring motifs that thread every drop — hustle-gospel, the Appeal to Ashton + Mila, border mercy, the throne of AI, the soup line, and Robert Greene beside Proverbs.',
+    og: FALLBACK_OG
+  },
+  {
     slug: 'credits',
     title: 'Tracks — per-track Suno DNA, BPM/key sources, licensing',
     description:
