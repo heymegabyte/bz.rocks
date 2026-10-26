@@ -329,6 +329,10 @@ export class Visualizer {
   private manualCycleStarted = false;
   private beatArmed = false;
   private lastCycleAt = 0;
+  // Rising-edge latch for onset-driven cuts (#29): true while the engine is
+  // flagging a drop, so a scene cut fires once on the drop's ONSET, not every
+  // frame the drop persists.
+  private dropWasImminent = false;
   private fpsEMA = 60;
   private lastFrame = performance.now();
   private hudFreq = 0;
@@ -799,7 +803,18 @@ export class Visualizer {
     // 6s cooldown = "switch often"; the beat latch = "switch to the beat".
     if (this.autoCycle) {
       if (e.beatPulse > 0.85) this.beatArmed = true;
-      if (this.beatArmed && now - this.lastCycleAt > 6000) {
+      // Onset-driven cut (#29): on the rising edge of a DROP (the engine's
+      // section-onset signal, which also fires dropFlash above), cut the scene
+      // immediately — but no sooner than 3s after the last cut so stacked drops
+      // don't thrash. This lands scene changes on the music's STRUCTURE (drops,
+      // builds, big hits), not just the 6s beat metronome. The 3s floor keeps
+      // holds ≥ the music-video "let shots breathe" minimum; rapid cuts stay the
+      // exception, reserved for genuine onsets.
+      const dropOnset = e.dropImminent && !this.dropWasImminent;
+      this.dropWasImminent = e.dropImminent;
+      const beatCycleDue = this.beatArmed && now - this.lastCycleAt > 6000;
+      const onsetCycleDue = dropOnset && now - this.lastCycleAt > 3000;
+      if (beatCycleDue || onsetCycleDue) {
         const i = MODE_ORDER.indexOf(this.mode);
         this.mode = MODE_ORDER[(i + 1) % MODE_ORDER.length];
         this.lastCycleAt = now;
@@ -808,6 +823,9 @@ export class Visualizer {
       }
     } else {
       this.beatArmed = false;
+      // Keep tracking the drop state while paused/manual so re-enabling
+      // auto-cycle mid-drop doesn't fire a spurious onset cut.
+      this.dropWasImminent = e.dropImminent;
     }
 
     const ctx = this.bgCtx;
