@@ -9239,7 +9239,13 @@ async function enhanceDownloadsPage(): Promise<void> {
     for (const row of rows) {
       const li = document.createElement('li');
       li.className = 'downloads__item';
+      // Cover + meta form a PLAY button — tap a downloaded track to play it (works
+      // offline, served from cache by the SW). The remove ✕ is a separate button.
+      const playBtn = document.createElement('button');
+      playBtn.type = 'button';
+      playBtn.className = 'downloads__play';
       if (row.t) {
+        playBtn.setAttribute('aria-label', `Play ${row.t.title}`);
         const img = document.createElement('img');
         img.className = 'downloads__cover';
         img.src = row.t.cover;
@@ -9247,7 +9253,9 @@ async function enhanceDownloadsPage(): Promise<void> {
         img.width = 44;
         img.height = 44;
         img.loading = 'lazy';
-        li.appendChild(img);
+        playBtn.appendChild(img);
+      } else {
+        playBtn.disabled = true;
       }
       const meta = document.createElement('div');
       meta.className = 'downloads__meta';
@@ -9259,7 +9267,12 @@ async function enhanceDownloadsPage(): Promise<void> {
       sub.textContent = [albumName, fmtMB(row.bytes)].filter(Boolean).join(' · ');
       meta.appendChild(title);
       meta.appendChild(sub);
-      li.appendChild(meta);
+      playBtn.appendChild(meta);
+      if (row.t) {
+        const tr = row.t;
+        playBtn.addEventListener('click', () => play(tr));
+      }
+      li.appendChild(playBtn);
       const rm = document.createElement('button');
       rm.type = 'button';
       rm.className = 'downloads__remove';

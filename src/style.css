@@ -16040,6 +16040,27 @@ a.aichat__widget:hover {
   border-radius: 6px;
   object-fit: cover;
 }
+.downloads__play {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: opacity 140ms ease;
+}
+.downloads__play:hover:not(:disabled) {
+  opacity: 0.82;
+}
+.downloads__play:disabled {
+  cursor: default;
+}
 .downloads__meta {
   display: flex;
   flex-direction: column;
