@@ -201,6 +201,67 @@ async function rateLimitedCount(
   return false;
 }
 
+// --- #10 GEO: AI-discovery tracking ----------------------------------------
+// Measures the two signals we actually control + observe (no external LLM API
+// probing): (1) humans ARRIVING from an AI answer (Referer = an AI-assistant
+// host → proof bZ was surfaced/cited); (2) AI CRAWLERS fetching the catalog
+// (UA = a retrieval/training bot → the supply side of AI citation). Counted in
+// KV, aggregated-only (no PII), surfaced on /stats + /api/geo. This is the
+// grounded, CF-native core of GEO measurement; probing ChatGPT/Perplexity for
+// our citation share is a separate (API-dependent) build, intentionally out.
+const AI_REFERRERS: Record<string, string> = {
+  'chatgpt.com': 'chatgpt',
+  'chat.openai.com': 'chatgpt',
+  'perplexity.ai': 'perplexity',
+  'gemini.google.com': 'gemini',
+  'claude.ai': 'claude',
+  'copilot.microsoft.com': 'copilot',
+  'you.com': 'you',
+  'phind.com': 'phind',
+  'grok.com': 'grok'
+};
+const AI_BOTS: Array<[RegExp, string]> = [
+  [/OAI-SearchBot/i, 'oai-searchbot'],
+  [/ChatGPT-User/i, 'chatgpt-user'],
+  [/GPTBot/i, 'gptbot'],
+  [/PerplexityBot/i, 'perplexitybot'],
+  [/Perplexity-User/i, 'perplexity-user'],
+  [/Claude-SearchBot/i, 'claude-searchbot'],
+  [/Claude-User/i, 'claude-user'],
+  [/ClaudeBot/i, 'claudebot'],
+  [/Google-Extended/i, 'google-extended'],
+  [/Applebot-Extended/i, 'applebot-extended'],
+  [/Bytespider/i, 'bytespider'],
+  [/Amazonbot/i, 'amazonbot'],
+  [/meta-externalagent/i, 'meta-ai'],
+  [/cohere-ai/i, 'cohere'],
+  [/DuckAssistBot/i, 'duckassist']
+];
+/** The full set of GEO source slugs, for the /api/geo reader (fixed set → read
+ * in parallel instead of a KV list scan). */
+const GEO_REFERRER_SOURCES = [...new Set(Object.values(AI_REFERRERS))];
+const GEO_BOT_SOURCES = AI_BOTS.map(([, s]) => s);
+
+/** Detect whether a request is an AI referral or an AI-crawler fetch. Returns
+ * null for ordinary traffic (so the KV write below NEVER fires on normal hits).
+ * Bots win over referrer (a bot can carry neither, or a stray referer). */
+function detectGeoSource(request: Request): { kind: 'ref' | 'bot'; source: string } | null {
+  const ua = request.headers.get('user-agent') || '';
+  for (const [re, src] of AI_BOTS) if (re.test(ua)) return { kind: 'bot', source: src };
+  const ref = request.headers.get('referer') || '';
+  if (ref) {
+    try {
+      const host = new URL(ref).hostname.replace(/^www\./, '');
+      for (const h in AI_REFERRERS) {
+        if (host === h || host.endsWith('.' + h)) return { kind: 'ref', source: AI_REFERRERS[h] };
+      }
+    } catch {
+      /* malformed Referer — ignore */
+    }
+  }
+  return null;
+}
+
 async function sha256Hex(s: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
   return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
@@ -1331,6 +1392,14 @@ async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext):
   td.empty { color:var(--mute); text-align:center; padding:32px; }
   .foot { margin-top:56px; color:var(--mute); font-size:.82rem; text-align:center; }
   .foot a { color:var(--accent); text-decoration:underline; text-underline-offset:2px; }
+  .geo { display:grid; gap:20px; }
+  .geo .geo-group h3 { font-family:'JetBrains Mono',monospace; font-size:.64rem; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin:0 0 10px; }
+  .geo .geo-rows { display:flex; flex-wrap:wrap; gap:10px; }
+  .geo .geo-chip { display:inline-flex; align-items:baseline; gap:8px; border:1px solid var(--line); border-radius:999px; padding:8px 14px; background:rgba(255,255,255,.03); }
+  .geo .geo-chip .src { font-weight:700; font-size:.9rem; }
+  .geo .geo-chip .ct { font-variant-numeric:tabular-nums; font-family:'JetBrains Mono',monospace; color:var(--accent); }
+  .geo .geo-empty { color:var(--mute); line-height:1.55; }
+  .geo .geo-fresh { color:var(--mute); font-size:.74rem; font-family:'JetBrains Mono',monospace; letter-spacing:.08em; }
 </style>
 </head><body>
   <div class="top">
@@ -1356,6 +1425,10 @@ async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext):
       <thead><tr><th>#</th><th>Track</th><th class="num">Plays</th><th class="num">Shares</th></tr></thead>
       <tbody>${topRows}</tbody>
     </table>
+    <h2>AI discovery</h2>
+    <section id="geoPanel" class="geo" aria-label="AI discovery" aria-live="polite">
+      <p class="geo-empty">Measuring how AI assistants surface bZ — referrals arriving from an AI answer, and AI crawlers fetching the catalog.</p>
+    </section>
     <p class="foot">Counts refresh every few minutes. <a href="${origin}/">Open the player &rarr;</a></p>
   </div>
   <script>
@@ -1376,6 +1449,42 @@ async function renderStatsPage(env: Env, origin: string, ctx: ExecutionContext):
             p.hidden = false;
           })
           .catch(function () {});
+        /* #10 GEO — fill the AI-discovery panel from /api/geo. TT-safe DOM
+           building (/stats enforces Trusted Types → no innerHTML). Fail-soft;
+           the honest "measuring…" copy stands if it errors or is empty. */
+        fetch('/api/geo').then(function (r) { return r.ok ? r.json() : null; }).then(function (g) {
+          if (!g) return;
+          var panel = document.getElementById('geoPanel');
+          if (!panel) return;
+          function chip(src, ct) {
+            var c = document.createElement('span'); c.className = 'geo-chip';
+            var s = document.createElement('span'); s.className = 'src'; s.textContent = src; c.appendChild(s);
+            var n = document.createElement('span'); n.className = 'ct'; n.textContent = String(ct); c.appendChild(n);
+            return c;
+          }
+          function group(title, obj) {
+            var keys = Object.keys(obj || {});
+            if (!keys.length) return null;
+            keys.sort(function (a, b) { return obj[b] - obj[a]; });
+            var box = document.createElement('div'); box.className = 'geo-group';
+            var h = document.createElement('h3'); h.textContent = title; box.appendChild(h);
+            var rows = document.createElement('div'); rows.className = 'geo-rows';
+            keys.forEach(function (k) { rows.appendChild(chip(k, obj[k])); });
+            box.appendChild(rows);
+            return box;
+          }
+          var gr = group('Referrals from AI answers', g.referrers);
+          var gb = group('AI crawler visits', g.bots);
+          if (!gr && !gb) return;
+          while (panel.firstChild) panel.removeChild(panel.firstChild);
+          if (gr) panel.appendChild(gr);
+          if (gb) panel.appendChild(gb);
+          if (g.freshnessMin != null) {
+            var f = document.createElement('p'); f.className = 'geo-fresh';
+            f.textContent = 'Updated ' + (g.freshnessMin < 1 ? 'just now' : g.freshnessMin + 'm ago');
+            panel.appendChild(f);
+          }
+        }).catch(function () {});
       } catch (e) {}
     })();
   </script>
@@ -1848,6 +1957,29 @@ export default {
           'X-Content-Type-Options': 'nosniff'
         }
       });
+    }
+
+    // #10 GEO — count AI referrals + AI-crawler fetches. Gated to GET page
+    // requests (no /api, no assets, no file-extension paths) so sub-resources
+    // don't inflate it; detectGeoSource returns null for ordinary traffic, so a
+    // KV write fires ONLY on an AI-matched hit (writes bounded by AI-traffic
+    // volume — tiny on a personal site). waitUntil → zero added latency.
+    // Cost: ~2 KV writes/matched-hit × low AI-hit volume ≈ well under 1K/day free.
+    if (
+      request.method === 'GET' &&
+      !url.pathname.startsWith('/api/') &&
+      !url.pathname.startsWith('/assets/') &&
+      !/\.[a-z0-9]{2,5}$/i.test(url.pathname)
+    ) {
+      const geo = detectGeoSource(request);
+      if (geo) {
+        ctx.waitUntil(
+          Promise.all([
+            bumpCounter(env.COUNTERS, `geo:${geo.kind}:${geo.source}`),
+            env.COUNTERS.put('geo:last', String(Date.now()))
+          ]).then(() => undefined)
+        );
+      }
     }
 
     // Consolidated content pages — Process / Theology / Support / Connect were
@@ -2342,6 +2474,44 @@ export default {
           { 'Cache-Control': 'public, max-age=300' },
           request
         );
+      }
+
+      // #10 GEO — aggregated AI-discovery counts (referrals + crawler fetches).
+      // Fixed source set → parallel reads, not a KV list scan. Aggregated-only
+      // (no PII), 60s edge cache, + a freshness signal so a quiet window reads as
+      // stale rather than silently "current" (per real-time-data-no-manual-refresh).
+      if (url.pathname === '/api/geo' && request.method === 'GET') {
+        const edge = (caches as unknown as { default: Cache }).default;
+        const cacheKey = new Request(`${url.origin}/api/geo`, { method: 'GET' });
+        const hit = await edge.match(cacheKey);
+        if (hit) return hit;
+        const [refCounts, botCounts, lastRaw] = await Promise.all([
+          Promise.all(GEO_REFERRER_SOURCES.map(s => readCount(env.COUNTERS, `geo:ref:${s}`))),
+          Promise.all(GEO_BOT_SOURCES.map(s => readCount(env.COUNTERS, `geo:bot:${s}`))),
+          env.COUNTERS.get('geo:last')
+        ]);
+        const referrers: Record<string, number> = {};
+        GEO_REFERRER_SOURCES.forEach((s, i) => {
+          if (refCounts[i] > 0) referrers[s] = refCounts[i];
+        });
+        const bots: Record<string, number> = {};
+        GEO_BOT_SOURCES.forEach((s, i) => {
+          if (botCounts[i] > 0) bots[s] = botCounts[i];
+        });
+        const lastMs = lastRaw ? Number(lastRaw) : 0;
+        const body = {
+          referrers,
+          bots,
+          totalReferrals: Object.values(referrers).reduce((a, b) => a + b, 0),
+          totalBotHits: Object.values(bots).reduce((a, b) => a + b, 0),
+          lastSeen: lastMs || null,
+          freshnessMin: lastMs ? Math.round((Date.now() - lastMs) / 60000) : null
+        };
+        const res = Response.json(body, {
+          headers: { ...SECURITY_HEADERS, 'Cache-Control': 'public, max-age=60' }
+        });
+        ctx.waitUntil(edge.put(cacheKey, res.clone()));
+        return res;
       }
 
       if (url.pathname === '/api/stats' && request.method === 'GET') {
