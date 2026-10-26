@@ -1,5 +1,5 @@
 import type { Album, Track } from './types';
-import { ALBUMS, ALBUM_BY_ID, TRACKS, TRACK_BY_ID } from './data';
+import { ALBUMS, ALBUM_BY_ID, TRACKS, TRACK_BY_ID, SPOTIFY_ARTIST_URL } from './data';
 // Lyrics moved out of data.ts (LCP split) — the Worker imports them eagerly here
 // for per-route SEO/OG (server bundle size is irrelevant); the client lazy-loads.
 import { STATIC_LYRICS } from './lyrics-static';
@@ -377,7 +377,38 @@ function buildAlbumBody(album: Album): string {
   return html;
 }
 
+/** The bZ artist entity, reused as `byArtist` on every MusicRecording/MusicAlbum.
+ * `sameAs` carries ONLY the verified Spotify artist (resolved in src/data.ts) —
+ * a sameAs that 404s or points at the wrong artist HURTS entity resolution, so
+ * we never guess Apple/YouTube/Bandcamp artist URLs here. Mirrors index.html. */
+function artistEntity(): object {
+  return { '@type': 'MusicGroup', name: ARTIST, url: SITE_ORIGIN, sameAs: [SPOTIFY_ARTIST_URL] };
+}
+
+/** A schema.org ListenAction with cross-platform EntryPoint targets — this is
+ * what surfaces "Listen" buttons in Google's Knowledge Panel / music carousel.
+ * Only truthy targets are included (a track/album may have just Spotify), and
+ * the on-site URL is always first so the direct in-browser player is primary. */
+function listenAction(targets: Array<string | undefined>): object | undefined {
+  const urls = targets.filter((u): u is string => Boolean(u));
+  if (!urls.length) return undefined;
+  return {
+    '@type': 'ListenAction',
+    target: urls.map(u => ({
+      '@type': 'EntryPoint',
+      urlTemplate: u,
+      actionPlatform: [
+        'https://schema.org/DesktopWebPlatform',
+        'https://schema.org/MobileWebPlatform',
+        'https://schema.org/IOSPlatform',
+        'https://schema.org/AndroidPlatform'
+      ]
+    }))
+  };
+}
+
 function trackJsonLd(track: Track, album: Album, url: string): object[] {
+  const listen = listenAction([url, album.links?.spotify, album.links?.appleMusic]);
   return [
     {
       '@context': 'https://schema.org',
@@ -390,7 +421,8 @@ function trackJsonLd(track: Track, album: Album, url: string): object[] {
       ...(TRACK_DURATIONS[track.id] ? { duration: iso8601Duration(TRACK_DURATIONS[track.id]) } : {}),
       audio: `${SITE_ORIGIN}${track.file}`,
       embedUrl: `${SITE_ORIGIN}/embed/${track.id}`,
-      byArtist: { '@type': 'MusicGroup', name: ARTIST, url: SITE_ORIGIN },
+      byArtist: artistEntity(),
+      ...(listen ? { potentialAction: listen } : {}),
       inAlbum: {
         '@type': 'MusicAlbum',
         name: album.name,
@@ -427,6 +459,7 @@ function trackJsonLd(track: Track, album: Album, url: string): object[] {
 
 function albumJsonLd(album: Album, url: string): object[] {
   const tracks = album.trackIds.map(id => TRACK_BY_ID.get(id)).filter((t): t is Track => Boolean(t));
+  const listen = listenAction([url, album.links?.spotify, album.links?.appleMusic]);
   return [
     {
       '@context': 'https://schema.org',
@@ -435,7 +468,8 @@ function albumJsonLd(album: Album, url: string): object[] {
       url,
       image: albumOgImage(album),
       datePublished: album.releasedAt,
-      byArtist: { '@type': 'MusicGroup', name: ARTIST, url: SITE_ORIGIN },
+      byArtist: artistEntity(),
+      ...(listen ? { potentialAction: listen } : {}),
       description: album.description,
       numTracks: tracks.length,
       track: tracks.map((t, idx) => ({
@@ -624,7 +658,11 @@ function contentPageSeo(c: { slug: string; title: string; description: string; o
         name: c.title,
         description,
         url,
-        isPartOf: { '@type': 'WebSite', name: 'bZ — bz.rocks', url: SITE_ORIGIN }
+        isPartOf: { '@type': 'WebSite', name: 'bZ — bz.rocks', url: SITE_ORIGIN },
+        // Speakable (#10 GEO): flag the answer heading for voice assistants +
+        // AI engines reading the page aloud — the seoBody leads with an <h1>
+        // that is the page's direct one-line answer ("About bZ …", "Press …").
+        speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1'] }
       },
       // Home > {Page} breadcrumb — parity with track/album routes, so Google can
       // render the hierarchy in search results.

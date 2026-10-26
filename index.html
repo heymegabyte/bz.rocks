@@ -197,7 +197,10 @@
 
     <!-- Person + MusicGroup with sameAs — EEAT signal that boosts authority
          in core updates and gives LLMs a verified-identity anchor for "who
-         is bZ?" queries. sameAs covers every public distribution channel. -->
+         is bZ?" queries. sameAs lists ONLY VERIFIED profiles — the resolved
+         Spotify artist (src/data.ts SPOTIFY_ARTIST_ID) + the real Megabyte
+         socials. A sameAs that 404s or points at the wrong entity HURTS
+         entity resolution, so unverifiable channels are omitted, never guessed. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -210,11 +213,7 @@
         "description": "Hustle-gospel artist. Christian-gangster ethic. Built with Suno + handwritten lyric direction.",
         "genre": ["Hustle gospel", "Christian rap", "Electronic gospel"],
         "sameAs": [
-          "https://open.spotify.com/artist/0Iiv5ohOcyXBKBWBC8E1eP",
-          "https://music.apple.com/us/artist/bz",
-          "https://music.youtube.com/channel/UC-bZ-music",
-          "https://bz.bandcamp.com",
-          "https://soundcloud.com/bz-music",
+          "https://open.spotify.com/artist/0hDEUhE0QAh51cM1Fe2p3T",
           "https://www.instagram.com/heymegabyte",
           "https://twitter.com/heymegabyte",
           "https://www.tiktok.com/@heymegabyte",
