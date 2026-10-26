@@ -28,6 +28,9 @@ ${albums}
 ## Feeds
 - [RSS feed](${origin}/feed.xml): every track, newest album first
 
+## AI tools (MCP)
+- [MCP server](${origin}/mcp): Model Context Protocol endpoint (Streamable HTTP). Connect an AI client to search bZ's catalog, get grounded "more like this" recommendations, and render a playable track-card widget — all answers are grounded in the real catalog.
+
 ## Optional
 - [Privacy](${origin}/privacy): privacy policy
 - [Terms](${origin}/terms): terms of use

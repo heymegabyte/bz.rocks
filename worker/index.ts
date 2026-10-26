@@ -3,6 +3,7 @@ import { TRACK_BY_ID, ALBUM_BY_ID, ALBUMS } from '../src/data';
 import { STATIC_LYRICS } from '../src/lyrics-static';
 import { buildRssFeed } from '../src/feed';
 import { buildLlmsTxt } from '../src/llms';
+import { handleMcp } from './mcp';
 import { sendPushBatch, type PushSubscriptionRecord } from './web-push';
 import { escapeXmlText, escapeHtmlAttr } from './escape';
 import { serializeJsonLd } from './json-ld';
@@ -1933,6 +1934,13 @@ export default {
           'X-Content-Type-Options': 'nosniff'
         }
       });
+    }
+
+    // #3 "bZ in chat" — Model Context Protocol server (Streamable HTTP + MCP
+    // Apps). Lets ChatGPT / Claude search + explore the catalog with a playable
+    // widget. Read-only + public → no auth. Own module so the hot router stays lean.
+    if (url.pathname === '/mcp') {
+      return handleMcp(request);
     }
 
     if (url.pathname === '/health') {
