@@ -1,0 +1,1021 @@
+{
+  "id": "wake-up-algenib",
+  "createdAtIso": "2026-11-14T00:00:00Z",
+  "brief": {
+    "concept": "Cinematic music film for bZ's 'Wake Up For You (Algenib Mix)' (album Reckless Grace), a gospel-trap reveille built on Ephesians 5:14 — 'Wake up, sleeper, rise from the dead, and Christ will shine on you.' Algenib is the blue-white star on Pegasus's shoulder. The film follows Dai, a grief-frozen night-shift custodian who sleeps in her parked car, and the one growing star that wakes her and sends her to show mercy on a scared stranger. A recurring MOTIF — a single blue-white star that keeps GROWING (windshield to puddle to dialysis monitor to sunrise) — carries the resurrection idea. GRADE: the film opens in cold indigo/charcoal and HARD-CUTS to warm amber/gold on the first hook, then the warmth grows to a full dawn. Anamorphic, fine grain, hyperreal, dignified — hard-but-holy, never exploitative. People GROUNDED always (walk, drive, kneel, reach — never float). Hold Dai's identity across every shot via first/last-frame conditioning from one hero reference; one model for the whole film. NO superimposed HUD / floating type in-scene.",
+    "durationSec": 299.76,
+    "aspectRatio": "16:9",
+    "mood": "haunting, tender, redemptive; grief-frozen to fully-awake; cold indigo yielding to warm resurrection gold",
+    "format": "music-video",
+    "song": { "title": "Wake Up For You (Algenib Mix)", "bpm": 140 }
+  },
+  "logline": "A grief-frozen night-shift custodian asleep in her car is woken by one growing blue-white star, rises from the dead of her own numbness, and carries that light to a frightened stranger — until the star becomes the dawn and she is fully awake.",
+  "synopsis": "Dai sleeps against the window of her parked Civic in a sodium-lit lot, breath fogging the glass, a lone blue-white star burning in the top corner. Her phone wakes dark, then flares with four missed calls from Ate Joy, the star's reflection sliding across the glass. Her eyes snap open catching that star in the windshield — the 'rise from the dead' beat — and she steps out, a boot hitting wet asphalt where a puddle holds the star beside chalk of Pegasus on the underpass. She zips her work fleece tight over her scrubs, and on the first hook the cold breaks to warm gold: she walks an empty 5am overpass toward the skyline while the star, now hand-sized, throws amber god-rays down the road. Inside the dialysis ward she mops, then stops at an old man, Mr. Okafor, sitting awake and alone and afraid beside the humming machine; their eyes meet. She sits, takes his hand, the monitor's blue readout echoing the star, and his shoulders drop. In a stairwell she answers the phone — 'Ate?' — and laughs through tears as dawn floods the window behind her. Wide: the star has become the sun cresting between the towers, Pegasus dissolving into cloud, the city lights flicking off. On the clinic roof at true sunrise she stands fully awake, fleece off, scrubs glowing, arms loose — a resurrection without cheese. The film closes on the empty Civic, its windshield now holding the whole gold sky where one star used to be.",
+  "characters": [
+    {
+      "id": "dai",
+      "name": "Dai (Dahlia)",
+      "description": "Afro-Filipina woman, 34, a night-shift dialysis-clinic custodian — dignified and exhausted, grief-frozen, carrying a weight she doesn't name. Cornrows, small gold hoop earrings, a faded hospital wristband on one wrist, a navy work fleece zipped over teal scrubs. She sleeps in her parked Civic between shifts. Human eyes, real worn skin; hard-but-holy, never exploitative. Grounded always — she drives, walks, kneels, reaches; never floats. She is the emotional through-line of the film and must stay recognizably the same person in every shot.",
+      "state": { "wakefulness": "asleep", "fleece": "unzipped", "location": "parked-car" },
+      "externalGoal": "Get up, get through the night shift, and answer the calls she has been avoiding",
+      "internalNeed": "To wake from her own grief-numbness — to rise from the dead of not-feeling and let light in again",
+      "contradiction": "The grief makes sleep and avoidance feel safer than waking, so she stays frozen even as the star keeps calling her up",
+      "voice": "Nearly silent; speaks only in behavior — a held breath, a snapped-awake inhale, a hand taken, one word on a phone",
+      "vulnerabilities": ["the exhaustion that keeps her asleep in the car", "the grief she won't pick up the phone to face"],
+      "blindSpots": ["that someone (Ate Joy) is still reaching for her", "that her own small mercy is the thing that wakes her"],
+      "relationships": {
+        "mr-okafor": "the frightened stranger she chooses to sit with and comfort",
+        "ate-joy": "the sister whose missed calls she keeps avoiding until the stairwell"
+      }
+    },
+    {
+      "id": "mr-okafor",
+      "name": "Mr. Okafor",
+      "description": "An elderly Black man, late 70s, alone in the dialysis ward in the small hours — awake, scared, dignified, a blanket over his knees beside the humming machine, its blue readout glowing on his face. Shown with warmth and respect, never as a prop. By the film's tender center he is the one Dai's small mercy reaches.",
+      "state": { "state": "awake-afraid", "location": "dialysis-chair" },
+      "externalGoal": "Get through the long machine hours of the night without being alone",
+      "internalNeed": "To be seen and sat with — company instead of fear",
+      "contradiction": "He is too proud and too tired to ask for company, so he sits awake and alone until someone chooses to stay",
+      "voice": "Wordless — a frightened stillness that softens when his hand is taken",
+      "vulnerabilities": ["the fear of the long machine night", "being unseen and alone"],
+      "blindSpots": ["that the exhausted custodian would stop and stay for him"],
+      "relationships": {
+        "dai": "the custodian who stops, sits, and takes his hand"
+      }
+    }
+  ],
+  "locations": [
+    {
+      "id": "parking-lot",
+      "name": "The Parking Lot",
+      "description": "A cold sodium-lit clinic parking lot before dawn — Dai's parked Civic, orange-grey light, breath fogging the glass, a lone blue-white star burning high in the top corner. Cold indigo/charcoal grade."
+    },
+    {
+      "id": "underpass",
+      "name": "The Underpass",
+      "description": "A wet 5am underpass near the lot — rain-slick asphalt holding a puddle, a chalk drawing of Pegasus on the concrete wall behind. Cold grade, the star reflected in the water."
+    },
+    {
+      "id": "overpass",
+      "name": "The Overpass",
+      "description": "An empty pedestrian overpass at 5am facing the city skyline — the place the cold breaks to warm gold on the first hook, the star now hand-sized throwing amber god-rays down the road. Steam-breath, hair lifting."
+    },
+    {
+      "id": "dialysis-ward",
+      "name": "The Dialysis Ward",
+      "description": "A quiet night dialysis ward — rows of chairs, one humming machine with a blue monitor readout, polished floor Dai mops. Where her small mercy reaches Mr. Okafor. Cool clinical light warming with the growing dawn."
+    },
+    {
+      "id": "stairwell",
+      "name": "The Stairwell",
+      "description": "A concrete clinic stairwell with a tall window — where Dai answers the phone and laughs through tears as dawn floods in behind her."
+    },
+    {
+      "id": "clinic-roof",
+      "name": "The Clinic Roof",
+      "description": "The flat clinic roof at true sunrise — where Dai stands fully awake, fleece off, scrubs glowing, the star now the sun cresting between the towers. Full warm dawn, Pegasus dissolving into cloud."
+    }
+  ],
+  "props": [
+    {
+      "id": "the-star",
+      "name": "The Growing Star",
+      "description": "A single blue-white star — the Algenib motif. It keeps GROWING across the film: a pinpoint in the windshield, a reflection in a puddle, an echo in the dialysis monitor's blue readout, then the sun itself at dawn. The visual engine of the resurrection idea.",
+      "state": { "size": "pinpoint", "where": "windshield" }
+    },
+    {
+      "id": "the-phone",
+      "name": "Dai's Phone",
+      "description": "Dai's phone on the dark dashboard — wakes with a banner 'Ate Joy (4 missed)', the star's reflection sliding across its glass; the call she finally answers in the stairwell.",
+      "state": { "screen": "dark", "calls": "4-missed-unanswered" }
+    },
+    {
+      "id": "work-fleece",
+      "name": "The Work Fleece",
+      "description": "Dai's navy work fleece, worn over teal scrubs — zipped tight at the pre-hook as she steadies herself, then taken OFF on the roof at sunrise when she is fully awake.",
+      "state": { "status": "unzipped" }
+    }
+  ],
+  "wardrobe": [
+    {
+      "id": "scrubs-and-fleece",
+      "name": "Scrubs and Work Fleece",
+      "description": "Dai's teal clinic scrubs under a navy work fleece, cornrows, small gold hoop earrings, a faded hospital wristband — grief-worn but dignified. The fleece zips tight pre-hook and comes off at the sunrise roof, the scrubs catching the gold dawn.",
+      "state": { "fleece": "unzipped" }
+    }
+  ],
+  "setupPayoffs": [
+    {
+      "id": "sp-star",
+      "detail": "The single blue-white star that keeps growing",
+      "setupSceneId": "s0",
+      "payoffSceneId": "s5",
+      "initialMeaning": "A lone cold pinpoint over a sleeping, grief-frozen woman — a far-off call to wake",
+      "finalMeaning": "Grown into the full sunrise — the light that woke her now floods the whole sky",
+      "isMotif": true
+    },
+    {
+      "id": "sp-phone",
+      "detail": "The missed calls from Ate Joy on the dark phone",
+      "setupSceneId": "s0",
+      "payoffSceneId": "s4",
+      "initialMeaning": "The calls she is avoiding — the grief she won't pick up",
+      "finalMeaning": "Answered at last in the stairwell — a laugh through tears as the dawn floods in",
+      "isMotif": true
+    },
+    {
+      "id": "sp-fleece",
+      "detail": "The work fleece zipped tight over her scrubs",
+      "setupSceneId": "s1",
+      "payoffSceneId": "s5",
+      "initialMeaning": "Armor cinched against the cold and the weight — bracing to merely get through",
+      "finalMeaning": "Taken off on the sunrise roof — no more armor, fully awake and warm",
+      "isMotif": true
+    },
+    {
+      "id": "sp-mercy",
+      "detail": "Dai stopping at Mr. Okafor's chair in the ward",
+      "setupSceneId": "s3",
+      "payoffSceneId": "s3",
+      "initialMeaning": "An exhausted custodian notices a frightened stranger and turns toward him",
+      "finalMeaning": "She sits and takes his hand — the small mercy that is what finally wakes her",
+      "isMotif": false
+    }
+  ],
+  "emotionalTrajectory": [
+    "grief-frozen numbness",
+    "a far-off summons she resists",
+    "a startled waking",
+    "braced, resolved motion",
+    "warm breakthrough",
+    "tender human mercy",
+    "released, fully-awake peace"
+  ],
+  "scenes": [
+    {
+      "id": "s0",
+      "index": 0,
+      "title": "Asleep in the Lot",
+      "narrativePurpose": "Establish Dai grief-frozen and asleep in her car under one cold star, with the missed calls she is avoiding — the numbness the film will wake her from.",
+      "protagonist": "dai",
+      "objective": "Dai sleeps through the cold pre-dawn, avoiding the calls and the grief waiting on her phone.",
+      "opposition": "Her own exhaustion and grief, which make sleep and avoidance feel safer than waking.",
+      "visibleActions": [
+        {
+          "subject": "dai",
+          "action": "sleeps against the car window, breath fogging the glass, a lone blue star burning in the top corner",
+          "objectInteraction": "rests her head against the cold window of the parked Civic",
+          "subtext": "even asleep she is bracing; something far off is already calling her up"
+        },
+        {
+          "subject": "dai",
+          "action": "does not stir as her dark phone flares with a banner of four missed calls, the star's reflection sliding across the glass",
+          "objectInteraction": "the phone lights beside her, unanswered",
+          "subtext": "the grief she won't pick up is right there, waiting"
+        }
+      ],
+      "decision": "She stays asleep and unreaching rather than wake to the calls she is avoiding.",
+      "change": "Dai, the cold lot, the growing star, and the unanswered calls are established; her numbness is shown as grief, not laziness.",
+      "consequence": "The star brightens and the call keeps coming — the only thing left is for her to wake.",
+      "audienceLearns": "A grief-frozen woman sleeps in her car under one cold star while the calls she needs to answer go unanswered.",
+      "emotionalStateStart": "grief-frozen numbness",
+      "emotionalStateEnd": "a far-off summons she resists",
+      "startState": {
+        "wakefulness": "asleep",
+        "star": "pinpoint-windshield",
+        "phone": "dark-unanswered",
+        "grade": "cold-indigo",
+        "fleece": "unzipped"
+      },
+      "endState": {
+        "wakefulness": "stirring",
+        "star": "brightening-windshield",
+        "phone": "banner-lit",
+        "grade": "cold-indigo",
+        "fleece": "unzipped"
+      },
+      "causedByPreviousVia": null,
+      "setupPayoffRefs": ["sp-star", "sp-phone"],
+      "durationSec": 60
+    },
+    {
+      "id": "s1",
+      "index": 1,
+      "title": "Rise from the Dead",
+      "narrativePurpose": "The waking — Dai's eyes snap open on the star, she steps out onto the wet underpass past Pegasus chalk, and braces herself to move.",
+      "protagonist": "dai",
+      "objective": "Dai must wake, get out of the car, and steady herself to begin moving toward the shift.",
+      "opposition": "The pull of sleep and the weight she's carrying, and the cold wet dark she must step into.",
+      "visibleActions": [
+        {
+          "subject": "dai",
+          "action": "snaps her eyes open catching the blue star in the windshield, pupils dilating on a sharp inhale",
+          "objectInteraction": "stares up through the windshield at the star",
+          "subtext": "the rise-from-the-dead beat — something in her comes back to life"
+        },
+        {
+          "subject": "dai",
+          "action": "steps a boot down onto wet asphalt beside a puddle holding the star, a chalk Pegasus on the wall behind",
+          "objectInteraction": "plants her boot in the rain-slick as the puddle ripple scatters the reflected star",
+          "subtext": "she crosses from asleep to awake, onto solid cold ground"
+        },
+        {
+          "subject": "dai",
+          "action": "zips her work fleece tight over her scrubs, knuckles and faded wristband close, bracing",
+          "objectInteraction": "cinches the fleece zipper up to her throat",
+          "subtext": "armor on — bracing to merely get through"
+        }
+      ],
+      "decision": "She rises and steps out into the cold instead of sinking back into sleep.",
+      "change": "Dai wakes, leaves the car, and braces herself — the numbness cracks into motion.",
+      "consequence": "Awake and braced, she sets out toward the clinic as the first warmth is about to break.",
+      "audienceLearns": "The star wakes her; she rises from the car and braces herself to move.",
+      "emotionalStateStart": "a far-off summons she resists",
+      "emotionalStateEnd": "braced, resolved motion",
+      "startState": {
+        "wakefulness": "stirring",
+        "star": "brightening-windshield",
+        "phone": "banner-lit",
+        "grade": "cold-indigo",
+        "fleece": "unzipped"
+      },
+      "endState": {
+        "wakefulness": "awake",
+        "star": "puddle-reflection",
+        "phone": "pocketed",
+        "grade": "cold-indigo",
+        "fleece": "zipped"
+      },
+      "justifiedStateChanges": ["phone"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-fleece"],
+      "durationSec": 72
+    },
+    {
+      "id": "s2",
+      "index": 2,
+      "title": "The First Hook",
+      "narrativePurpose": "The cold-to-warm breakthrough — on the first hook the grade snaps to gold and Dai walks the empty overpass toward the skyline, the star now hand-sized.",
+      "protagonist": "dai",
+      "objective": "Dai must cross the empty overpass toward the clinic as the light finally turns warm.",
+      "opposition": "The lingering cold and weight she's walking out of, and the long empty road ahead.",
+      "visibleActions": [
+        {
+          "subject": "dai",
+          "action": "walks an empty 5am overpass toward the skyline as the grade breaks from cold to warm gold, the star now hand-sized throwing amber god-rays down the road",
+          "objectInteraction": "walks the center line of the overpass into the widening amber light",
+          "subtext": "the breakthrough — warmth and life finally reach her"
+        }
+      ],
+      "decision": "She keeps walking into the warm light rather than turning back to the cold.",
+      "change": "The world turns from cold indigo to warm gold around Dai as she walks toward the city.",
+      "consequence": "Carried by the warmth, she arrives at the clinic ward where her mercy will be asked for.",
+      "audienceLearns": "On the hook the cold breaks to gold — the light has reached her and she walks into it.",
+      "emotionalStateStart": "braced, resolved motion",
+      "emotionalStateEnd": "warm breakthrough",
+      "startState": {
+        "wakefulness": "awake",
+        "star": "puddle-reflection",
+        "grade": "cold-indigo",
+        "fleece": "zipped"
+      },
+      "endState": {
+        "wakefulness": "awake",
+        "star": "hand-sized-overpass",
+        "grade": "warm-gold",
+        "fleece": "zipped"
+      },
+      "justifiedStateChanges": ["grade", "star"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-star"],
+      "durationSec": 48
+    },
+    {
+      "id": "s3",
+      "index": 3,
+      "title": "The Mercy",
+      "narrativePurpose": "The tender center — Dai stops mopping at a frightened old man alone with the machine, sits, and takes his hand; the small mercy that is what truly wakes her.",
+      "protagonist": "dai",
+      "objective": "Dai must choose whether to pass by or stop for the frightened stranger alone in the ward.",
+      "opposition": "Her own exhaustion and the easy option of mopping past and finishing the shift alone.",
+      "visibleActions": [
+        {
+          "subject": "dai",
+          "action": "mops the ward floor, then stops at a chair where Mr. Okafor sits awake and afraid beside the humming machine, their eyes meeting",
+          "objectInteraction": "sets the mop aside as she turns toward the old man",
+          "subtext": "she sees him — she won't pass by"
+        },
+        {
+          "subject": "dai",
+          "action": "sits and takes Mr. Okafor's hand, the monitor's blue readout echoing the star, and his shoulders drop",
+          "objectInteraction": "folds her hand around his beside the glowing blue monitor",
+          "subtext": "the small mercy that finally wakes her all the way"
+        },
+        {
+          "subject": "mr-okafor",
+          "action": "lets his frightened shoulders drop as his hand is taken, his face softening",
+          "objectInteraction": "grips her hand back",
+          "subtext": "he was seen; he is not alone"
+        }
+      ],
+      "decision": "She stops and sits with him rather than mopping past and finishing the night alone.",
+      "change": "Dai gives the stranger company and comfort, and in doing so wakes fully herself.",
+      "consequence": "Having chosen mercy, she is ready to answer the calls she was avoiding.",
+      "audienceLearns": "Her small mercy to a frightened stranger is the thing that truly wakes her.",
+      "emotionalStateStart": "warm breakthrough",
+      "emotionalStateEnd": "tender human mercy",
+      "startState": {
+        "wakefulness": "awake",
+        "star": "monitor-echo",
+        "grade": "warm-gold",
+        "okafor": "awake-afraid"
+      },
+      "endState": {
+        "wakefulness": "fully-awake",
+        "star": "monitor-echo",
+        "grade": "warm-gold",
+        "okafor": "comforted"
+      },
+      "justifiedStateChanges": ["wakefulness", "star"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-mercy"],
+      "durationSec": 48
+    },
+    {
+      "id": "s4",
+      "index": 4,
+      "title": "Answer the Call",
+      "narrativePurpose": "She picks up the grief at last — Dai answers Ate Joy in the stairwell and laughs through tears as dawn floods in.",
+      "protagonist": "dai",
+      "objective": "Dai must finally answer the sister's call she has been avoiding all night.",
+      "opposition": "The grief and avoidance that kept the phone unanswered since the lot.",
+      "visibleActions": [
+        {
+          "subject": "dai",
+          "action": "answers the phone in a dawn-flooded stairwell, mouthing 'Ate?' and laughing through tears as light pours through the window behind her",
+          "objectInteraction": "lifts the phone to her ear against the bright stairwell window",
+          "subtext": "the call she avoided all night, finally picked up — the grief met with light"
+        }
+      ],
+      "decision": "She answers and lets the feeling come instead of avoiding it any longer.",
+      "change": "Dai answers the sister and breaks into a tearful laugh as the dawn fills the stairwell.",
+      "consequence": "Unfrozen and connected again, she steps up to the roof to meet the full sunrise.",
+      "audienceLearns": "She finally answers the call she was avoiding — the grief met with a tearful laugh in the light.",
+      "emotionalStateStart": "tender human mercy",
+      "emotionalStateEnd": "released, fully-awake peace",
+      "startState": {
+        "wakefulness": "fully-awake",
+        "phone": "pocketed",
+        "grade": "warm-gold",
+        "okafor": "comforted"
+      },
+      "endState": {
+        "wakefulness": "fully-awake",
+        "phone": "answered",
+        "grade": "dawn-gold",
+        "okafor": "comforted"
+      },
+      "justifiedStateChanges": ["phone", "grade"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-phone"],
+      "durationSec": 36
+    },
+    {
+      "id": "s5",
+      "index": 5,
+      "title": "Fully Awake",
+      "narrativePurpose": "The resurrection payoff — the star becomes the sun, Dai stands fully awake on the roof with the fleece off, and the film closes on her empty car holding the whole gold sky.",
+      "protagonist": "dai",
+      "objective": "Dai must step into the full sunrise, fully awake, and let the light hold her.",
+      "opposition": "The last weight of who she was in the cold — the frozen version she is leaving behind.",
+      "visibleActions": [
+        {
+          "subject": "dai",
+          "action": "stands on the clinic roof at true sunrise, fleece off and scrubs glowing, arms loose and face lifted as the star becomes the sun cresting between the towers",
+          "objectInteraction": "lets the taken-off fleece hang from one hand as she lifts her face to the sun",
+          "subtext": "fully awake — risen from the dead of her own numbness, no armor left"
+        },
+        {
+          "subject": "dai",
+          "action": "is absent from her empty Civic below, its windshield now holding the whole gold sky where one star used to be",
+          "objectInteraction": "the empty car holds the full dawn in its glass",
+          "subtext": "the one star has become the whole sky; she is up and gone into the day"
+        }
+      ],
+      "decision": "She takes off the armor and lets the full light hold her instead of bracing against it.",
+      "change": "The star completes its growth into the sun and Dai stands fully awake and unarmored in the dawn.",
+      "consequence": "A new, hard-won wakefulness — grief met, mercy given, the whole sky alight.",
+      "audienceLearns": "The star she woke to has become the dawn, and she stands fully awake, unarmored, in the light.",
+      "emotionalStateStart": "released, fully-awake peace",
+      "emotionalStateEnd": "released, fully-awake peace",
+      "startState": {
+        "wakefulness": "fully-awake",
+        "star": "dawn-gold",
+        "grade": "dawn-gold",
+        "fleece": "zipped"
+      },
+      "endState": {
+        "wakefulness": "fully-awake",
+        "star": "sun-risen",
+        "grade": "full-dawn",
+        "fleece": "off"
+      },
+      "justifiedStateChanges": ["star", "grade", "fleece"],
+      "causedByPreviousVia": "therefore",
+      "setupPayoffRefs": ["sp-star", "sp-fleece"],
+      "durationSec": 36
+    }
+  ],
+  "shots": [
+    {
+      "id": "w1",
+      "sceneId": "s0",
+      "index": 0,
+      "durationSec": 6,
+      "subject": "Dai asleep against the car window, breath fogging the glass, one blue star in the top corner",
+      "environment": "A cold sodium-lit clinic parking lot before dawn, Dai's parked Civic, orange-grey light, a lone blue-white star high in the top corner",
+      "action": "The camera pushes slowly to her sleeping face as the breath-fog thins and the star brightens",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "cold sodium orange-grey key, deep indigo shadow, a single blue-white star flare top-corner, soft window reflection",
+      "emotionalIntention": "grief-frozen numbness; a woman asleep under a far-off summons",
+      "temporalProgression": "the camera eases in on her face, the fogged breath thinning on the glass as the corner star slowly brightens",
+      "continuityConstraints": [
+        "Dai asleep, head against the window, human eyes closed, cornrows + gold hoops + navy fleece over teal scrubs, grounded in the car seat",
+        "ONE blue-white star top-corner, cold indigo/charcoal grade, 16:9 framed for a 2.39 letterbox, fine grain, no text",
+        "no HUD / floating type, no fire; she never floats"
+      ],
+      "referenceAssets": ["dai", "parking-lot", "the-star"],
+      "startStateRef": "wakefulness=asleep",
+      "endStateRef": "wakefulness=stirring",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["low night-lot hum", "faint breath on glass", "a distant car"],
+        "silence": false,
+        "note": "cold open on the instrumental; MiniMax native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the whole film (one model locks Dai's identity across every shot via first-frame conditioning from one hero still); photoreal micro-expression, 1080p, cap-compliant at $0.25/s. The richest, most carefully-prompted opening shot since it is previewed first.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal skin + true sleeping micro-expression, real breath-fog physics on cold glass",
+        "the star reads as a real sharp point of blue-white light, not a lens artifact",
+        "no warping, no CGI-plastic look, Dai recognizably the same woman as the hero reference"
+      ],
+      "keyframePrompt": "A 34-year-old Afro-Filipina woman asleep against the driver's window of a parked Civic in a cold sodium-lit clinic parking lot before dawn, breath fogging the glass, cornrows and small gold hoop earrings, a navy work fleece over teal scrubs, deep indigo shadow, a single sharp blue-white star burning high in the top corner, HBO-grade, anamorphic, fine grain, no text",
+      "veoPrompt": "A real 34-year-old Afro-Filipina woman sleeps against the window of her parked Civic in a cold sodium-lit lot before dawn, her breath fogging the cold glass; a slow cinematic push-in to her sleeping face as the fog thins and a single blue-white star brightens in the top corner. Cold indigo-and-charcoal grade, hyper-real, 35mm anamorphic, grounded, human, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, CGI, 3D render, video game, plastic skin, waxy skin, cartoon, anime, floating people, levitating, warped face, extra fingers, fake lens flare everywhere, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "w2",
+      "sceneId": "s0",
+      "index": 1,
+      "durationSec": 6,
+      "subject": "Macro of the dark dashboard phone waking with a 'Ate Joy (4 missed)' banner, star reflection sliding across the glass",
+      "environment": "On the dark dashboard of the Civic in the cold lot, the phone screen the only light source, the blue star reflected in the glass",
+      "action": "The phone screen wakes and lights her chin as the reflected star slides across the glass",
+      "cameraFraming": "insert",
+      "cameraMovement": "push-in",
+      "lensIntention": "macro, anamorphic, very shallow",
+      "lighting": "the phone's cold screen-glow as key lighting her chin, deep indigo around, a blue star reflection travelling the glass",
+      "emotionalIntention": "the avoided grief, right there and unanswered; a far-off summons she resists",
+      "temporalProgression": "the dark screen wakes to a missed-calls banner, its glow rising on her chin as the reflected star slides across the phone glass",
+      "continuityConstraints": [
+        "the phone banner reads as a generic missed-call notification ('Ate Joy (4 missed)') — a real phone UI, not superimposed film text/HUD",
+        "cold indigo grade, the blue star reflection consistent with w1, 16:9 for a 2.39 letterbox, fine grain",
+        "Dai's chin + jaw + gold hoop in frame edge, human skin, grounded; no floating"
+      ],
+      "referenceAssets": ["the-phone", "dai", "the-star"],
+      "startStateRef": "phone=dark-unanswered",
+      "endStateRef": "phone=banner-lit",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a muffled phone buzz", "a soft notification tone", "night-lot hum"],
+        "silence": false,
+        "note": "verse — the avoided call; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the macro phone insert (one model for whole-film consistency); photoreal screen-glow on skin and real reflection travel. The second-richest, carefully-prompted opening shot, previewed first with w1.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal phone screen-glow as the only light, real reflection physics on the glass",
+        "the banner reads as a believable phone notification, not film-overlay text",
+        "no warping, Dai's partial face consistent with the hero reference"
+      ],
+      "keyframePrompt": "Extreme macro of a phone on a dark car dashboard waking with a missed-call banner reading 'Ate Joy (4 missed)', the cold screen-glow lighting a woman's chin and gold hoop earring at frame edge, a blue-white star reflection sliding across the phone glass, deep indigo around, HBO-grade, anamorphic, fine grain",
+      "veoPrompt": "An extreme macro of a phone waking on a dark car dashboard, a missed-call banner 'Ate Joy (4 missed)' glowing, its cold screen-light rising on a woman's chin and gold hoop at the frame edge while a blue-white star reflection slides across the phone glass; a slow macro push-in. Cold indigo grade, hyper-real, 35mm anamorphic, a believable phone UI, no film text overlay.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, warped hands, garbled text, superimposed film text, HUD, watermark"
+    },
+    {
+      "id": "w3",
+      "sceneId": "s1",
+      "index": 0,
+      "durationSec": 6,
+      "subject": "Dai's eyes snapping open catching the star in the windshield, pupils dilating",
+      "environment": "Inside the Civic looking at her face through the windshield, the blue star sharp in the glass above her",
+      "action": "Her eyes snap open on the star and her pupils dilate on a sharp inhale",
+      "cameraFraming": "close-up",
+      "cameraMovement": "push-in",
+      "lensIntention": "85mm-equivalent, anamorphic, very shallow",
+      "lighting": "cold key on her face, the blue star reflected in her wet eyes, deep indigo fill",
+      "emotionalIntention": "the rise-from-the-dead beat; something comes back to life in her",
+      "temporalProgression": "her closed eyes snap open catching the star, pupils dilating as she takes a sharp waking inhale",
+      "continuityConstraints": [
+        "the SAME Dai, human eyes (never glowing), cornrows + gold hoops, navy fleece over teal scrubs, grounded in the seat",
+        "the blue star reflected in her eyes, cold indigo grade consistent with s0, 16:9 for a 2.39 letterbox, fine grain",
+        "no HUD / floating type; she does not float"
+      ],
+      "referenceAssets": ["dai", "the-star"],
+      "startStateRef": "wakefulness=stirring",
+      "endStateRef": "wakefulness=awake",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a sharp waking inhale", "a heartbeat thud", "night-lot hum"],
+        "silence": false,
+        "note": "verse 1 — 'rise from the dead'; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for photoreal micro-expression on the waking beat; one model keeps Dai's face identical to the hero reference.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal skin + true pupil-dilation and a real waking inhale",
+        "a real star reflection in wet human eyes, never glowing eyes",
+        "no warping, Dai consistent with the hero reference"
+      ],
+      "keyframePrompt": "Close-up of a 34-year-old Afro-Filipina woman's face as her eyes snap open inside a car, a sharp blue-white star reflected in her wet eyes above her, pupils dilating on a sharp inhale, cornrows and gold hoops, cold indigo key and deep fill, HBO-grade, anamorphic, fine grain",
+      "veoPrompt": "A close-up on a real woman's face inside a car as her eyes snap open and her pupils dilate on a sharp waking inhale, a blue-white star reflected in her wet eyes; a slow push-in. Cold indigo grade, hyper-real skin, true micro-expression, 35mm anamorphic, human eyes never glowing.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, red eyes, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, warped face, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "w4",
+      "sceneId": "s1",
+      "index": 1,
+      "durationSec": 6,
+      "subject": "A boot hitting wet asphalt beside a puddle holding the star, Pegasus chalk on the wall",
+      "environment": "A wet 5am underpass beside the lot, rain-slick asphalt, a puddle holding the reflected star, a chalk Pegasus on the concrete wall behind",
+      "action": "Her boot steps down into the wet and the ripple scatters the star's reflection in the puddle",
+      "cameraFraming": "insert",
+      "cameraMovement": "tilt",
+      "lensIntention": "anamorphic, low, shallow",
+      "lighting": "cold wet-asphalt reflections, the blue star mirrored in the puddle, chalk Pegasus faintly lit behind",
+      "emotionalIntention": "crossing from asleep to awake, onto solid cold ground",
+      "temporalProgression": "the boot plants in the puddle and the ripple blows the reflected star apart as the camera tilts up toward the chalk Pegasus",
+      "continuityConstraints": [
+        "Dai's work boot + scrub-cuff, grounded, stepping onto real wet asphalt — never floating",
+        "the star reflected in the puddle (consistent blue-white), a chalk Pegasus drawing on the wall, cold grade, 16:9 for a 2.39 letterbox, fine grain",
+        "no HUD / floating type, no fire"
+      ],
+      "referenceAssets": ["underpass", "the-star", "dai"],
+      "startStateRef": "star=brightening-windshield",
+      "endStateRef": "star=puddle-reflection",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a boot splash in a puddle", "dripping water", "a low underpass echo"],
+        "silence": false,
+        "note": "verse 1 — stepping out; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the photoreal wet-asphalt reflection insert; one model for whole-film consistency.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal boot + real puddle ripple and reflection physics",
+        "the chalk Pegasus reads as real chalk on concrete",
+        "no warping, grounded, cold grade"
+      ],
+      "keyframePrompt": "Low insert of a work boot stepping down into a puddle on wet 5am underpass asphalt, a blue-white star reflected in the water scattering as the ripple spreads, a faint chalk drawing of Pegasus on the concrete wall behind, cold grade, HBO-grade, anamorphic, fine grain",
+      "veoPrompt": "A low insert of a real work boot stepping down into a puddle on wet underpass asphalt at 5am, a blue-white star reflected in the water blowing apart as the ripple spreads; a slow tilt up toward a chalk Pegasus drawing on the concrete wall. Cold grade, hyper-real water physics, 35mm anamorphic, grounded, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "CGI, 3D render, video game, plastic look, cartoon, anime, floating, levitating, fake water, warped reflection, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "w5",
+      "sceneId": "s1",
+      "index": 2,
+      "durationSec": 6,
+      "subject": "Dai's hands zipping the work fleece tight, knuckles and faded wristband close",
+      "environment": "Tight on her hands at the underpass, cold light, the faded hospital wristband on one wrist",
+      "action": "Her hands cinch the fleece zipper up to her throat, bracing",
+      "cameraFraming": "insert",
+      "cameraMovement": "push-in",
+      "lensIntention": "macro, anamorphic, very shallow",
+      "lighting": "cold key raking the hands, one warm stop beginning to creep in, deep fill",
+      "emotionalIntention": "armor on — bracing to merely get through",
+      "temporalProgression": "her hands draw the fleece zipper up to the throat and cinch it tight as the light warms one stop",
+      "continuityConstraints": [
+        "Dai's real hands, navy fleece + teal scrub-cuff, faded hospital wristband on one wrist, grounded",
+        "cold grade just starting to warm one stop (the breakthrough is coming), 16:9 for a 2.39 letterbox, fine grain",
+        "no HUD / floating type"
+      ],
+      "referenceAssets": ["work-fleece", "dai"],
+      "startStateRef": "fleece=unzipped",
+      "endStateRef": "fleece=zipped",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a zipper drawing up", "a steadying breath", "thin wind"],
+        "silence": false,
+        "note": "pre-hook — bracing; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the photoreal hands-and-zipper insert; one model for whole-film consistency.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal hands + real fabric + zipper, no extra fingers",
+        "the wristband reads as a real worn hospital band",
+        "no warping, grounded"
+      ],
+      "keyframePrompt": "Macro insert of a woman's hands zipping a navy work fleece up to the throat over teal scrubs, knuckles and a faded hospital wristband close, cold raking light with one warm stop creeping in, HBO-grade, anamorphic, fine grain",
+      "veoPrompt": "A macro insert of a real woman's hands drawing a navy work-fleece zipper up to her throat over teal scrubs and cinching it tight, a faded hospital wristband on one wrist; a slow push-in as the light warms one stop. Hyper-real hands and fabric, 35mm anamorphic, cold-to-warming grade, grounded, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "CGI, 3D render, video game, plastic skin, cartoon, anime, floating, levitating, extra fingers, warped hands, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "w6",
+      "sceneId": "s2",
+      "index": 0,
+      "durationSec": 6,
+      "subject": "Dai walking an empty 5am overpass toward the skyline, the star hand-sized throwing amber god-rays",
+      "environment": "An empty pedestrian overpass at 5am facing the city skyline, the grade breaking from cold to warm gold, the star now hand-sized casting amber god-rays down the road",
+      "action": "She walks the center of the overpass toward the skyline as the cold breaks to gold around her",
+      "cameraFraming": "wide",
+      "cameraMovement": "crane",
+      "lensIntention": "anamorphic 35mm, wide, slowly rising",
+      "lighting": "the grade snapping from cold indigo to warm gold, hand-sized star throwing amber god-rays down the road, steam-breath lit, hair rim-lit",
+      "emotionalIntention": "warm breakthrough; warmth and life finally reach her",
+      "temporalProgression": "she walks forward into widening amber light as the camera cranes up, cold indigo giving way to warm gold, her hair lifting in the rising rays",
+      "continuityConstraints": [
+        "the SAME Dai, navy fleece over teal scrubs, cornrows + gold hoops, GROUNDED walking the overpass on her feet — NEVER floating",
+        "the cold-to-warm grade break lands here (first hook), the star now hand-sized with amber god-rays, 16:9 for a 2.39 letterbox, fine grain",
+        "no HUD / floating type, no fire"
+      ],
+      "referenceAssets": ["dai", "overpass", "the-star"],
+      "startStateRef": "grade=cold-indigo",
+      "endStateRef": "grade=warm-gold",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["footsteps on the overpass", "a swell of wind", "distant city hum"],
+        "silence": false,
+        "note": "FIRST HOOK — cold-to-warm cut; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the grounded hero walk at the breakthrough; one model keeps Dai consistent as the grade turns.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "grounded walking, feet on the overpass, never floating",
+        "photoreal cold-to-warm grade break + real god-rays + real steam-breath",
+        "no warping, Dai consistent with the hero reference"
+      ],
+      "keyframePrompt": "A 34-year-old Afro-Filipina woman in a navy work fleece over teal scrubs walking the center of an empty 5am pedestrian overpass toward a city skyline, the grade breaking from cold indigo to warm gold, a hand-sized blue-white star throwing amber god-rays down the road, steam-breath and hair lifting, grounded on her feet, HBO-grade, anamorphic, fine grain",
+      "veoPrompt": "A real woman in a work fleece over scrubs walks the center of an empty 5am overpass toward the skyline, grounded, feet on the ground, as the grade breaks from cold indigo to warm gold and a hand-sized star throws amber god-rays down the road; a slow crane rising with her, steam-breath, hair lifting. Hyper-real, 35mm anamorphic, never floating.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, warped body, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "w7",
+      "sceneId": "s3",
+      "index": 0,
+      "durationSec": 6,
+      "subject": "Dai mopping the ward, then stopping at Mr. Okafor awake and afraid beside the humming machine",
+      "environment": "A quiet night dialysis ward, rows of chairs, one humming machine with a blue monitor readout, polished floor, warm-gold light warming the cool clinical space",
+      "action": "She stops mopping and turns toward the old man as their eyes meet",
+      "cameraFraming": "medium",
+      "cameraMovement": "tracking",
+      "lensIntention": "anamorphic 35mm, medium, slow tracking",
+      "lighting": "cool clinical key warming with gold, the machine's blue monitor glow on Mr. Okafor, soft fill",
+      "emotionalIntention": "she sees him — she won't pass by",
+      "temporalProgression": "the camera tracks with her mop stroke until she stops and turns, the old man's frightened eyes meeting hers across the ward",
+      "continuityConstraints": [
+        "the SAME Dai, navy fleece over teal scrubs, mop in hand, GROUNDED; Mr. Okafor elderly Black man awake + afraid, blanket over knees, blue monitor glow on him",
+        "warm-gold grade warming the cool ward, the machine's blue readout echoing the star, 16:9 for a 2.39 letterbox, fine grain",
+        "no HUD / floating type, no fire, dignified not exploitative"
+      ],
+      "referenceAssets": ["dai", "mr-okafor", "dialysis-ward"],
+      "startStateRef": "okafor=awake-afraid",
+      "endStateRef": "okafor=awake-afraid",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a mop on polished floor", "the steady hum of a dialysis machine", "a soft rhythmic beep"],
+        "silence": false,
+        "note": "verse 2 — noticing him; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the two-character ward beat; one model keeps both Dai and Mr. Okafor consistent across the mercy scene.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal grounded figures, real ward + machine, no floating",
+        "Mr. Okafor dignified and afraid, the blue monitor glow real",
+        "no warping, Dai consistent with the hero reference"
+      ],
+      "keyframePrompt": "A night dialysis ward, a 34-year-old Afro-Filipina custodian in navy fleece over teal scrubs pausing mid-mop and turning toward an elderly Black man sitting awake and afraid beside a humming machine with a glowing blue monitor, a blanket over his knees, warm-gold light warming the cool clinical space, their eyes meeting, HBO-grade, anamorphic, fine grain",
+      "veoPrompt": "In a quiet night dialysis ward a real custodian in a work fleece over scrubs stops mopping and turns toward an elderly man sitting awake and afraid beside a humming machine with a glowing blue monitor, a blanket over his knees; a slow tracking move as their eyes meet. Warm-gold light in a cool ward, hyper-real, 35mm anamorphic, grounded, dignified, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, warped faces, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "w8",
+      "sceneId": "s3",
+      "index": 1,
+      "durationSec": 6,
+      "subject": "Dai sitting and taking Mr. Okafor's hand, the blue monitor echoing the star, his shoulders dropping",
+      "environment": "At Mr. Okafor's chair in the ward, the blue monitor readout glowing beside their clasped hands, warm-gold fill",
+      "action": "She folds her hand around his beside the glowing monitor and his shoulders drop",
+      "cameraFraming": "close-up",
+      "cameraMovement": "push-in",
+      "lensIntention": "85mm-equivalent, anamorphic, very shallow",
+      "lighting": "the monitor's blue readout echoing the star on their hands, warm-gold key on their faces, soft fill",
+      "emotionalIntention": "tender human mercy; the small mercy that wakes her all the way",
+      "temporalProgression": "she sits and closes her hand around his beside the blue monitor, and his frightened shoulders ease down as both faces soften",
+      "continuityConstraints": [
+        "the SAME Dai + Mr. Okafor, two human hands clasped, warm-gold key with the blue monitor echoing the star, grounded",
+        "dignified, no gore, 16:9 for a 2.39 letterbox, fine grain",
+        "no HUD / floating type, no glowing eyes"
+      ],
+      "referenceAssets": ["dai", "mr-okafor", "the-star"],
+      "startStateRef": "wakefulness=awake",
+      "endStateRef": "wakefulness=fully-awake",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a soft shared breath", "the machine's steady beep", "a gentle settle"],
+        "silence": false,
+        "note": "chorus / verse 2 — the hand taken; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the tender clasped-hands beat; one model keeps both characters consistent.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal two human hands clasped, no extra fingers, real skin",
+        "the blue monitor glow and warm key read real",
+        "no warping, both faces consistent with their references"
+      ],
+      "keyframePrompt": "Close-up of a custodian sitting and folding her hand around an elderly man's hand beside a glowing blue dialysis monitor, his frightened shoulders dropping and both faces softening, warm-gold key with the blue readout echoing a star, HBO-grade, anamorphic, fine grain",
+      "veoPrompt": "A close-up as a real custodian sits and folds her hand around an elderly man's hand beside a glowing blue dialysis monitor, his frightened shoulders easing down as both faces soften; a slow tender push-in. Warm-gold key with the blue monitor echoing a star, hyper-real skin, 35mm anamorphic, two human hands, no gore.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, extra fingers, warped hands, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "w9",
+      "sceneId": "s4",
+      "index": 0,
+      "durationSec": 6,
+      "subject": "Dai answering the phone in a dawn-flooded stairwell, laughing through tears",
+      "environment": "A concrete clinic stairwell with a tall window flooding with dawn and the star, Dai against the bright light",
+      "action": "She lifts the phone to her ear and laughs through tears as dawn floods the window behind her",
+      "cameraFraming": "medium",
+      "cameraMovement": "push-in",
+      "lensIntention": "anamorphic 35mm, medium, shallow",
+      "lighting": "warm dawn backlight pouring through the stairwell window, the star in the light, soft bounce on her tearful face",
+      "emotionalIntention": "released, fully-awake peace; the grief met with light",
+      "temporalProgression": "she lifts the phone, mouths 'Ate?', and breaks into a tearful laugh as the dawn floods brighter through the window behind her",
+      "continuityConstraints": [
+        "the SAME Dai, navy fleece over teal scrubs, cornrows + gold hoops, human eyes, GROUNDED on the stairs",
+        "warm dawn backlight with the star in the window, grade now dawn-gold, 16:9 for a 2.39 letterbox, fine grain",
+        "no HUD / floating type; she does not float"
+      ],
+      "referenceAssets": ["dai", "stairwell", "the-phone", "the-star"],
+      "startStateRef": "phone=pocketed",
+      "endStateRef": "phone=answered",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a tearful laugh", "a shaky exhale", "faint dawn birdsong through glass"],
+        "silence": false,
+        "note": "bridge — answering the call; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the photoreal laugh-through-tears beat; one model keeps Dai's face identical across the film.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal skin + true laugh-through-tears micro-expression, real backlit dawn",
+        "human eyes, real tears catching the light",
+        "no warping, Dai consistent with the hero reference"
+      ],
+      "keyframePrompt": "A 34-year-old Afro-Filipina woman in a navy fleece over teal scrubs answering a phone in a concrete clinic stairwell, a tall window behind her flooding with warm dawn and a bright star, laughing through tears, cornrows and gold hoops, HBO-grade, anamorphic, fine grain",
+      "veoPrompt": "A real woman in a work fleece over scrubs lifts a phone to her ear in a concrete stairwell, mouths a word and breaks into a tearful laugh as a tall window behind her floods brighter with warm dawn and a star; a slow push-in. Warm dawn backlight, hyper-real skin and tears, 35mm anamorphic, grounded, human eyes.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "glowing eyes, CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, warped face, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "w10",
+      "sceneId": "s5",
+      "index": 0,
+      "durationSec": 6,
+      "subject": "Wide — the star become the sun cresting between the towers, Pegasus dissolving into cloud",
+      "environment": "A wide city vista at true sunrise, the star now the sun cresting between two towers, a Pegasus shape dissolving into cloud, city lights flicking off",
+      "action": "The sun crests between the towers as the Pegasus cloud dissolves and the city lights flick off",
+      "cameraFraming": "establishing",
+      "cameraMovement": "drone",
+      "lensIntention": "anamorphic 35mm, wide vista, high",
+      "lighting": "full warm sunrise flaring between the towers, cold night lifting, clean dawn air",
+      "emotionalIntention": "the resurrection payoff; one star has become the whole sky",
+      "temporalProgression": "the drone holds as the sun crests between the towers, a Pegasus-shaped cloud dissolving and the city lights flicking off in the growing light",
+      "continuityConstraints": [
+        "the growing-star motif completes as the sunrise (payoff), a Pegasus cloud shape dissolving, no figure",
+        "full warm dawn grade, the cold night lifting, 16:9 for a 2.39 letterbox, fine grain",
+        "no HUD / floating type, no fire"
+      ],
+      "referenceAssets": ["clinic-roof", "the-star"],
+      "startStateRef": "grade=dawn-gold",
+      "endStateRef": "grade=full-dawn",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a wide dawn wind", "distant waking city", "soft swelling calm"],
+        "silence": false,
+        "note": "final chorus — the star becomes the sun; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the pure-landscape sunrise vista; one model for whole-film consistency; no character.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal sunrise cresting between real towers, real cloud dissolve",
+        "clean dawn air, the star fully become the sun",
+        "no warping, no CGI look"
+      ],
+      "keyframePrompt": "A wide aerial city vista at true sunrise, a blue-white star now become the sun cresting between two towers, a faint Pegasus-shaped cloud dissolving into the dawn, city lights flicking off as warm light floods in, HBO-grade, anamorphic, fine grain, no text",
+      "veoPrompt": "A wide aerial city vista at true sunrise; a star has become the sun cresting between two towers while a faint Pegasus-shaped cloud dissolves and the city lights flick off in the growing light; a slow drone hold. Full warm dawn, hyper-real, 35mm anamorphic, real sunrise light, no figure.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "CGI, 3D render, video game, plastic look, cartoon, anime, floating, superimposed text, HUD, watermark, fake sun"
+    },
+    {
+      "id": "w11",
+      "sceneId": "s5",
+      "index": 1,
+      "durationSec": 6,
+      "subject": "Dai on the clinic roof at true sunrise, fleece off, scrubs glowing, fully awake",
+      "environment": "The flat clinic roof at true sunrise, full warm dawn, Dai standing with the fleece off and scrubs glowing, towers behind",
+      "action": "She stands fully awake, arms loose, lifting her face to the sun with the fleece hanging from one hand",
+      "cameraFraming": "medium",
+      "cameraMovement": "orbit",
+      "lensIntention": "anamorphic 35mm, medium, slow orbit",
+      "lighting": "full warm sunrise key, scrubs glowing in the gold, wind lit, clean air",
+      "emotionalIntention": "released, fully-awake peace; risen from the dead of her own numbness",
+      "temporalProgression": "the camera orbits slowly as she lifts her face to the sun, arms loosening, the taken-off fleece hanging from one hand, hair and scrubs catching the wind",
+      "continuityConstraints": [
+        "the SAME Dai, now with the fleece OFF (payoff) and scrubs glowing, cornrows + gold hoops, GROUNDED on the roof — NEVER floating, a resurrection pose with NO cheese",
+        "full warm dawn grade, 16:9 for a 2.39 letterbox, fine grain",
+        "no HUD / floating type, dignified"
+      ],
+      "referenceAssets": ["dai", "clinic-roof", "work-fleece"],
+      "startStateRef": "fleece=zipped",
+      "endStateRef": "fleece=off",
+      "transition": "cut",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["a full first breath", "warm dawn wind", "distant birdsong"],
+        "silence": false,
+        "note": "final hook — fully awake; native audio discarded, score to the track"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the grounded resurrection-pose hero shot; one model keeps Dai identical to the hero reference at the payoff.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "grounded on the roof, feet planted, never floating, a dignified resurrection pose with no cheese",
+        "photoreal skin + real wind + scrubs glowing in real sunrise",
+        "no warping, Dai consistent with the hero reference"
+      ],
+      "keyframePrompt": "A 34-year-old Afro-Filipina woman standing on a flat clinic roof at true sunrise, a navy fleece hanging from one hand and teal scrubs glowing in the full warm dawn, arms loose and face lifted to the sun, cornrows and gold hoops, grounded, dignified, HBO-grade, anamorphic, fine grain",
+      "veoPrompt": "A real woman stands on a flat clinic roof at true sunrise, a work fleece hanging from one hand and her scrubs glowing in the full warm dawn, arms loosening as she lifts her face to the sun, hair and fabric catching the wind; a slow orbit around her, grounded, feet planted, never floating. Hyper-real, 35mm anamorphic, dignified, no cheese.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "CGI, 3D render, video game, plastic skin, cartoon, anime, floating people, levitating, warped body, cheesy pose, superimposed text, HUD, watermark"
+    },
+    {
+      "id": "w12",
+      "sceneId": "s5",
+      "index": 2,
+      "durationSec": 6,
+      "subject": "The empty Civic, windshield now holding the whole gold sky where one star used to be",
+      "environment": "Back in the parking lot at full dawn, the empty Civic, its windshield holding the whole warm gold sky, no star — the sky itself",
+      "action": "The camera holds on the empty car as its windshield holds the full gold sky, then slowly fades",
+      "cameraFraming": "wide",
+      "cameraMovement": "locked-off",
+      "lensIntention": "anamorphic 35mm, wide, static",
+      "lighting": "full warm dawn flooding the lot, the whole gold sky mirrored in the windshield, clean air",
+      "emotionalIntention": "earned, hard-won peace; the one star has become the whole sky and she is gone into the day",
+      "temporalProgression": "the camera holds static on the empty car as the full gold sky sits in its windshield, then slowly fades out",
+      "continuityConstraints": [
+        "the empty Civic (no Dai), the windshield now holding the WHOLE gold sky where the single star was in s0 (motif payoff)",
+        "full warm dawn grade (the inverse of the cold open), 16:9 for a 2.39 letterbox, fine grain",
+        "no HUD / floating type, no fire, no figure"
+      ],
+      "referenceAssets": ["parking-lot", "the-star"],
+      "startStateRef": "star=sun-risen",
+      "endStateRef": "star=sun-risen",
+      "transition": "fade",
+      "audio": {
+        "dialogue": false,
+        "music": true,
+        "sfx": ["quiet morning calm", "a lone bird", "a soft breeze"],
+        "silence": false,
+        "note": "outro — the empty car, the whole sky; native audio discarded, score to the track — final beat"
+      },
+      "model": {
+        "provider": "minimax",
+        "modelId": "MiniMax-Hailuo-02",
+        "rationale": "MiniMax Hailuo-02 for the final empty-car outro; one model for whole-film consistency; no character.",
+        "estCostUsd": 1.5,
+        "dryRun": true
+      },
+      "qualityConstraints": [
+        "photoreal empty car + real sky reflection in the windshield",
+        "the whole gold sky replaces the single star of the open (payoff), no figure",
+        "no warping, no CGI look"
+      ],
+      "keyframePrompt": "A wide static shot of an empty Civic in a parking lot at full dawn, its windshield holding the whole warm gold morning sky where a single blue-white star burned at night, clean air, full warm dawn flooding the lot, HBO-grade, anamorphic, fine grain, no text",
+      "veoPrompt": "A wide static shot of an empty Civic in a parking lot at full dawn, the whole warm gold morning sky mirrored in its windshield where a single star burned in the night; the camera holds, then slowly fades. Full warm dawn, hyper-real, 35mm anamorphic, no figure, no text.",
+      "useHeroAsFirstFrame": false,
+      "seedanceRef": false,
+      "negativePrompt": "CGI, 3D render, video game, plastic look, cartoon, anime, floating, people, figure, superimposed text, HUD, watermark"
+    }
+  ],
+  "budget": { "maxUsd": 40, "spentUsd": 0, "requireApproval": true },
+  "qualityAcceptance": [
+    "Hyper-real: convincing on a paused frame AND in motion — anamorphic 35mm, fine grain",
+    "Cold indigo/charcoal open that HARD-CUTS to warm amber/gold on the first hook (w6), then grows to full dawn",
+    "ONE model (MiniMax Hailuo-02) across the whole film for character consistency — Dai stays recognizably the same woman shot-to-shot via first/last-frame conditioning from one hero still",
+    "People GROUNDED always (sleep/drive/walk/kneel/reach, NEVER floating or levitating)",
+    "The growing-star motif is legible: pinpoint windshield → puddle → dialysis monitor → sunrise → whole-sky windshield",
+    "Dignified hard-but-holy treatment — grief and mercy shown with respect, never exploitative; Mr. Okafor dignified, not a prop",
+    "NO superimposed HUD / holograms / floating type in-scene (the phone banner reads as a real phone UI, not film overlay)",
+    "Theme reads: wake up, sleeper — rise from the dead; the light that wakes her is the mercy she gives",
+    "Beat-synced: every cut lands on a beat; the biggest cut (cold→warm) lands on the first hook",
+    "Score to the original 'Wake Up For You (Algenib Mix)' master (public/audio/wake-up-algenib-mix.mp3); MiniMax native audio discarded",
+    "S1 & S2 opening shots (w1, w2) are the richest, most carefully-prompted — they are previewed first"
+  ]
+}
