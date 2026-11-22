@@ -30,8 +30,16 @@ const SENTRY_DSN = (window.__SENTRY_DSN__ || '').trim();
 // We avoid the full SDK (60KB+) and ship a 15-line shim that posts the same
 // event envelope. The worker forwards to Sentry's ingest URL with the auth
 // header so the DSN never leaks to the client.
+const IGNORED_CLIENT_ERROR_RE =
+  /ResizeObserver loop (?:completed with undelivered notifications|limit exceeded)|Object Not Found Matching Id:\d+|Script error\.?/i;
+
+function shouldIgnoreClientError(message: unknown): boolean {
+  return typeof message === 'string' && IGNORED_CLIENT_ERROR_RE.test(message);
+}
+
 function reportError(payload: Record<string, unknown>) {
   if (!SENTRY_DSN) return;
+  if (shouldIgnoreClientError(payload.message)) return;
   try {
     fetch('/api/error', {
       method: 'POST',

@@ -2245,6 +2245,14 @@ export default {
             type?: string;
             url?: string;
           };
+          if (
+            typeof parsed.message === 'string' &&
+            /ResizeObserver loop (?:completed with undelivered notifications|limit exceeded)|Object Not Found Matching Id:\d+|^Script error\.?$/i.test(
+              parsed.message.trim()
+            )
+          ) {
+            return new Response(null, { status: 204 });
+          }
           // Parse DSN: https://<public>@<host>/<project_id>
           const m = env.SENTRY_DSN.match(/^https:\/\/([^@]+)@([^/]+)\/(\d+)$/);
           if (m) {
@@ -2468,12 +2476,7 @@ export default {
       // just serves the cached value. Fail-soft {insight:''}. Edge-cache 5m.
       if (url.pathname === '/api/stats-insight' && request.method === 'GET') {
         const insight = (await env.COUNTERS.get('stats-insight#v3')) || '';
-        return jsonResponse(
-          { insight },
-          200,
-          { 'Cache-Control': 'public, max-age=300' },
-          request
-        );
+        return jsonResponse({ insight }, 200, { 'Cache-Control': 'public, max-age=300' }, request);
       }
 
       // #10 GEO — aggregated AI-discovery counts (referrals + crawler fetches).
@@ -3210,9 +3213,10 @@ export default {
         const to = TRACK_BY_ID.get(toId)!;
         const fromAlbum = ALBUM_BY_ID.get(from.album);
         const toAlbum = ALBUM_BY_ID.get(to.album);
-        const segueLyric = (t: (typeof from) | (typeof to)): string =>
-          (STATIC_LYRICS[t.id] || []).map(l => l.trim()).find(l => l.length > 8 && l.length < 70 && !/^[[(]/.test(l)) ??
-          '';
+        const segueLyric = (t: typeof from | typeof to): string =>
+          (STATIC_LYRICS[t.id] || [])
+            .map(l => l.trim())
+            .find(l => l.length > 8 && l.length < 70 && !/^[[(]/.test(l)) ?? '';
         const fromLyric = segueLyric(from);
         const toLyric = segueLyric(to);
         const system =
@@ -3303,7 +3307,7 @@ export default {
           facts = `ALBUM: "${a.name}" by bZ\ntagline: ${a.tagline ?? ''}\nabout: ${a.description ?? ''}`;
         }
         const system =
-          "You write ONE irresistible social share caption for bZ's gospel-rap music, drawing ONLY on the details given. Make a stranger want to press play. Voice: Newark hustle-gospel — street-smart, faith-rooted, cinematic. LEAD WITH THIS SONG'S OWN concrete image, story, place, or a vivid line from it — the specific detail that sets it apart from every other track. NEVER open with generic faith-words that could describe any gospel song. BAD (banned — says nothing, fits every bZ track): \"Holy vibes from <album>\", \"Hard holy vibes\", \"Gospel vibes\", \"Holy beats\". GOOD (concrete, specific to the song): \"Mama called us Baby Sharks in the dark\", \"A CBO pen against a trillion-dollar hole\", \"Killed the dragon, kept the mercy\". STRICT: one line, max ~22 words AND under 170 characters, no hashtags, at most one tasteful emoji, no quotation marks, no markdown, no preamble, zero drug references. NEVER invent facts, numbers, features, or collaborators — interpret only what is given. Output ONLY the caption text.";
+          'You write ONE irresistible social share caption for bZ\'s gospel-rap music, drawing ONLY on the details given. Make a stranger want to press play. Voice: Newark hustle-gospel — street-smart, faith-rooted, cinematic. LEAD WITH THIS SONG\'S OWN concrete image, story, place, or a vivid line from it — the specific detail that sets it apart from every other track. NEVER open with generic faith-words that could describe any gospel song. BAD (banned — says nothing, fits every bZ track): "Holy vibes from <album>", "Hard holy vibes", "Gospel vibes", "Holy beats". GOOD (concrete, specific to the song): "Mama called us Baby Sharks in the dark", "A CBO pen against a trillion-dollar hole", "Killed the dragon, kept the mercy". STRICT: one line, max ~22 words AND under 170 characters, no hashtags, at most one tasteful emoji, no quotation marks, no markdown, no preamble, zero drug references. NEVER invent facts, numbers, features, or collaborators — interpret only what is given. Output ONLY the caption text.';
         let caption = '';
         try {
           const out = (await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
@@ -3338,9 +3342,7 @@ export default {
             const t = TRACK_BY_ID.get(trackId)!;
             const line = (STATIC_LYRICS[t.id] || [])
               .map(l => l.trim())
-              .find(
-                l => l.length > 14 && l.length < 90 && !/^[[(]/.test(l) && !GENERIC_CAP.test(l)
-              );
+              .find(l => l.length > 14 && l.length < 90 && !/^[[(]/.test(l) && !GENERIC_CAP.test(l));
             if (line) caption = line.length > 160 ? line.slice(0, 157).trimEnd() + '…' : line;
             else caption = '';
           } else {
@@ -3502,8 +3504,29 @@ export default {
           // never through argument" both → "win through actions …" so the prefix test
           // below catches them (the inserted "your" no longer breaks the match).
           const STOP = new Set([
-            'the', 'a', 'an', 'to', 'of', 'your', 'my', 'our', 'their', 'his', 'her',
-            'and', 'or', 'in', 'on', 'at', 'for', 'with', 'is', 'are', 'be', 'that', 'this'
+            'the',
+            'a',
+            'an',
+            'to',
+            'of',
+            'your',
+            'my',
+            'our',
+            'their',
+            'his',
+            'her',
+            'and',
+            'or',
+            'in',
+            'on',
+            'at',
+            'for',
+            'with',
+            'is',
+            'are',
+            'be',
+            'that',
+            'this'
           ]);
           const normed = (w: string): string =>
             w
@@ -3517,7 +3540,8 @@ export default {
           const isDupWhy = (w: string): boolean => {
             const n = normed(w);
             if (!n) return true;
-            for (const s of whySeen) if (n === s || n.startsWith(s + ' ') || s.startsWith(n + ' ')) return true;
+            for (const s of whySeen)
+              if (n === s || n.startsWith(s + ' ') || s.startsWith(n + ' ')) return true;
             return false;
           };
           const dupes: Array<{ id: string; why: string }> = [];
@@ -3564,8 +3588,7 @@ export default {
             let why = '';
             if (fromWisdom.length >= 4 && !nonReason.test(fromWisdom) && !isDupWhy(fromWisdom))
               why = fromWisdom;
-            else if (fromVibe.length >= 4 && !nonReason.test(fromVibe) && !isDupWhy(fromVibe))
-              why = fromVibe;
+            else if (fromVibe.length >= 4 && !nonReason.test(fromVibe) && !isDupWhy(fromVibe)) why = fromVibe;
             else if (d.why.length >= 4 && !nonReason.test(d.why) && !isDupWhy(d.why)) why = d.why;
             if (!why) continue;
             whySeen.add(normed(why));

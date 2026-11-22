@@ -1353,10 +1353,17 @@ function setupShell(root: HTMLElement) {
           <button id="btnPagesMenu" class="topbar__menu-trigger" type="button"
                   aria-haspopup="menu" aria-expanded="false" aria-controls="topbarPagesMenu">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            <span>Story</span>
+            <span>Browse</span>
             <svg class="topbar__menu-caret" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5 6 7.5 9 4.5"/></svg>
           </button>
-          <div id="topbarPagesMenu" class="topbar__menu-list" role="menu" aria-label="Story pages" hidden>
+          <div id="topbarPagesMenu" class="topbar__menu-list topbar__mega" role="menu" aria-label="Browse bz.rocks" hidden>
+            <div class="topbar__mega-head">
+              <span>Browse the world of bZ</span>
+              <strong>Music, meaning, process, and every way in.</strong>
+            </div>
+            <section class="topbar__mega-group" aria-labelledby="megaExplore"><h2 id="megaExplore">Explore</h2>
+            <div class="topbar__mega-links">
+            <a href="/"><strong>Home</strong><span>The music-first experience</span></a>
             <a href="/about" data-content-page="about" role="menuitem">
               <strong>About</strong>
               <span>Bio · theology · process · support · connect</span>
@@ -1389,6 +1396,8 @@ function setupShell(root: HTMLElement) {
               <strong>Your Downloads</strong>
               <span>Offline library — manage saved tracks</span>
             </a>
+            </div></section>
+            <section class="topbar__mega-group" aria-labelledby="megaStory"><h2 id="megaStory">Story &amp; impact</h2><div class="topbar__mega-links">
             <a id="lnkAppeal" href="/ashton/" role="menuitem">
               <strong>Appeal</strong>
               <span>Open letter to Ashton + Mila</span>
@@ -1396,6 +1405,22 @@ function setupShell(root: HTMLElement) {
             <a href="https://mission.megabyte.space" target="_blank" rel="noopener noreferrer" role="menuitem">
               <strong>Mission ↗</strong>
               <span>What bZ is building + why</span>
+            </a>
+            </div></section>
+            <section class="topbar__mega-group topbar__mega-journal" aria-labelledby="megaJournal"><h2 id="megaJournal">Latest from the journal</h2>
+              <a class="topbar__mega-feature" href="/blog/reckless-grace-humanitarianism" data-content-page="blog/reckless-grace-humanitarianism" role="menuitem">
+                <img src="/art/cover-reckless-grace.jpg" alt="Reckless Grace album artwork glowing red in deep shadow" loading="lazy" decoding="async" />
+                <span><small>Impact</small><strong>Reckless Grace: Mercy Without Borders</strong><em>Why nobody belongs beneath us.</em></span>
+              </a>
+              <a class="topbar__mega-feature" href="/blog/songs-built-in-conversation" data-content-page="blog/songs-built-in-conversation" role="menuitem">
+                <img src="/art/cover-signals.jpg" alt="Signals artwork resembling a luminous studio transmission" loading="lazy" decoding="async" />
+                <span><small>Inside the studio</small><strong>Songs Built in Conversation</strong><em>Our ChatGPT + Suno process.</em></span>
+              </a>
+              <a class="topbar__mega-all" href="/blog" data-content-page="blog" role="menuitem">View all articles →</a>
+            </section>
+            <a class="topbar__mega-album" href="/reckless-grace" role="menuitem">
+              <img src="/art/cover-reckless-grace.jpg" alt="Reckless Grace album cover" loading="lazy" decoding="async" />
+              <span><small>Featured album</small><strong>Reckless Grace</strong><em>Listen with context →</em></span>
             </a>
           </div>
         </div>
@@ -5961,7 +5986,14 @@ function startHud() {
   };
   if (wave) {
     refreshWaveDims();
-    const ro = new ResizeObserver(() => refreshWaveDims());
+    let waveRaf = 0;
+    const ro = new ResizeObserver(() => {
+      if (waveRaf) cancelAnimationFrame(waveRaf);
+      waveRaf = requestAnimationFrame(() => {
+        waveRaf = 0;
+        refreshWaveDims();
+      });
+    });
     ro.observe(wave);
   }
   let waveAccent =
@@ -6925,7 +6957,8 @@ function bindUi() {
   // Live lyrics overlay
   $('#btnLyricsOverlay')?.addEventListener('click', () => setKaraokeOverlay(!karaokeOverlayOn));
 
-  // Topbar Story button — engages "story mode": the normal topbar nav
+  // Browse opens the canonical mega menu. Content pages keep their existing
+  // focused story rail once opened so playback and page-to-page navigation persist.
   // (Search / Lyrics / Story / menu) is hidden and replaced inline by a
   // chip rail of all content-page links. Click a chip to open that page;
   // click the ✕ at the right of the rail to exit story mode and restore
@@ -7033,8 +7066,23 @@ function bindUi() {
   }
   pagesMenuTrigger?.addEventListener('click', e => {
     e.stopPropagation();
-    const on = !document.documentElement.classList.contains('is-story-mode');
-    setStoryMode(on);
+    const open = pagesMenuList?.hidden ?? true;
+    if (pagesMenuList) pagesMenuList.hidden = !open;
+    pagesMenuTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.addEventListener('click', e => {
+    if (!pagesMenuList || pagesMenuList.hidden) return;
+    const target = e.target as Element | null;
+    if (target?.closest('[data-topbar-menu]')) return;
+    pagesMenuList.hidden = true;
+    pagesMenuTrigger?.setAttribute('aria-expanded', 'false');
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && pagesMenuList && !pagesMenuList.hidden) {
+      pagesMenuList.hidden = true;
+      pagesMenuTrigger?.setAttribute('aria-expanded', 'false');
+      pagesMenuTrigger?.focus();
+    }
   });
   $('#btnStoryNavClose')?.addEventListener('click', () => {
     setStoryMode(false);
@@ -7692,9 +7740,7 @@ async function fetchSimilarNext(trackId: string): Promise<Track | null> {
     if (r.ok) {
       const d = (await r.json()) as { similar?: Array<{ id?: string }> };
       const ids = Array.isArray(d.similar)
-        ? d.similar
-            .map(s => s?.id)
-            .filter((x): x is string => !!x && TRACK_BY_ID.has(x) && x !== trackId)
+        ? d.similar.map(s => s?.id).filter((x): x is string => !!x && TRACK_BY_ID.has(x) && x !== trackId)
         : [];
       const pick = ids.find(id => !recentTracks.includes(id)) ?? ids[0];
       if (pick) return TRACK_BY_ID.get(pick) ?? null;
@@ -8516,8 +8562,7 @@ function lyricSnippetWindow(line: string, q: string, max = 64): string {
 // THIS track matched on a lyric line (not its title/album/vibe).
 function armLyricSeekIfLyricMatch(t: Track): void {
   const q = ($('#cmdkInput') as HTMLInputElement | null)?.value.toLowerCase().trim() ?? '';
-  pendingLyricSeekQuery =
-    q && !searchFields(t).base.includes(q) && matchedLyricLine(t.id, q) ? q : null;
+  pendingLyricSeekQuery = q && !searchFields(t).base.includes(q) && matchedLyricLine(t.id, q) ? q : null;
 }
 
 // Seek the audio to `time`, waiting for metadata if the element just started.
@@ -8653,7 +8698,8 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
     searchActiveIdx = -1;
     const q = escapeHtml((input?.value ?? '').trim());
     results.innerHTML = `<div class="cmdk__suggest"><div class="cmdk__group">No match for &ldquo;${q}&rdquo; — try a vibe, mood, or lyric</div><div class="cmdk__suggest-chips">${SEARCH_SUGGESTIONS.map(
-      s => `<button type="button" class="cmdk__suggest-chip" data-suggest="${escapeHtml(s)}">${escapeHtml(s)}</button>`
+      s =>
+        `<button type="button" class="cmdk__suggest-chip" data-suggest="${escapeHtml(s)}">${escapeHtml(s)}</button>`
     ).join('')}</div></div>`;
     return;
   }
@@ -8729,7 +8775,8 @@ function renderSearchResults(tracks: Track[], aiPicks: Array<{ track: Track; why
   const suggestHtml = sq
     ? ''
     : `<div class="cmdk__suggest"><div class="cmdk__group">✦ Try a vibe, mood, or lyric</div><div class="cmdk__suggest-chips">${SEARCH_SUGGESTIONS.map(
-        q => `<button type="button" class="cmdk__suggest-chip" data-suggest="${escapeHtml(q)}">${escapeHtml(q)}</button>`
+        q =>
+          `<button type="button" class="cmdk__suggest-chip" data-suggest="${escapeHtml(q)}">${escapeHtml(q)}</button>`
       ).join('')}</div></div>`;
   // Option rows live in an INNER listbox so the suggest chips (above) + the AI
   // "Play as a set" action (below) stay OUT of the listbox — a listbox may only own
@@ -8765,8 +8812,9 @@ function openSearch(preset?: { query: string; tracks: Track[] }) {
     // lyric-content search works (off the eager bundle — LCP).
     void enrichSearchLyrics();
   };
-  const ric = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number })
-    .requestIdleCallback;
+  const ric = (
+    window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }
+  ).requestIdleCallback;
   if (ric) ric(warmBlobs, { timeout: 500 });
   else setTimeout(warmBlobs, 50);
 }
@@ -8786,12 +8834,7 @@ function exploreTag(label: string) {
   // Fail-soft to catalog order when there's no current track to rank against.
   const curTags = currentTrackId ? getTrackTags(currentTrackId) : undefined;
   if (curTags) {
-    const curSet = new Set([
-      ...curTags.moods,
-      ...curTags.themes,
-      ...curTags.genres,
-      ...curTags.places
-    ]);
+    const curSet = new Set([...curTags.moods, ...curTags.themes, ...curTags.genres, ...curTags.places]);
     const curAlbum = TRACK_BY_ID.get(currentTrackId!)?.album;
     ids = ids
       .filter(id => id !== currentTrackId)
@@ -9355,9 +9398,7 @@ async function enhanceLinksPage(): Promise<void> {
         const albumId = btn.dataset.downloadAlbum;
         const album = albumId ? ALBUMS.find(a => a.id === albumId) : null;
         if (!album) return;
-        const files = album.trackIds
-          .map(id => TRACK_BY_ID.get(id)?.file)
-          .filter((f): f is string => !!f);
+        const files = album.trackIds.map(id => TRACK_BY_ID.get(id)?.file).filter((f): f is string => !!f);
         if (!files.length) return;
         const original = btn.textContent;
         btn.disabled = true;
