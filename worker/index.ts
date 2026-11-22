@@ -3649,6 +3649,7 @@ export default {
         // don't have. Per ai-abundance: label the REAL model.
         const CHAT_MODELS = new Set([
           '@cf/meta/llama-3.1-8b-instruct-fp8',
+          '@cf/meta/llama-3.1-8b-instruct-fast',
           '@cf/meta/llama-3.3-70b-instruct-fp8-fast'
         ]);
         const model =
@@ -3762,13 +3763,24 @@ ${chatCatalog}`;
           try {
             aiResponse = await runWithRetry(model);
           } catch (primaryErr) {
-            // Fall back to the smaller, faster, more-available 8B model
-            if (model !== '@cf/meta/llama-3.1-8b-instruct-fp8') {
-              usedModel = '@cf/meta/llama-3.1-8b-instruct-fp8';
-              aiResponse = await runWithRetry(usedModel);
-            } else {
-              throw primaryErr;
+            // Fall back across active 8B/70B Workers AI models (handles Nov 20, 2026 @cf/meta/llama-3.1-8b-instruct-fp8 retirement)
+            const fallbackCandidates = [
+              '@cf/meta/llama-3.1-8b-instruct-fast',
+              '@cf/meta/llama-3.1-8b-instruct-fp8',
+              '@cf/meta/llama-3.3-70b-instruct-fp8-fast'
+            ].filter(candidate => candidate !== model);
+            let recovered: ReadableStream<Uint8Array> | { response: string } | undefined;
+            for (const candidate of fallbackCandidates) {
+              try {
+                recovered = await runWithRetry(candidate);
+                usedModel = candidate;
+                break;
+              } catch {
+                /* try next fallback */
+              }
             }
+            if (!recovered) throw primaryErr;
+            aiResponse = recovered;
           }
 
           if (stream && aiResponse instanceof ReadableStream) {
