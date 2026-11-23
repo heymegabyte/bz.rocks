@@ -8,6 +8,19 @@
  * required for this build).
  */
 
+import {
+  renderWidget as renderCatalogWidget,
+  WIDGET_CSS as CATALOG_WIDGET_CSS
+} from '@theme.tools/blog/widgets';
+
+/**
+ * The canonical @theme.tools/blog widget stylesheet. Re-exported so any host
+ * that renders catalog-delegated widgets (pricing / cta / link-card) can inject
+ * it exactly once alongside the markup. In a browser context `renderWidgets`
+ * injects it automatically via `ensureCatalogWidgetCss()`.
+ */
+export const WIDGET_CSS: string = CATALOG_WIDGET_CSS;
+
 export type AiChatWidgetKind =
   | 'text-card'
   | 'cta'
@@ -404,21 +417,41 @@ function renderTextCard(w: TextCardWidget): string {
   return `<section class="aichat__widget aichat__widget--text" role="group">${title}<p class="aichat__w-body">${escapeHtml(w.body)}</p></section>`;
 }
 
+/**
+ * Delegate to the @theme.tools/blog `cta` widget. URLs are pre-sanitized with
+ * the in-house `safeUrl` (the catalog only HTML-escapes hrefs, so this preserves
+ * our `javascript:`/`data:` → `#` security invariant). The catalog throws on a
+ * malformed shape; we fall back to a text card rather than drop the widget.
+ */
 function renderCta(w: CtaWidget): string {
-  const body = w.body ? `<p class="aichat__w-body">${escapeHtml(w.body)}</p>` : '';
-  const ph = safeUrl(w.primary.href);
-  const sh = w.secondary ? safeUrl(w.secondary.href) : '';
-  const sec = w.secondary
-    ? `<a class="aichat__w-btn aichat__w-btn--ghost" href="${sh}"${externalAttrs(sh)}>${escapeHtml(w.secondary.label)}</a>`
-    : '';
-  return `<section class="aichat__widget aichat__widget--cta"><header class="aichat__w-title">${escapeHtml(w.title)}</header>${body}<div class="aichat__w-actions"><a class="aichat__w-btn" href="${ph}"${externalAttrs(ph)}>${escapeHtml(w.primary.label)}</a>${sec}</div></section>`;
+  try {
+    return renderCatalogWidget('cta', {
+      title: w.title,
+      body: w.body,
+      primary: { href: safeUrl(w.primary.href), label: w.primary.label },
+      secondary: w.secondary && { href: safeUrl(w.secondary.href), label: w.secondary.label }
+    });
+  } catch {
+    return renderTextCard({ kind: 'text-card', title: w.title, body: w.body ?? '' });
+  }
 }
 
+/**
+ * Delegate to the @theme.tools/blog `link-card` widget. `href` is pre-sanitized
+ * via `safeUrl` to keep the scheme allow-list. Falls back to a text card if the
+ * catalog rejects the shape.
+ */
 function renderLinkCard(w: LinkCardWidget): string {
-  const href = safeUrl(w.href);
-  const desc = w.description ? `<p class="aichat__w-body">${escapeHtml(w.description)}</p>` : '';
-  const badge = w.badge ? `<span class="aichat__w-badge">${escapeHtml(w.badge)}</span>` : '';
-  return `<a class="aichat__widget aichat__widget--link" href="${href}"${externalAttrs(href)}>${badge}<header class="aichat__w-title">${escapeHtml(w.title)}</header>${desc}</a>`;
+  try {
+    return renderCatalogWidget('link-card', {
+      href: safeUrl(w.href),
+      title: w.title,
+      description: w.description,
+      badge: w.badge
+    });
+  } catch {
+    return renderTextCard({ kind: 'text-card', title: w.title, body: w.description ?? '' });
+  }
 }
 
 function renderPhoto(w: PhotoWidget): string {
@@ -465,16 +498,23 @@ function renderAlbumCard(w: AlbumCardWidget): string {
   return `<a class="aichat__widget aichat__widget--album" href="${href}"${externalAttrs(href)} data-album-id="${escapeHtml(w.albumId)}">${cover}<div class="aichat__w-album-meta"><header class="aichat__w-title">${escapeHtml(w.name)}</header>${tag}<small>${w.trackCount} tracks</small></div></a>`;
 }
 
+/**
+ * Delegate to the @theme.tools/blog `pricing` widget. The optional cta's href is
+ * pre-sanitized via `safeUrl`. Falls back to a text card if the catalog rejects
+ * the shape (e.g. an empty `features` list).
+ */
 function renderPricingCard(w: PricingCardWidget): string {
-  const cadence = w.cadence ? `<small class="aichat__w-cadence">${escapeHtml(w.cadence)}</small>` : '';
-  const features = w.features
-    .slice(0, 12)
-    .map(f => `<li>${escapeHtml(f)}</li>`)
-    .join('');
-  const cta = w.cta
-    ? `<a class="aichat__w-btn" href="${safeUrl(w.cta.href)}"${externalAttrs(safeUrl(w.cta.href))}>${escapeHtml(w.cta.label)}</a>`
-    : '';
-  return `<section class="aichat__widget aichat__widget--pricing"><header class="aichat__w-title">${escapeHtml(w.tier)}</header><strong class="aichat__w-price">${escapeHtml(w.price)}</strong>${cadence}<ul class="aichat__w-features">${features}</ul>${cta}</section>`;
+  try {
+    return renderCatalogWidget('pricing', {
+      tier: w.tier,
+      price: w.price,
+      cadence: w.cadence,
+      features: w.features,
+      cta: w.cta && { href: safeUrl(w.cta.href), label: w.cta.label }
+    });
+  } catch {
+    return renderTextCard({ kind: 'text-card', title: w.tier, body: w.price });
+  }
 }
 
 function renderFaq(w: FaqAccordionWidget): string {
@@ -975,11 +1015,32 @@ export function renderWidget(w: unknown): string {
 }
 
 /**
+ * Inject the @theme.tools/blog `WIDGET_CSS` into the document head exactly once,
+ * so catalog-delegated widgets (pricing / cta / link-card) are styled wherever
+ * ai-widgets markup is emitted. Idempotent + DOM-guarded (no-op under SSR/tests).
+ */
+let catalogCssInjected = false;
+export function ensureCatalogWidgetCss(): void {
+  if (catalogCssInjected) return;
+  if (typeof document === 'undefined' || !document.head) return;
+  if (document.getElementById('tt-widget-css')) {
+    catalogCssInjected = true;
+    return;
+  }
+  const style = document.createElement('style');
+  style.id = 'tt-widget-css';
+  style.textContent = WIDGET_CSS;
+  document.head.appendChild(style);
+  catalogCssInjected = true;
+}
+
+/**
  * Render a widget bundle below an assistant message. Returns an empty string
  * when there are no widgets so callers can append unconditionally.
  */
 export function renderWidgets(widgets?: AiChatWidget[] | null): string {
   if (!Array.isArray(widgets) || !widgets.length) return '';
+  ensureCatalogWidgetCss();
   const slice = widgets.slice(0, 24);
   const rendered = slice.map(renderWidget).filter(Boolean).join('');
   if (!rendered) return '';

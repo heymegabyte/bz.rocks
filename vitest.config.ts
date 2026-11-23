@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { resolve } from 'node:path';
 
 /**
  * Vitest config. Pure-module unit tests only — DOM and Worker code is covered
@@ -6,6 +7,14 @@ import { defineConfig } from 'vitest/config';
  * the test loop stays sub-second.
  */
 export default defineConfig({
+  resolve: {
+    alias: {
+      // theme.tools consumption: mirror the vite.config.ts alias so unit tests
+      // that render catalog-delegated widgets resolve the vendored module.
+      // Keep in sync with vite.config.ts + tsconfig.json `paths`.
+      '@theme.tools/blog/widgets': resolve(__dirname, 'vendor/theme.tools/blog/widgets.ts')
+    }
+  },
   test: {
     include: ['src/**/*.test.ts', 'worker/**/*.test.ts'],
     environment: 'node',

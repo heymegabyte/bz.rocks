@@ -85,7 +85,6 @@ describe('renderWidget — cta', () => {
     });
     expect(html).toContain('href="https://bz.rocks/canopy/birch-swing-heaven"');
     expect(html).toContain('href="/about"');
-    expect(html).toContain('target="_blank"');
     expect(html).toContain('Play');
     expect(html).toContain('About');
   });
@@ -102,7 +101,7 @@ describe('renderWidget — cta', () => {
 });
 
 describe('renderWidget — link-card', () => {
-  it('renders title, description, badge and external rel attrs', () => {
+  it('renders title, description, badge and a whole-card href', () => {
     const html = renderWidget({
       kind: 'link-card',
       title: 'Read the prose',
@@ -113,7 +112,7 @@ describe('renderWidget — link-card', () => {
     expect(html).toContain('Read the prose');
     expect(html).toContain('Long-form notes on the album.');
     expect(html).toContain('NEW');
-    expect(html).toContain('rel="noopener noreferrer"');
+    expect(html).toContain('href="https://example.com/prose"');
   });
 });
 
@@ -870,6 +869,82 @@ describe('renderWidget — unsupported / malformed', () => {
     expect(renderWidget(undefined)).toBe('');
     expect(renderWidget('hello' as unknown)).toBe('');
     expect(renderWidget(42 as unknown)).toBe('');
+  });
+});
+
+describe('catalog delegation — pricing / cta / link-card emit @theme.tools markup', () => {
+  it('cta delegates to the catalog tt-cta widget (not the in-house aichat markup)', () => {
+    const html = renderWidget({
+      kind: 'cta',
+      title: 'Listen now',
+      body: 'Two albums dropped.',
+      primary: { label: 'Play', href: 'https://bz.rocks/canopy' },
+      secondary: { label: 'About', href: '/about' }
+    });
+    expect(html).toContain('class="tt-widget tt-cta"');
+    expect(html).not.toContain('aichat__widget--cta');
+    expect(html).toContain('Listen now');
+    expect(html).toContain('Play');
+    expect(html).toContain('About');
+  });
+
+  it('link-card delegates to the catalog tt-link-card widget', () => {
+    const html = renderWidget({
+      kind: 'link-card',
+      title: 'Read the prose',
+      description: 'Long-form notes.',
+      href: 'https://example.com/prose',
+      badge: 'NEW'
+    });
+    expect(html).toContain('class="tt-widget tt-link-card"');
+    expect(html).not.toContain('aichat__widget--link');
+    expect(html).toContain('Read the prose');
+    expect(html).toContain('NEW');
+  });
+
+  it('pricing-card delegates to the catalog tt-pricing widget', () => {
+    const html = renderWidget({
+      kind: 'pricing-card',
+      tier: 'Pro',
+      price: '$9',
+      cadence: '/mo',
+      features: ['Unlimited', 'Priority support'],
+      cta: { label: 'Upgrade', href: '/upgrade' }
+    });
+    expect(html).toContain('class="tt-widget tt-pricing"');
+    expect(html).not.toContain('aichat__widget--pricing');
+    expect(html).toContain('Pro');
+    expect(html).toContain('$9');
+    expect(html).toContain('Unlimited');
+    expect(html).toContain('Priority support');
+    expect(html).toContain('Upgrade');
+  });
+
+  it('pricing-card renders without a cta', () => {
+    const html = renderWidget({
+      kind: 'pricing-card',
+      tier: 'Free',
+      price: '$0',
+      features: ['One album']
+    });
+    expect(html).toContain('class="tt-widget tt-pricing"');
+    expect(html).toContain('Free');
+    expect(html).toContain('One album');
+  });
+
+  it('still neutralizes javascript: hrefs through the catalog (safeUrl pre-sanitized)', () => {
+    const cta = renderWidget({
+      kind: 'cta',
+      title: 'Pwn',
+      primary: { label: 'click', href: 'javascript:steal()' }
+    });
+    expect(cta).not.toContain('javascript:');
+    const link = renderWidget({
+      kind: 'link-card',
+      title: 'Evil',
+      href: 'javascript:steal()'
+    });
+    expect(link).not.toContain('javascript:');
   });
 });
 
