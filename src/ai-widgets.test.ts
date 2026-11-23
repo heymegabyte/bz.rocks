@@ -188,18 +188,73 @@ describe('renderWidget — album-card', () => {
   });
 });
 
-describe('renderWidget — mini-table', () => {
-  it('caps body cells to header length', () => {
+describe('renderWidget — mini-table (delegates to @theme.tools/blog table)', () => {
+  it('delegates to the catalog tt-table widget (not the in-house aichat markup)', () => {
     const html = renderWidget({
       kind: 'mini-table',
       caption: 'Albums',
       headers: ['Name', 'Year'],
-      rows: [['Canopy Dispatch', '2026', 'extra-ignored']]
+      rows: [['Canopy Dispatch', '2026']]
     });
-    expect(html).toContain('<caption>Albums</caption>');
+    expect(html).toContain('class="tt-widget tt-table-widget"');
+    expect(html).toContain('<thead>');
+    expect(html).toContain('<tbody>');
+    expect(html).toContain('<caption class="tt-table-caption">Albums</caption>');
+    expect(html).not.toContain('aichat__widget--table');
+    expect(html).toContain('Name');
+    expect(html).toContain('Year');
     expect(html).toContain('Canopy Dispatch');
     expect(html).toContain('2026');
+  });
+
+  it('normalizes ragged rows: extra cells dropped, short rows padded (so the catalog never throws)', () => {
+    const html = renderWidget({
+      kind: 'mini-table',
+      headers: ['Name', 'Year'],
+      rows: [
+        ['Canopy Dispatch', '2026', 'extra-ignored'],
+        ['Lone Birch'] // short row → padded, not a throw
+      ]
+    });
+    // Still the catalog table, not the text-card fallback.
+    expect(html).toContain('class="tt-widget tt-table-widget"');
+    expect(html).toContain('<tbody>');
+    expect(html).toContain('Canopy Dispatch');
     expect(html).not.toContain('extra-ignored');
+    expect(html).toContain('Lone Birch');
+  });
+
+  it('coerces non-string cells (numbers/booleans) to strings before delegating', () => {
+    const html = renderWidget({
+      kind: 'mini-table',
+      headers: ['Plays', 'Live'],
+      // Authored payloads can carry non-strings; the catalog requires strings.
+      rows: [[1234 as unknown as string, true as unknown as string]]
+    });
+    expect(html).toContain('class="tt-widget tt-table-widget"');
+    expect(html).toContain('1234');
+    expect(html).toContain('true');
+  });
+
+  it('escapes untrusted header + cell text through the catalog', () => {
+    const html = renderWidget({
+      kind: 'mini-table',
+      headers: ['<script>h</script>'],
+      rows: [['<b>c</b>']]
+    });
+    expect(html).not.toContain('<script>h</script>');
+    expect(html).not.toContain('<b>c</b>');
+    expect(html).toContain('&lt;script&gt;');
+  });
+
+  it('falls back to a text card when the shape is unusable (no headers)', () => {
+    const html = renderWidget({
+      kind: 'mini-table',
+      headers: [],
+      rows: [['x']]
+    });
+    expect(html).toContain('class="aichat__widget aichat__widget--text"');
+    expect(html).not.toContain('tt-table-widget');
   });
 });
 

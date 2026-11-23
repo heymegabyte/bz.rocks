@@ -30,6 +30,7 @@ export const WIDGET_TYPES = [
   "pricing",
   "cta",
   "link-card",
+  "table",
 ] as const;
 
 export type WidgetType = (typeof WIDGET_TYPES)[number];
@@ -209,6 +210,12 @@ export interface ScorecardData {
 export interface AccordionData {
   title: string;
   items: { summary: string; body: string }[];
+}
+export interface TableData {
+  title?: string;
+  caption?: string;
+  columns: string[];
+  rows: string[][];
 }
 
 const CALLOUT_VARIANTS: readonly CalloutVariant[] = ["info", "warning", "success", "tip"];
@@ -691,6 +698,80 @@ ${details}
 </section>`.trim();
 }
 
+/**
+ * A generic data table — arbitrary column headers + body rows, rendered as a plain `<table>` where
+ * EVERY body cell is a `<td>` (no row-header). Distinct from `comparison` (which promotes the first
+ * cell of each row to a `<th scope="row">` and highlights a winning last column, forbidding empty
+ * cells) and from `spec-table` (a single-item label→value `<dl>`): use `table` for ordinary tabular
+ * data — release histories, feature matrices, reference grids — where EMPTY cells are legitimate and
+ * no column is a row label. `title` + `caption` are optional; every header/cell/title/caption is
+ * escaped. Reuses the shared `.tt-table-scroll` horizontal-scroll wrapper + table styling.
+ * @throws {WidgetError} on an invalid shape, an empty `columns`/`rows` array, a non-string
+ *   header/cell, or a row whose cell count does not equal the number of columns. Empty-string cells
+ *   are VALID (they render as an empty `<td></td>`).
+ */
+export function renderTable(data: unknown): string {
+  const ctx = "table";
+  const obj = asRoot(data, ctx);
+  const title = optStr(obj, "title");
+  const caption = optStr(obj, "caption");
+  const columns = reqStrArray(obj, "columns", ctx);
+  const rawRows = obj["rows"];
+  if (!Array.isArray(rawRows) || rawRows.length === 0) {
+    throw new WidgetError(`${ctx}: field "rows" must be a non-empty array`);
+  }
+  const rows: string[][] = rawRows.map((row, r) => {
+    if (!Array.isArray(row)) {
+      throw new WidgetError(`${ctx}: "rows[${r}]" must be an array`);
+    }
+    if (row.length !== columns.length) {
+      throw new WidgetError(
+        `${ctx}: "rows[${r}]" has ${row.length} cells but there are ${columns.length} columns`,
+      );
+    }
+    return row.map((cell, c) => {
+      // Empty cells are intentionally ALLOWED; only a non-string cell is a shape error.
+      if (typeof cell !== "string") {
+        throw new WidgetError(`${ctx}: "rows[${r}][${c}]" must be a string`);
+      }
+      return cell;
+    });
+  });
+
+  const head = columns
+    .map((col) => `        <th scope="col">${escapeHtml(col)}</th>`)
+    .join("\n");
+  const body = rows
+    .map((row) => {
+      const cells = row.map((cell) => `        <td>${escapeHtml(cell)}</td>`).join("\n");
+      return `      <tr>\n${cells}\n      </tr>`;
+    })
+    .join("\n");
+  const captionHtml = caption
+    ? `\n      <caption class="tt-table-caption">${escapeHtml(caption)}</caption>`
+    : "";
+  const headingHtml = title
+    ? `\n  <h3 class="tt-widget__heading tt-table-widget__heading">${escapeHtml(title)}</h3>`
+    : "";
+  const aria = title ? ` aria-label="${escapeHtml(title)}"` : "";
+
+  return `
+<figure class="tt-widget tt-table-widget" data-ripple="true" data-spotlight="true" data-magnetic="true"${aria}>${headingHtml}
+  <div class="tt-table-scroll">
+    <table>${captionHtml}
+      <thead>
+      <tr>
+${head}
+      </tr>
+      </thead>
+      <tbody>
+${body}
+      </tbody>
+    </table>
+  </div>
+</figure>`.trim();
+}
+
 // ---------------------------------------------------------------------------
 // Dispatcher
 // ---------------------------------------------------------------------------
@@ -793,6 +874,7 @@ const RENDERERS: Record<WidgetType, (data: unknown) => string> = {
   pricing: renderPricing,
   cta: renderCta,
   "link-card": renderLinkCard,
+  table: renderTable,
 };
 
 /**
@@ -1391,6 +1473,43 @@ export const WIDGET_CSS: string = `
 .tt-link-card__badge { display: inline-block; margin-bottom: 8px; font-size: 0.72rem; font-weight: 700; color: var(--tt-accent); text-transform: uppercase; letter-spacing: 0.04em; }
 .tt-link-card__title { display: block; }
 .tt-link-card__desc { margin: 6px 0 0; color: var(--tt-fg-muted); }
+
+/* Generic data table ----------------------------------------------------- */
+.tt-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tt-table-widget > .tt-table-scroll > table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 28rem;
+}
+.tt-table-caption {
+  margin-bottom: 0.6rem;
+  text-align: left;
+  font-size: 0.78rem;
+  color: var(--tt-fg-muted);
+  caption-side: top;
+}
+.tt-table-widget th,
+.tt-table-widget td {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid var(--tt-border);
+  vertical-align: top;
+}
+.tt-table-widget thead th {
+  font-weight: 700;
+  color: var(--tt-accent);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  background: linear-gradient(180deg, rgba(0, 229, 255, 0.14), rgba(0, 229, 255, 0.04));
+  position: sticky;
+  top: 0;
+}
+.tt-table-widget td { color: var(--tt-fg); }
+.tt-table-widget tbody tr { transition: background var(--tt-motion); }
+.tt-table-widget tbody tr:hover td { background: rgba(0, 229, 255, 0.04); }
+.tt-table-widget tbody tr:last-child td { border-bottom: 0; }
 
 /* Motion safety ---------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {

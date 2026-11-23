@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "sourceRepository": "https://github.com/heymegabyte/theme.tools",
-  "sourceRevision": "77b0caf175640029dbbe9b3f674b0c0b3d721d47",
+  "sourceRevision": "6eeb943df10bec7a644dd068a4f5577af1d10f44",
   "builtAt": "2026-11-22",
   "consumer": "music.megabyte.space",
   "vendorStrategy": "self-contained-source-file",
@@ -11,8 +11,8 @@
       "name": "@theme.tools/blog",
       "subpath": "./widgets",
       "sourceFile": "packages/blog/src/widgets.ts",
-      "sourceFileCommit": "ca219e5509b9ba37e8738ff3b29c2e257c836fb9",
-      "sourceSha256": "97f52026ee18bf1158fadc362338f99c5973688c939f45d6ea6e053ee0793ac8",
+      "sourceFileCommit": "23ca521a01acc5638dd09d52c7120bcd73ceb95e",
+      "sourceSha256": "8208b1a018c250a8a5697fbe7621768f6810a1a1353be87672d753f570a54c58",
       "vendoredFile": "blog/widgets.ts",
       "aliasedAs": "@theme.tools/blog/widgets"
     }

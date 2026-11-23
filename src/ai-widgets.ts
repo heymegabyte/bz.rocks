@@ -536,20 +536,36 @@ function renderFaq(w: FaqAccordionWidget): string {
   }
 }
 
+/**
+ * Delegate to the @theme.tools/blog `table` widget (a generic headers+rows data
+ * table). The catalog is strict: it REQUIRES a non-empty `columns`, string-only
+ * cells, and each row's length to EQUAL `columns.length`. The in-house shape is
+ * looser (ragged rows, non-string cells tolerated), so we normalize before
+ * delegating — slice/pad every row to exactly `headers.length` and coerce each
+ * cell to a string — which preserves the historical "extra cells dropped"
+ * behavior without the catalog throwing. No URLs are involved, so no `safeUrl`
+ * pre-sanitization is needed. Falls back to a text card if the catalog still
+ * rejects the shape (e.g. an empty `headers` array).
+ */
 function renderMiniTable(w: MiniTableWidget): string {
-  const caption = w.caption ? `<caption>${escapeHtml(w.caption)}</caption>` : '';
-  const head = w.headers.map(h => `<th scope="col">${escapeHtml(h)}</th>`).join('');
-  const body = w.rows
-    .slice(0, 50)
-    .map(
-      r =>
-        `<tr>${r
-          .slice(0, w.headers.length)
-          .map(c => `<td>${escapeHtml(c)}</td>`)
-          .join('')}</tr>`
-    )
-    .join('');
-  return `<table class="aichat__widget aichat__widget--table">${caption}<thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+  try {
+    const columns = (w.headers ?? []).map(h => String(h));
+    const rows = (w.rows ?? []).slice(0, 50).map(r => {
+      const cells = Array.isArray(r) ? r : [];
+      // Normalize to exactly columns.length: extras dropped, short rows padded.
+      return columns.map((_, i) => String(cells[i] ?? ''));
+    });
+    return renderCatalogWidget('table', {
+      caption: w.caption,
+      columns,
+      rows
+    });
+  } catch {
+    const body = (w.rows ?? [])
+      .map(r => (Array.isArray(r) ? r.map(c => String(c ?? '')).join(' · ') : ''))
+      .join('\n');
+    return renderTextCard({ kind: 'text-card', title: w.caption, body });
+  }
 }
 
 function renderStatCard(w: StatCardWidget): string {
