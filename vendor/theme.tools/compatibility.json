@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "https://github.com/heymegabyte/theme.tools",
+  "sourceRevision": "77b0caf175640029dbbe9b3f674b0c0b3d721d47",
+  "builtAt": "2026-11-22",
+  "consumer": "music.megabyte.space",
+  "vendorStrategy": "self-contained-source-file",
+  "vendorRationale": "music's CI (.github/workflows/ci.yml) runs `npm run build` after checking out music ALONE, so a sibling `../theme.tools` src-alias would break CI. The @theme.tools/blog tarball cannot be installed standalone (its `@theme-tools/shared-utils: workspace:*` dep breaks `file:` install), and `widgets.ts` is fully self-contained (zero cross-package imports — escapeHtml/WidgetError/validation all inline). So the single file is vendored in-repo and aliased via tsconfig `paths` + vite `resolve.alias`.",
+  "packages": [
+    {
+      "name": "@theme.tools/blog",
+      "subpath": "./widgets",
+      "sourceFile": "packages/blog/src/widgets.ts",
+      "sourceFileCommit": "ca219e5509b9ba37e8738ff3b29c2e257c836fb9",
+      "sourceSha256": "97f52026ee18bf1158fadc362338f99c5973688c939f45d6ea6e053ee0793ac8",
+      "vendoredFile": "blog/widgets.ts",
+      "aliasedAs": "@theme.tools/blog/widgets"
+    }
+  ],
+  "resyncInstructions": "To update: re-copy packages/blog/src/widgets.ts from the theme.tools sibling, then refresh sourceRevision/sourceFileCommit/sourceSha256 above (compute with `shasum -a 256`). Verify `widgets.ts` is still self-contained (`grep -nE \"\\bfrom\\s+['\\\"]\" blog/widgets.ts` must return nothing) before vendoring.",
+  "usedExports": [
+    "renderWidget",
+    "WIDGET_TYPES",
+    "WIDGET_CSS",
+    "WidgetType",
+    "WidgetError",
+    "escapeHtml",
+    "renderPricing",
+    "renderCta",
+    "renderLinkCard"
+  ]
+}

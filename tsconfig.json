@@ -15,7 +15,11 @@
     "resolveJsonModule": true,
     "allowImportingTsExtensions": false,
     "noEmit": true,
-    "types": ["@cloudflare/workers-types"]
+    "types": ["@cloudflare/workers-types"],
+    "baseUrl": ".",
+    "paths": {
+      "@theme.tools/blog/widgets": ["./vendor/theme.tools/blog/widgets.ts"]
+    }
   },
-  "include": ["src/**/*.ts", "worker/**/*.ts"]
+  "include": ["src/**/*.ts", "worker/**/*.ts", "vendor/theme.tools/**/*.ts"]
 }
