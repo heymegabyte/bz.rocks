@@ -517,16 +517,23 @@ function renderPricingCard(w: PricingCardWidget): string {
   }
 }
 
+/**
+ * Delegate to the @theme.tools/blog `faq` widget (a Q&A `<details>` accordion,
+ * near-identical to the in-house shape). The catalog REQUIRES a non-empty `title`,
+ * so we supply "FAQ" when the optional in-house title is absent, and it throws on
+ * any empty q/a — we fall back to a text card rather than drop the widget. No URLs
+ * are involved, so no `safeUrl` pre-sanitization is needed here.
+ */
 function renderFaq(w: FaqAccordionWidget): string {
-  const title = w.title ? `<header class="aichat__w-title">${escapeHtml(w.title)}</header>` : '';
-  const items = w.items
-    .slice(0, 20)
-    .map(
-      it =>
-        `<details class="aichat__w-faq-item"><summary>${escapeHtml(it.q)}</summary><p>${escapeHtml(it.a)}</p></details>`
-    )
-    .join('');
-  return `<section class="aichat__widget aichat__widget--faq">${title}${items}</section>`;
+  try {
+    return renderCatalogWidget('faq', {
+      title: w.title && w.title.trim() ? w.title : 'FAQ',
+      items: (w.items ?? []).slice(0, 20).map(it => ({ q: it.q, a: it.a }))
+    });
+  } catch {
+    const body = (w.items ?? []).map(it => `${it.q}\n${it.a}`).join('\n\n');
+    return renderTextCard({ kind: 'text-card', title: w.title ?? 'FAQ', body });
+  }
 }
 
 function renderMiniTable(w: MiniTableWidget): string {
@@ -551,16 +558,29 @@ function renderStatCard(w: StatCardWidget): string {
   return `<section class="aichat__widget aichat__widget--stat"><span class="aichat__w-label">${escapeHtml(w.label)}</span><strong class="aichat__w-value">${escapeHtml(w.value)}</strong>${delta}${hint}</section>`;
 }
 
+/**
+ * Delegate to the @theme.tools/blog `timeline` widget. The catalog event is
+ * `{ label, body }` (both required, non-empty) and the widget REQUIRES a non-empty
+ * `title`; the in-house item is `{ when, title, body? }`. We map `when`→`label` and
+ * fold the in-house item headline (+ optional body) into the required catalog `body`
+ * so no field is dropped, and supply a "Timeline" fallback heading. Falls back to a
+ * text card if the catalog rejects the shape (e.g. an empty `when`/`title`).
+ */
 function renderTimeline(w: TimelineWidget): string {
-  const title = w.title ? `<header class="aichat__w-title">${escapeHtml(w.title)}</header>` : '';
-  const items = w.items
-    .slice(0, 30)
-    .map(
-      it =>
-        `<li><time>${escapeHtml(it.when)}</time><strong>${escapeHtml(it.title)}</strong>${it.body ? `<p>${escapeHtml(it.body)}</p>` : ''}</li>`
-    )
-    .join('');
-  return `<section class="aichat__widget aichat__widget--timeline">${title}<ol>${items}</ol></section>`;
+  try {
+    return renderCatalogWidget('timeline', {
+      title: w.title && w.title.trim() ? w.title : 'Timeline',
+      events: (w.items ?? []).slice(0, 30).map(it => ({
+        label: it.when,
+        body: it.body && it.body.trim() ? `${it.title} — ${it.body}` : it.title
+      }))
+    });
+  } catch {
+    const body = (w.items ?? [])
+      .map(it => `${it.when}: ${it.title}${it.body ? ` — ${it.body}` : ''}`)
+      .join('\n');
+    return renderTextCard({ kind: 'text-card', title: w.title ?? 'Timeline', body });
+  }
 }
 
 function renderCommandPalette(w: CommandPaletteWidget): string {

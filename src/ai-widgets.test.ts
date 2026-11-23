@@ -948,6 +948,90 @@ describe('catalog delegation — pricing / cta / link-card emit @theme.tools mar
   });
 });
 
+describe('catalog delegation — faq-accordion / timeline emit @theme.tools markup', () => {
+  it('faq-accordion delegates to the catalog tt-faq widget (not the in-house aichat markup)', () => {
+    const html = renderWidget({
+      kind: 'faq-accordion',
+      title: 'Questions',
+      items: [
+        { q: 'Is it free?', a: 'Yes.' },
+        { q: 'Who made it?', a: 'A solo builder.' }
+      ]
+    });
+    expect(html).toContain('class="tt-widget tt-faq"');
+    expect(html).toContain('tt-faq__question');
+    expect(html).not.toContain('aichat__widget--faq');
+    expect(html).toContain('Questions');
+    expect(html).toContain('Is it free?');
+    expect(html).toContain('Yes.');
+    expect(html).toContain('Who made it?');
+  });
+
+  it('faq-accordion supplies a fallback heading when title is omitted (catalog requires one)', () => {
+    const html = renderWidget({
+      kind: 'faq-accordion',
+      items: [{ q: 'Q?', a: 'A.' }]
+    });
+    expect(html).toContain('class="tt-widget tt-faq"');
+    expect(html).toContain('Q?');
+    expect(html).toContain('A.');
+  });
+
+  it('faq-accordion escapes untrusted question/answer text through the catalog', () => {
+    const html = renderWidget({
+      kind: 'faq-accordion',
+      title: 'X',
+      items: [{ q: '<script>a</script>', a: '<b>b</b>' }]
+    });
+    expect(html).not.toContain('<script>a</script>');
+    expect(html).not.toContain('<b>b</b>');
+    expect(html).toContain('&lt;script&gt;');
+  });
+
+  it('timeline delegates to the catalog tt-timeline widget (not the in-house aichat markup)', () => {
+    const html = renderWidget({
+      kind: 'timeline',
+      title: 'History',
+      items: [
+        { when: '2024', title: 'Founded', body: 'First commit.' },
+        { when: '2026', title: 'Launched' }
+      ]
+    });
+    expect(html).toContain('class="tt-widget tt-timeline"');
+    expect(html).toContain('tt-timeline__event');
+    expect(html).not.toContain('aichat__widget--timeline');
+    expect(html).toContain('History');
+    expect(html).toContain('2024');
+    expect(html).toContain('Founded');
+    expect(html).toContain('First commit.');
+    // An event with no body still renders (its headline becomes the required body).
+    expect(html).toContain('2026');
+    expect(html).toContain('Launched');
+  });
+
+  it('timeline supplies a fallback heading when title is omitted (catalog requires one)', () => {
+    const html = renderWidget({
+      kind: 'timeline',
+      items: [{ when: 'Day 1', title: 'Start' }]
+    });
+    expect(html).toContain('class="tt-widget tt-timeline"');
+    expect(html).toContain('Day 1');
+    expect(html).toContain('Start');
+  });
+
+  it('timeline escapes untrusted event text through the catalog', () => {
+    const html = renderWidget({
+      kind: 'timeline',
+      title: 'T',
+      items: [{ when: '<i>when</i>', title: '<u>t</u>', body: '<s>b</s>' }]
+    });
+    expect(html).not.toContain('<i>when</i>');
+    expect(html).not.toContain('<u>t</u>');
+    expect(html).not.toContain('<s>b</s>');
+    expect(html).toContain('&lt;i&gt;');
+  });
+});
+
 describe('renderWidgets bundle', () => {
   it('returns empty string for null/empty', () => {
     expect(renderWidgets(undefined)).toBe('');
